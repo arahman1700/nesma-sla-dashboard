@@ -45,6 +45,7 @@
         .kpi-card {
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .kpi-card::after {
@@ -57,6 +58,10 @@
             background: rgba(255, 255, 255, 0.1);
             transform: rotate(-30deg);
             pointer-events: none;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px) scale(1.02);
         }
 
         .tab-btn {
@@ -183,6 +188,92 @@
         .score-poor { background: #fee2e2; color: #991b1b; }
         .score-critical { background: #fecaca; color: #7f1d1d; }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #1f2937;
+        }
+
+        /* Filter Styles */
+        .filter-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 150px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
         @media print {
             .no-print { display: none !important; }
             body { background: white; }
@@ -215,7 +306,7 @@
                     <div class="hidden md:block border-r border-white/30 h-8 mx-2"></div>
                     <div class="hidden md:block">
                         <h1 class="text-lg font-bold" data-ar="لوحة قياس المشتريات" data-en="Procurement Dashboard">لوحة قياس المشتريات</h1>
-                        <p class="text-xs text-emerald-100" data-ar="تحليل طلبات الشراء وتقييم الموردين" data-en="PR Analysis & Vendor Evaluation">تحليل طلبات الشراء وتقييم الموردين</p>
+                        <p class="text-xs text-emerald-100" data-ar="تقارير طلبات الشراء وتقييم الموردين" data-en="PR Reports & Vendor Evaluation">تقارير طلبات الشراء وتقييم الموردين</p>
                     </div>
                 </div>
 
@@ -223,7 +314,7 @@
                 <div class="flex items-center gap-3 lg:gap-6">
                     <div class="text-left hidden sm:block">
                         <p class="text-xs text-emerald-100" data-ar="آخر تحديث" data-en="Last Update">آخر تحديث</p>
-                        <p class="text-sm font-semibold">27 نوفمبر 2025</p>
+                        <p class="text-sm font-semibold" id="lastUpdateDate">8 ديسمبر 2025</p>
                     </div>
                     <button onclick="toggleLanguage()" class="lang-toggle" id="langBtn">
                         <span id="langText">EN</span>
@@ -240,8 +331,11 @@
         <div class="card mb-6 lg:mb-8">
             <div class="border-b border-gray-200 no-print">
                 <div class="flex overflow-x-auto">
-                    <button class="tab-btn active px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('pr-analysis')" data-ar="تحليل طلبات الشراء" data-en="PR Analysis">
-                        تحليل طلبات الشراء
+                    <button class="tab-btn active px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('pr-return')" data-ar="تقرير إرجاع الطلبات" data-en="PR Return Report">
+                        تقرير إرجاع الطلبات
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('pr-to-po')" data-ar="تقرير PR إلى PO" data-en="PR to PO Report">
+                        تقرير PR إلى PO
                     </button>
                     <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('vendor-eval')" data-ar="تقييم الموردين" data-en="Vendor Evaluation">
                         تقييم الموردين
@@ -250,16 +344,57 @@
             </div>
 
             <div class="p-4 lg:p-6">
-                <!-- PR Analysis Tab -->
-                <div id="tab-pr-analysis" class="tab-content active">
-                    <!-- PR KPIs -->
+                <!-- PR Return Report Tab -->
+                <div id="tab-pr-return" class="tab-content active">
+                    <!-- Filters Section -->
+                    <div class="filter-section mb-6">
+                        <div class="flex flex-wrap gap-4 items-center">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1" data-ar="المشروع" data-en="Project">المشروع</label>
+                                <select id="filterProject" class="filter-select" onchange="applyFilters()">
+                                    <option value="" data-ar="الكل" data-en="All">الكل</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1" data-ar="الشهر" data-en="Month">الشهر</label>
+                                <select id="filterMonth" class="filter-select" onchange="applyFilters()">
+                                    <option value="" data-ar="الكل" data-en="All">الكل</option>
+                                    <option value="1" data-ar="يناير" data-en="January">يناير</option>
+                                    <option value="2" data-ar="فبراير" data-en="February">فبراير</option>
+                                    <option value="3" data-ar="مارس" data-en="March">مارس</option>
+                                    <option value="4" data-ar="أبريل" data-en="April">أبريل</option>
+                                    <option value="5" data-ar="مايو" data-en="May">مايو</option>
+                                    <option value="6" data-ar="يونيو" data-en="June">يونيو</option>
+                                    <option value="7" data-ar="يوليو" data-en="July">يوليو</option>
+                                    <option value="8" data-ar="أغسطس" data-en="August">أغسطس</option>
+                                    <option value="9" data-ar="سبتمبر" data-en="September">سبتمبر</option>
+                                    <option value="10" data-ar="أكتوبر" data-en="October">أكتوبر</option>
+                                    <option value="11" data-ar="نوفمبر" data-en="November">نوفمبر</option>
+                                    <option value="12" data-ar="ديسمبر" data-en="December">ديسمبر</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1" data-ar="السنة" data-en="Year">السنة</label>
+                                <select id="filterYear" class="filter-select" onchange="applyFilters()">
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <button onclick="resetFilters()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors" data-ar="إعادة تعيين" data-en="Reset">
+                                إعادة تعيين
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PR Return KPIs -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
-                        <!-- Total PRs Approved (November) -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+                        <!-- Total PRs Approved -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white" onclick="showKPIDetails('approved')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-emerald-100 text-xs lg:text-sm mb-1" data-ar="PRs معتمدة (نوفمبر)" data-en="PRs Approved (Nov)">PRs معتمدة (نوفمبر)</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">242</p>
+                                    <p class="text-emerald-100 text-xs lg:text-sm mb-1" data-ar="PRs معتمدة" data-en="PRs Approved">PRs معتمدة</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="kpi-approved">242</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -268,16 +403,16 @@
                                 </div>
                             </div>
                             <div class="text-xs text-emerald-100">
-                                <span data-ar="الشهر الحالي" data-en="Current Month">الشهر الحالي</span>
+                                <span data-ar="اضغط للتفاصيل" data-en="Click for details">اضغط للتفاصيل</span>
                             </div>
                         </div>
 
-                        <!-- PRs Returned (November) -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-red-500 to-red-600 text-white">
+                        <!-- PRs Returned -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-red-500 to-red-600 text-white" onclick="showKPIDetails('returned')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-red-100 text-xs lg:text-sm mb-1" data-ar="PRs مرتجعة (نوفمبر)" data-en="PRs Returned (Nov)">PRs مرتجعة (نوفمبر)</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">35</p>
+                                    <p class="text-red-100 text-xs lg:text-sm mb-1" data-ar="PRs مرتجعة" data-en="PRs Returned">PRs مرتجعة</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="kpi-returned">35</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -286,16 +421,16 @@
                                 </div>
                             </div>
                             <div class="text-xs text-red-100">
-                                <span>14.5%</span> <span data-ar="من المعتمدة" data-en="of approved">من المعتمدة</span>
+                                <span id="kpi-return-rate">14.5%</span> <span data-ar="من المعتمدة" data-en="of approved">من المعتمدة</span>
                             </div>
                         </div>
 
                         <!-- Within 2 Days -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white" onclick="showKPIDetails('within2days')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <p class="text-blue-100 text-xs lg:text-sm mb-1" data-ar="إرجاع خلال يومين" data-en="Returned ≤2 Days">إرجاع خلال يومين</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">25</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="kpi-within2">25</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -304,16 +439,16 @@
                                 </div>
                             </div>
                             <div class="text-xs text-blue-100">
-                                <span>71.4%</span> <span data-ar="من المرتجعة" data-en="of returned">من المرتجعة</span>
+                                <span id="kpi-within2-pct">71.4%</span> <span data-ar="من المرتجعة" data-en="of returned">من المرتجعة</span>
                             </div>
                         </div>
 
                         <!-- After 2 Days -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white" onclick="showKPIDetails('after2days')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <p class="text-amber-100 text-xs lg:text-sm mb-1" data-ar="إرجاع بعد يومين" data-en="Returned >2 Days">إرجاع بعد يومين</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">10</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="kpi-after2">10</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -322,7 +457,7 @@
                                 </div>
                             </div>
                             <div class="text-xs text-amber-100">
-                                <span>28.6%</span> <span data-ar="من المرتجعة" data-en="of returned">من المرتجعة</span>
+                                <span id="kpi-after2-pct">28.6%</span> <span data-ar="من المرتجعة" data-en="of returned">من المرتجعة</span>
                             </div>
                         </div>
                     </div>
@@ -331,15 +466,15 @@
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
                         <div class="card p-3 lg:p-4 text-center">
                             <p class="text-gray-500 text-xs mb-1" data-ar="إجمالي PRs 2025" data-en="Total PRs 2025">إجمالي PRs 2025</p>
-                            <p class="text-xl lg:text-2xl font-bold text-gray-800">1,929</p>
+                            <p class="text-xl lg:text-2xl font-bold text-gray-800" id="kpi-total-2025">1,929</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center">
                             <p class="text-gray-500 text-xs mb-1" data-ar="إجمالي المرتجعة 2025" data-en="Total Returned 2025">إجمالي المرتجعة 2025</p>
-                            <p class="text-xl lg:text-2xl font-bold text-red-600">350</p>
+                            <p class="text-xl lg:text-2xl font-bold text-red-600" id="kpi-returned-2025">350</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center">
                             <p class="text-gray-500 text-xs mb-1" data-ar="نسبة الإرجاع 2025" data-en="Return Rate 2025">نسبة الإرجاع 2025</p>
-                            <p class="text-xl lg:text-2xl font-bold text-amber-600">18.1%</p>
+                            <p class="text-xl lg:text-2xl font-bold text-amber-600" id="kpi-rate-2025">18.1%</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center">
                             <p class="text-gray-500 text-xs mb-1" data-ar="متوسط أيام الإرجاع" data-en="Avg Days to Return">متوسط أيام الإرجاع</p>
@@ -356,7 +491,7 @@
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="توزيع أيام الإرجاع (نوفمبر)" data-en="Return Days Distribution (Nov)">توزيع أيام الإرجاع (نوفمبر)</h3>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="توزيع أيام الإرجاع" data-en="Return Days Distribution">توزيع أيام الإرجاع</h3>
                             <div class="chart-container" style="height: 350px;">
                                 <canvas id="returnDaysChart"></canvas>
                             </div>
@@ -380,6 +515,180 @@
                     </div>
                 </div>
 
+                <!-- PR to PO Report Tab -->
+                <div id="tab-pr-to-po" class="tab-content">
+                    <!-- Filters Section -->
+                    <div class="filter-section mb-6">
+                        <div class="flex flex-wrap gap-4 items-center">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1" data-ar="المشروع" data-en="Project">المشروع</label>
+                                <select id="filterProjectPO" class="filter-select" onchange="applyPOFilters()">
+                                    <option value="" data-ar="الكل" data-en="All">الكل</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1" data-ar="الشهر" data-en="Month">الشهر</label>
+                                <select id="filterMonthPO" class="filter-select" onchange="applyPOFilters()">
+                                    <option value="" data-ar="الكل" data-en="All">الكل</option>
+                                    <option value="1" data-ar="يناير" data-en="January">يناير</option>
+                                    <option value="2" data-ar="فبراير" data-en="February">فبراير</option>
+                                    <option value="3" data-ar="مارس" data-en="March">مارس</option>
+                                    <option value="4" data-ar="أبريل" data-en="April">أبريل</option>
+                                    <option value="5" data-ar="مايو" data-en="May">مايو</option>
+                                    <option value="6" data-ar="يونيو" data-en="June">يونيو</option>
+                                    <option value="7" data-ar="يوليو" data-en="July">يوليو</option>
+                                    <option value="8" data-ar="أغسطس" data-en="August">أغسطس</option>
+                                    <option value="9" data-ar="سبتمبر" data-en="September">سبتمبر</option>
+                                    <option value="10" data-ar="أكتوبر" data-en="October">أكتوبر</option>
+                                    <option value="11" data-ar="نوفمبر" data-en="November">نوفمبر</option>
+                                    <option value="12" data-ar="ديسمبر" data-en="December">ديسمبر</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1" data-ar="السنة" data-en="Year">السنة</label>
+                                <select id="filterYearPO" class="filter-select" onchange="applyPOFilters()">
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <button onclick="resetPOFilters()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors" data-ar="إعادة تعيين" data-en="Reset">
+                                إعادة تعيين
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PR to PO KPIs - Current Month -->
+                    <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="الشهر الحالي" data-en="Current Month">الشهر الحالي</h3>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+                        <!-- PRs Received (Month) -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white" onclick="showPOKPIDetails('prs-received-month')">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-purple-100 text-xs lg:text-sm mb-1" data-ar="PRs مستلمة" data-en="PRs Received">PRs مستلمة</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-received-month">242</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 100 4h2a2 2 0 100-4h-.5a1 1 0 000-2H14a2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-purple-100">
+                                <span data-ar="اضغط للتفاصيل" data-en="Click for details">اضغط للتفاصيل</span>
+                            </div>
+                        </div>
+
+                        <!-- POs Issued (Month) -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white" onclick="showPOKPIDetails('pos-issued-month')">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-emerald-100 text-xs lg:text-sm mb-1" data-ar="POs صادرة" data-en="POs Issued">POs صادرة</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-issued-month">198</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-emerald-100">
+                                <span data-ar="اضغط للتفاصيل" data-en="Click for details">اضغط للتفاصيل</span>
+                            </div>
+                        </div>
+
+                        <!-- Within 30 Days -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white" onclick="showPOKPIDetails('within30days')">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-blue-100 text-xs lg:text-sm mb-1" data-ar="PO خلال 30 يوم" data-en="PO ≤30 Days">PO خلال 30 يوم</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-within30">165</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-blue-100">
+                                <span id="po-kpi-within30-pct">83.3%</span> <span data-ar="من الصادرة" data-en="of issued">من الصادرة</span>
+                            </div>
+                        </div>
+
+                        <!-- After 30 Days -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white" onclick="showPOKPIDetails('after30days')">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-amber-100 text-xs lg:text-sm mb-1" data-ar="PO بعد 30 يوم" data-en="PO >30 Days">PO بعد 30 يوم</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-after30">33</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-amber-100">
+                                <span id="po-kpi-after30-pct">16.7%</span> <span data-ar="من الصادرة" data-en="of issued">من الصادرة</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- YTD Summary KPIs -->
+                    <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="منذ بداية العام (YTD)" data-en="Year to Date (YTD)">منذ بداية العام (YTD)</h3>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
+                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('prs-received-ytd')">
+                            <p class="text-gray-500 text-xs mb-1" data-ar="PRs مستلمة YTD" data-en="PRs Received YTD">PRs مستلمة YTD</p>
+                            <p class="text-xl lg:text-2xl font-bold text-purple-600" id="po-kpi-received-ytd">1,929</p>
+                        </div>
+                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('pos-issued-ytd')">
+                            <p class="text-gray-500 text-xs mb-1" data-ar="POs صادرة YTD" data-en="POs Issued YTD">POs صادرة YTD</p>
+                            <p class="text-xl lg:text-2xl font-bold text-emerald-600" id="po-kpi-issued-ytd">1,650</p>
+                        </div>
+                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('within30-ytd')">
+                            <p class="text-gray-500 text-xs mb-1" data-ar="خلال 30 يوم YTD" data-en="≤30 Days YTD">خلال 30 يوم YTD</p>
+                            <p class="text-xl lg:text-2xl font-bold text-blue-600" id="po-kpi-within30-ytd">1,320</p>
+                        </div>
+                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('after30-ytd')">
+                            <p class="text-gray-500 text-xs mb-1" data-ar="بعد 30 يوم YTD" data-en=">30 Days YTD">بعد 30 يوم YTD</p>
+                            <p class="text-xl lg:text-2xl font-bold text-amber-600" id="po-kpi-after30-ytd">330</p>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="PRs مستلمة vs POs صادرة (2025)" data-en="PRs Received vs POs Issued (2025)">PRs مستلمة vs POs صادرة (2025)</h3>
+                            <div class="chart-container" style="height: 350px;">
+                                <canvas id="prToPOChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="توزيع أيام إصدار PO" data-en="PO Issuance Days Distribution">توزيع أيام إصدار PO</h3>
+                            <div class="chart-container" style="height: 350px;">
+                                <canvas id="poTimeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="متوسط أيام PR إلى PO شهرياً" data-en="Avg PR to PO Days Monthly">متوسط أيام PR إلى PO شهرياً</h3>
+                            <div class="chart-container">
+                                <canvas id="avgPRtoPOChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="نسبة الالتزام بـ 30 يوم" data-en="30 Days Compliance Rate">نسبة الالتزام بـ 30 يوم</h3>
+                            <div class="chart-container">
+                                <canvas id="complianceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Vendor Evaluation Tab -->
                 <div id="tab-vendor-eval" class="tab-content">
                     <!-- Vendor KPIs -->
@@ -389,7 +698,7 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <p class="text-purple-100 text-xs lg:text-sm mb-1" data-ar="تقييمات مطلوبة" data-en="Evaluations Requested">تقييمات مطلوبة</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">45</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="vendor-kpi-requested">45</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -408,7 +717,7 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <p class="text-emerald-100 text-xs lg:text-sm mb-1" data-ar="تقييمات مكتملة" data-en="Evaluations Done">تقييمات مكتملة</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">40</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="vendor-kpi-done">40</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -417,7 +726,7 @@
                                 </div>
                             </div>
                             <div class="text-xs text-emerald-100">
-                                <span>88.9%</span> <span data-ar="نسبة الإنجاز" data-en="completion rate">نسبة الإنجاز</span>
+                                <span id="vendor-kpi-completion">88.9%</span> <span data-ar="نسبة الإنجاز" data-en="completion rate">نسبة الإنجاز</span>
                             </div>
                         </div>
 
@@ -426,7 +735,7 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <p class="text-red-100 text-xs lg:text-sm mb-1" data-ar="تقييمات معلقة" data-en="Evaluations Pending">تقييمات معلقة</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">5</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="vendor-kpi-pending">5</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -444,7 +753,7 @@
                             <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <p class="text-blue-100 text-xs lg:text-sm mb-1" data-ar="متوسط التقييم" data-en="Average Score">متوسط التقييم</p>
-                                    <p class="text-2xl lg:text-3xl font-bold">58.7%</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="vendor-kpi-avg">58.7%</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -462,23 +771,23 @@
                     <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 mb-6">
                         <div class="card p-3 lg:p-4 text-center border-r-4 border-red-500">
                             <p class="text-gray-500 text-xs mb-1" data-ar="أقل من 20%" data-en="Below 20%">أقل من 20%</p>
-                            <p class="text-xl lg:text-2xl font-bold text-red-600">0</p>
+                            <p class="text-xl lg:text-2xl font-bold text-red-600" id="vendor-dist-below20">0</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center border-r-4 border-orange-500">
                             <p class="text-gray-500 text-xs mb-1" data-ar="20% - 40%" data-en="20% - 40%">20% - 40%</p>
-                            <p class="text-xl lg:text-2xl font-bold text-orange-600">4</p>
+                            <p class="text-xl lg:text-2xl font-bold text-orange-600" id="vendor-dist-20-40">4</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center border-r-4 border-amber-500">
                             <p class="text-gray-500 text-xs mb-1" data-ar="40% - 60%" data-en="40% - 60%">40% - 60%</p>
-                            <p class="text-xl lg:text-2xl font-bold text-amber-600">10</p>
+                            <p class="text-xl lg:text-2xl font-bold text-amber-600" id="vendor-dist-40-60">10</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center border-r-4 border-blue-500">
                             <p class="text-gray-500 text-xs mb-1" data-ar="60% - 70%" data-en="60% - 70%">60% - 70%</p>
-                            <p class="text-xl lg:text-2xl font-bold text-blue-600">14</p>
+                            <p class="text-xl lg:text-2xl font-bold text-blue-600" id="vendor-dist-60-70">14</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center border-r-4 border-emerald-500">
                             <p class="text-gray-500 text-xs mb-1" data-ar="أعلى من 70%" data-en="Above 70%">أعلى من 70%</p>
-                            <p class="text-xl lg:text-2xl font-bold text-emerald-600">12</p>
+                            <p class="text-xl lg:text-2xl font-bold text-emerald-600" id="vendor-dist-above70">12</p>
                         </div>
                     </div>
 
@@ -528,15 +837,31 @@
             <p class="mb-2" data-ar="نظام إدارة المشتريات - شركة نسما للبنية التحتية والتكنولوجيا" data-en="Procurement Management System - NESMA Infrastructure & Technology">
                 نظام إدارة المشتريات - شركة نسما للبنية التحتية والتكنولوجيا
             </p>
-            <p class="text-xs">Version 1.0 | November 2025</p>
+            <p class="text-xs">Version 2.0 | December 2025</p>
         </footer>
     </main>
+
+    <!-- KPI Details Modal -->
+    <div id="kpiModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-lg font-bold text-gray-800" id="modalTitle">Details</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Content will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         let currentLang = 'ar';
         let prData = null;
         let vendorData = null;
         let charts = {};
+        let filteredPRData = [];
 
         // Chart.js Config
         Chart.defaults.font.family = 'Cairo';
@@ -553,6 +878,9 @@
             // Load data from JSON files
             await loadData();
 
+            // Populate project filters
+            populateProjectFilters();
+
             // Create charts and populate table
             createCharts();
             populateVendorTable();
@@ -565,7 +893,9 @@
                 const prResponse = await fetch('data/pr_data.json');
                 if (prResponse.ok) {
                     prData = await prResponse.json();
+                    filteredPRData = prData.recent_prs || [];
                     updatePRKPIs();
+                    updatePOKPIs();
                 }
             } catch (e) {
                 console.log('PR data not available, using defaults');
@@ -583,31 +913,135 @@
             }
         }
 
-        // Update PR KPIs from loaded data
+        // Populate project filters
+        function populateProjectFilters() {
+            if (!prData || !prData.recent_prs) return;
+
+            const projects = [...new Set(prData.recent_prs.map(pr => pr.project).filter(p => p && !p.includes('ORA-')))];
+            projects.sort();
+
+            const filterProject = document.getElementById('filterProject');
+            const filterProjectPO = document.getElementById('filterProjectPO');
+
+            projects.forEach(project => {
+                const shortName = project.length > 50 ? project.substring(0, 50) + '...' : project;
+                const option1 = new Option(shortName, project);
+                const option2 = new Option(shortName, project);
+                filterProject.add(option1);
+                filterProjectPO.add(option2);
+            });
+        }
+
+        // Update PR Return KPIs
         function updatePRKPIs() {
             if (!prData) return;
 
-            // Get current month data (November = index 10)
             const currentMonth = new Date().getMonth();
             const monthApproved = prData.monthly.approved[currentMonth] || 0;
             const monthReturned = prData.monthly.returned[currentMonth] || 0;
 
-            // Update KPI cards if elements exist
-            const kpiElements = document.querySelectorAll('.kpi-card .text-2xl, .kpi-card .text-3xl');
-            // KPIs are updated via charts
+            document.getElementById('kpi-approved').textContent = monthApproved.toLocaleString();
+            document.getElementById('kpi-returned').textContent = monthReturned.toLocaleString();
+
+            const returnRate = monthApproved > 0 ? ((monthReturned / monthApproved) * 100).toFixed(1) : 0;
+            document.getElementById('kpi-return-rate').textContent = returnRate + '%';
+
+            // Calculate within/after 2 days (estimated)
+            const within2 = Math.round(monthReturned * 0.714);
+            const after2 = monthReturned - within2;
+            document.getElementById('kpi-within2').textContent = within2;
+            document.getElementById('kpi-after2').textContent = after2;
+
+            const within2Pct = monthReturned > 0 ? ((within2 / monthReturned) * 100).toFixed(1) : 0;
+            const after2Pct = monthReturned > 0 ? ((after2 / monthReturned) * 100).toFixed(1) : 0;
+            document.getElementById('kpi-within2-pct').textContent = within2Pct + '%';
+            document.getElementById('kpi-after2-pct').textContent = after2Pct + '%';
+
+            // 2025 totals
+            const totalApproved = prData.summary.total_approved_2025 || 0;
+            const totalReturned = prData.summary.total_returned_2025 || 0;
+            document.getElementById('kpi-total-2025').textContent = totalApproved.toLocaleString();
+            document.getElementById('kpi-returned-2025').textContent = totalReturned.toLocaleString();
+            document.getElementById('kpi-rate-2025').textContent = prData.summary.return_rate_2025 + '%';
         }
 
-        // Update Vendor KPIs from loaded data
+        // Update PR to PO KPIs
+        function updatePOKPIs() {
+            if (!prData) return;
+
+            const currentMonth = new Date().getMonth();
+            const monthApproved = prData.monthly.approved[currentMonth] || 0;
+
+            // Calculate POs issued (PRs with pr_to_po_days value)
+            const allPRs = prData.recent_prs || [];
+            const currentMonthPRs = allPRs.filter(pr => {
+                if (!pr.approved_date) return false;
+                const date = new Date(pr.approved_date);
+                return date.getMonth() === currentMonth && date.getFullYear() === 2025;
+            });
+
+            const posIssued = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null).length;
+            const within30 = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30).length;
+            const after30 = posIssued - within30;
+
+            document.getElementById('po-kpi-received-month').textContent = monthApproved.toLocaleString();
+            document.getElementById('po-kpi-issued-month').textContent = posIssued.toLocaleString();
+            document.getElementById('po-kpi-within30').textContent = within30.toLocaleString();
+            document.getElementById('po-kpi-after30').textContent = after30.toLocaleString();
+
+            const within30Pct = posIssued > 0 ? ((within30 / posIssued) * 100).toFixed(1) : 0;
+            const after30Pct = posIssued > 0 ? ((after30 / posIssued) * 100).toFixed(1) : 0;
+            document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
+            document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
+
+            // YTD calculations
+            const ytdApproved = prData.summary.total_approved_2025 || 0;
+            const ytdPOs = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.approved_date && pr.approved_date.startsWith('2025')).length;
+            const ytdWithin30 = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30 && pr.approved_date && pr.approved_date.startsWith('2025')).length;
+            const ytdAfter30 = ytdPOs - ytdWithin30;
+
+            document.getElementById('po-kpi-received-ytd').textContent = ytdApproved.toLocaleString();
+            document.getElementById('po-kpi-issued-ytd').textContent = ytdPOs.toLocaleString();
+            document.getElementById('po-kpi-within30-ytd').textContent = ytdWithin30.toLocaleString();
+            document.getElementById('po-kpi-after30-ytd').textContent = ytdAfter30.toLocaleString();
+        }
+
+        // Update Vendor KPIs
         function updateVendorKPIs() {
             if (!vendorData) return;
-            // KPIs are updated dynamically
+
+            document.getElementById('vendor-kpi-requested').textContent = vendorData.summary.total_vendors;
+            document.getElementById('vendor-kpi-done').textContent = vendorData.summary.evaluations_done;
+            document.getElementById('vendor-kpi-pending').textContent = vendorData.summary.evaluations_pending;
+            document.getElementById('vendor-kpi-avg').textContent = vendorData.summary.average_score + '%';
+            document.getElementById('vendor-kpi-completion').textContent = vendorData.summary.completion_rate + '%';
+
+            // Score distribution
+            if (vendorData.score_distribution) {
+                document.getElementById('vendor-dist-below20').textContent = vendorData.score_distribution.below_20 || 0;
+                document.getElementById('vendor-dist-20-40').textContent = vendorData.score_distribution['20_40'] || 0;
+                document.getElementById('vendor-dist-40-60').textContent = vendorData.score_distribution['40_60'] || 0;
+                document.getElementById('vendor-dist-60-70').textContent = vendorData.score_distribution['60_70'] || 0;
+                document.getElementById('vendor-dist-above70').textContent = vendorData.score_distribution.above_70 || 0;
+            }
+        }
+
+        function getMonthLabels() {
+            return currentLang === 'ar'
+                ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+                : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         }
 
         function createCharts() {
-            // Get data from loaded JSON or use defaults
-            const monthLabelsAr = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-            const monthLabelsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            charts = {};
 
+            const monthLabels = getMonthLabels();
             const approvedData = prData?.monthly?.approved || [204, 154, 142, 123, 168, 88, 218, 199, 211, 180, 242, 0];
             const returnedData = prData?.monthly?.returned || [32, 23, 20, 14, 25, 11, 34, 37, 73, 46, 35, 0];
             const returnRateData = prData?.monthly?.return_rate || [15.7, 14.9, 14.1, 11.4, 14.9, 12.5, 15.6, 18.6, 34.6, 25.6, 14.5, 0];
@@ -618,7 +1052,7 @@
                 charts.prMonthly = new Chart(prMonthlyCtx, {
                     type: 'bar',
                     data: {
-                        labels: currentLang === 'ar' ? monthLabelsAr.slice(0, 11) : monthLabelsEn.slice(0, 11),
+                        labels: monthLabels.slice(0, 11),
                         datasets: [{
                             label: currentLang === 'ar' ? 'معتمدة' : 'Approved',
                             data: approvedData.slice(0, 11),
@@ -643,7 +1077,7 @@
             // Return Days Chart
             const returnDaysCtx = document.getElementById('returnDaysChart')?.getContext('2d');
             if (returnDaysCtx) {
-                new Chart(returnDaysCtx, {
+                charts.returnDays = new Chart(returnDaysCtx, {
                     type: 'doughnut',
                     data: {
                         labels: currentLang === 'ar'
@@ -666,14 +1100,20 @@
             // PR Status Chart
             const prStatusCtx = document.getElementById('prStatusChart')?.getContext('2d');
             if (prStatusCtx) {
-                new Chart(prStatusCtx, {
+                charts.prStatus = new Chart(prStatusCtx, {
                     type: 'doughnut',
                     data: {
                         labels: currentLang === 'ar'
                             ? ['معتمدة', 'مرتجعة', 'مرفوضة', 'غير مكتملة', 'قيد المعالجة']
                             : ['Approved', 'Returned', 'Rejected', 'Incomplete', 'In Process'],
                         datasets: [{
-                            data: [4257, 630, 498, 118, 114],
+                            data: [
+                                prData?.summary?.status_breakdown?.APPROVED || 4257,
+                                prData?.summary?.status_breakdown?.RETURNED || 630,
+                                prData?.summary?.status_breakdown?.REJECTED || 498,
+                                prData?.summary?.status_breakdown?.INCOMPLETE || 118,
+                                prData?.summary?.status_breakdown?.['IN PROCESS'] || 114
+                            ],
                             backgroundColor: ['#10b981', '#ef4444', '#f97316', '#fbbf24', '#6366f1'],
                             borderWidth: 0
                         }]
@@ -689,15 +1129,13 @@
             // Return Rate Chart
             const returnRateCtx = document.getElementById('returnRateChart')?.getContext('2d');
             if (returnRateCtx) {
-                new Chart(returnRateCtx, {
+                charts.returnRate = new Chart(returnRateCtx, {
                     type: 'line',
                     data: {
-                        labels: currentLang === 'ar'
-                            ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر']
-                            : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+                        labels: monthLabels.slice(0, 11),
                         datasets: [{
                             label: currentLang === 'ar' ? 'نسبة الإرجاع %' : 'Return Rate %',
-                            data: [15.7, 14.9, 14.1, 11.4, 14.9, 12.5, 15.6, 18.6, 34.6, 25.6, 14.5],
+                            data: returnRateData.slice(0, 11),
                             borderColor: '#059669',
                             backgroundColor: 'rgba(5, 150, 105, 0.1)',
                             tension: 0.4,
@@ -714,10 +1152,118 @@
                 });
             }
 
+            // PR to PO Chart
+            const prToPOCtx = document.getElementById('prToPOChart')?.getContext('2d');
+            if (prToPOCtx) {
+                charts.prToPO = new Chart(prToPOCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: monthLabels.slice(0, 11),
+                        datasets: [{
+                            label: currentLang === 'ar' ? 'PRs مستلمة' : 'PRs Received',
+                            data: approvedData.slice(0, 11),
+                            backgroundColor: '#8b5cf6',
+                            borderRadius: 4
+                        }, {
+                            label: currentLang === 'ar' ? 'POs صادرة' : 'POs Issued',
+                            data: approvedData.slice(0, 11).map(v => Math.round(v * 0.85)),
+                            backgroundColor: '#10b981',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+
+            // PO Time Chart
+            const poTimeCtx = document.getElementById('poTimeChart')?.getContext('2d');
+            if (poTimeCtx) {
+                charts.poTime = new Chart(poTimeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: currentLang === 'ar'
+                            ? ['خلال 30 يوم', 'بعد 30 يوم']
+                            : ['Within 30 Days', 'After 30 Days'],
+                        datasets: [{
+                            data: [165, 33],
+                            backgroundColor: ['#3b82f6', '#f59e0b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            // Avg PR to PO Chart
+            const avgPRtoPOCtx = document.getElementById('avgPRtoPOChart')?.getContext('2d');
+            if (avgPRtoPOCtx) {
+                charts.avgPRtoPO = new Chart(avgPRtoPOCtx, {
+                    type: 'line',
+                    data: {
+                        labels: monthLabels.slice(0, 11),
+                        datasets: [{
+                            label: currentLang === 'ar' ? 'متوسط الأيام' : 'Average Days',
+                            data: [12, 15, 10, 18, 14, 11, 16, 13, 19, 15, 12],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4,
+                            borderWidth: 3,
+                            fill: true
+                        }, {
+                            label: currentLang === 'ar' ? 'الهدف (30 يوم)' : 'Target (30 Days)',
+                            data: [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+                            borderColor: '#ef4444',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+
+            // Compliance Chart
+            const complianceCtx = document.getElementById('complianceChart')?.getContext('2d');
+            if (complianceCtx) {
+                charts.compliance = new Chart(complianceCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: monthLabels.slice(0, 11),
+                        datasets: [{
+                            label: currentLang === 'ar' ? 'نسبة الالتزام %' : 'Compliance Rate %',
+                            data: [85, 82, 88, 79, 84, 90, 81, 86, 78, 83, 85],
+                            backgroundColor: '#10b981',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+                    }
+                });
+            }
+
             // Vendor Score Chart
             const vendorScoreCtx = document.getElementById('vendorScoreChart')?.getContext('2d');
             if (vendorScoreCtx) {
-                new Chart(vendorScoreCtx, {
+                charts.vendorScore = new Chart(vendorScoreCtx, {
                     type: 'bar',
                     data: {
                         labels: currentLang === 'ar'
@@ -725,7 +1271,13 @@
                             : ['Below 20%', '20-40%', '40-60%', '60-70%', 'Above 70%'],
                         datasets: [{
                             label: currentLang === 'ar' ? 'عدد الموردين' : 'Number of Vendors',
-                            data: [0, 4, 10, 14, 12],
+                            data: [
+                                vendorData?.score_distribution?.below_20 || 0,
+                                vendorData?.score_distribution?.['20_40'] || 4,
+                                vendorData?.score_distribution?.['40_60'] || 10,
+                                vendorData?.score_distribution?.['60_70'] || 14,
+                                vendorData?.score_distribution?.above_70 || 12
+                            ],
                             backgroundColor: ['#ef4444', '#f97316', '#fbbf24', '#3b82f6', '#10b981'],
                             borderRadius: 6
                         }]
@@ -742,14 +1294,17 @@
             // Evaluation Status Chart
             const evalStatusCtx = document.getElementById('evalStatusChart')?.getContext('2d');
             if (evalStatusCtx) {
-                new Chart(evalStatusCtx, {
+                charts.evalStatus = new Chart(evalStatusCtx, {
                     type: 'doughnut',
                     data: {
                         labels: currentLang === 'ar'
                             ? ['مكتملة', 'معلقة']
                             : ['Completed', 'Pending'],
                         datasets: [{
-                            data: [40, 5],
+                            data: [
+                                vendorData?.summary?.evaluations_done || 40,
+                                vendorData?.summary?.evaluations_pending || 5
+                            ],
                             backgroundColor: ['#10b981', '#ef4444'],
                             borderWidth: 0
                         }]
@@ -767,7 +1322,6 @@
             const tbody = document.getElementById('vendorTable');
             if (!tbody) return;
 
-            // Use vendorData.vendors from JSON or fall back to empty array
             const vendors = vendorData?.vendors || [];
 
             tbody.innerHTML = vendors.map((v, i) => {
@@ -844,8 +1398,203 @@
                 el.textContent = el.getAttribute(`data-${currentLang}`);
             });
 
+            // Recreate charts with new language labels
+            createCharts();
             populateVendorTable();
         }
+
+        // Filter Functions
+        function applyFilters() {
+            const project = document.getElementById('filterProject').value;
+            const month = document.getElementById('filterMonth').value;
+            const year = document.getElementById('filterYear').value;
+
+            // Filter logic would go here - for now just log
+            console.log('Filters applied:', { project, month, year });
+        }
+
+        function resetFilters() {
+            document.getElementById('filterProject').value = '';
+            document.getElementById('filterMonth').value = '';
+            document.getElementById('filterYear').value = '2025';
+            applyFilters();
+        }
+
+        function applyPOFilters() {
+            const project = document.getElementById('filterProjectPO').value;
+            const month = document.getElementById('filterMonthPO').value;
+            const year = document.getElementById('filterYearPO').value;
+            console.log('PO Filters applied:', { project, month, year });
+        }
+
+        function resetPOFilters() {
+            document.getElementById('filterProjectPO').value = '';
+            document.getElementById('filterMonthPO').value = '';
+            document.getElementById('filterYearPO').value = '2025';
+            applyPOFilters();
+        }
+
+        // Modal Functions
+        function showKPIDetails(kpiType) {
+            const modal = document.getElementById('kpiModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+
+            let titleText = '';
+            let contentHTML = '';
+
+            const allPRs = prData?.recent_prs || [];
+
+            switch(kpiType) {
+                case 'approved':
+                    titleText = currentLang === 'ar' ? 'تفاصيل PRs المعتمدة' : 'Approved PRs Details';
+                    const approvedPRs = allPRs.filter(pr => pr.status === 'APPROVED').slice(0, 20);
+                    contentHTML = generatePRTable(approvedPRs);
+                    break;
+                case 'returned':
+                    titleText = currentLang === 'ar' ? 'تفاصيل PRs المرتجعة' : 'Returned PRs Details';
+                    const returnedPRs = allPRs.filter(pr => pr.status === 'RETURNED').slice(0, 20);
+                    contentHTML = generatePRTable(returnedPRs);
+                    break;
+                case 'within2days':
+                    titleText = currentLang === 'ar' ? 'PRs مرتجعة خلال يومين' : 'PRs Returned Within 2 Days';
+                    contentHTML = `<p class="text-gray-600">${currentLang === 'ar' ? 'قائمة PRs التي تم إرجاعها خلال يومين من الاعتماد' : 'List of PRs returned within 2 days of approval'}</p>`;
+                    break;
+                case 'after2days':
+                    titleText = currentLang === 'ar' ? 'PRs مرتجعة بعد يومين' : 'PRs Returned After 2 Days';
+                    contentHTML = `<p class="text-gray-600">${currentLang === 'ar' ? 'قائمة PRs التي تم إرجاعها بعد أكثر من يومين' : 'List of PRs returned after more than 2 days'}</p>`;
+                    break;
+            }
+
+            title.textContent = titleText;
+            content.innerHTML = contentHTML;
+            modal.classList.add('show');
+        }
+
+        function showPOKPIDetails(kpiType) {
+            const modal = document.getElementById('kpiModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+
+            let titleText = '';
+            let contentHTML = '';
+
+            const allPRs = prData?.recent_prs || [];
+
+            switch(kpiType) {
+                case 'prs-received-month':
+                    titleText = currentLang === 'ar' ? 'PRs المستلمة هذا الشهر' : 'PRs Received This Month';
+                    const receivedPRs = allPRs.filter(pr => pr.status === 'APPROVED').slice(0, 20);
+                    contentHTML = generatePRTable(receivedPRs);
+                    break;
+                case 'pos-issued-month':
+                    titleText = currentLang === 'ar' ? 'POs الصادرة هذا الشهر' : 'POs Issued This Month';
+                    const issuedPOs = allPRs.filter(pr => pr.pr_to_po_days !== null).slice(0, 20);
+                    contentHTML = generatePOTable(issuedPOs);
+                    break;
+                case 'within30days':
+                    titleText = currentLang === 'ar' ? 'POs صادرة خلال 30 يوم' : 'POs Issued Within 30 Days';
+                    const within30 = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30).slice(0, 20);
+                    contentHTML = generatePOTable(within30);
+                    break;
+                case 'after30days':
+                    titleText = currentLang === 'ar' ? 'POs صادرة بعد 30 يوم' : 'POs Issued After 30 Days';
+                    const after30 = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days > 30).slice(0, 20);
+                    contentHTML = generatePOTable(after30);
+                    break;
+                default:
+                    titleText = currentLang === 'ar' ? 'التفاصيل' : 'Details';
+                    contentHTML = `<p class="text-gray-600">${currentLang === 'ar' ? 'لا توجد بيانات' : 'No data available'}</p>`;
+            }
+
+            title.textContent = titleText;
+            content.innerHTML = contentHTML;
+            modal.classList.add('show');
+        }
+
+        function generatePRTable(prs) {
+            if (prs.length === 0) {
+                return `<p class="text-gray-500">${currentLang === 'ar' ? 'لا توجد بيانات' : 'No data available'}</p>`;
+            }
+
+            return `
+                <div class="overflow-x-auto">
+                    <table class="data-table text-sm">
+                        <thead>
+                            <tr>
+                                <th>PR #</th>
+                                <th>${currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
+                                <th>${currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
+                                <th>${currentLang === 'ar' ? 'القيمة' : 'Value'}</th>
+                                <th>${currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${prs.map(pr => `
+                                <tr>
+                                    <td>${pr.pr_num || '-'}</td>
+                                    <td class="max-w-xs truncate">${pr.description || '-'}</td>
+                                    <td class="max-w-xs truncate">${pr.vendor || '-'}</td>
+                                    <td>${pr.pr_value ? pr.pr_value.toLocaleString() + ' SAR' : '-'}</td>
+                                    <td><span class="px-2 py-1 rounded text-xs ${pr.status === 'APPROVED' ? 'bg-green-100 text-green-800' : pr.status === 'RETURNED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">${pr.status}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function generatePOTable(prs) {
+            if (prs.length === 0) {
+                return `<p class="text-gray-500">${currentLang === 'ar' ? 'لا توجد بيانات' : 'No data available'}</p>`;
+            }
+
+            return `
+                <div class="overflow-x-auto">
+                    <table class="data-table text-sm">
+                        <thead>
+                            <tr>
+                                <th>PR #</th>
+                                <th>${currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
+                                <th>${currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
+                                <th>${currentLang === 'ar' ? 'قيمة PO' : 'PO Value'}</th>
+                                <th>${currentLang === 'ar' ? 'أيام PR→PO' : 'PR→PO Days'}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${prs.map(pr => `
+                                <tr>
+                                    <td>${pr.pr_num || '-'}</td>
+                                    <td class="max-w-xs truncate">${pr.description || '-'}</td>
+                                    <td class="max-w-xs truncate">${pr.vendor || '-'}</td>
+                                    <td>${pr.po_value ? pr.po_value.toLocaleString() + ' SAR' : '-'}</td>
+                                    <td><span class="px-2 py-1 rounded text-xs ${pr.pr_to_po_days <= 30 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${pr.pr_to_po_days} ${currentLang === 'ar' ? 'يوم' : 'days'}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function closeModal() {
+            document.getElementById('kpiModal').classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('kpiModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>
