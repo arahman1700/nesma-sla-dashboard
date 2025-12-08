@@ -11,9 +11,10 @@
         :root {
             --nesma-primary: #2e3192;
             --nesma-secondary: #80d1e9;
-            --nesma-dark: #1a1a2e;
-            --nesma-gradient: linear-gradient(135deg, #2e3192 0%, #1a1a5e 100%);
-            --procurement-gradient: linear-gradient(135deg, #059669 0%, #34d399 100%);
+            --nesma-dark: #203366;
+            --nesma-gray: #b3b3b3;
+            --nesma-gradient: linear-gradient(135deg, #2e3192 0%, #203366 100%);
+            --procurement-gradient: linear-gradient(135deg, #2e3192 0%, #80d1e9 100%);
         }
 
         * { font-family: 'Cairo', 'Inter', sans-serif; }
@@ -26,7 +27,7 @@
 
         .nesma-header {
             background: var(--procurement-gradient);
-            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3);
+            box-shadow: 0 4px 20px rgba(46, 49, 146, 0.3);
         }
 
         .card {
@@ -34,11 +35,11 @@
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
-            border: 1px solid rgba(5, 150, 105, 0.05);
+            border: 1px solid rgba(46, 49, 146, 0.05);
         }
 
         .card:hover {
-            box-shadow: 0 8px 30px rgba(5, 150, 105, 0.1);
+            box-shadow: 0 8px 30px rgba(46, 49, 146, 0.1);
             transform: translateY(-2px);
         }
 
@@ -76,7 +77,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: #059669;
+            background: #2e3192;
             transform: scaleX(0);
             transition: transform 0.3s ease;
         }
@@ -86,8 +87,8 @@
         }
 
         .tab-btn.active {
-            color: #059669;
-            background: rgba(5, 150, 105, 0.05);
+            color: #2e3192;
+            background: rgba(46, 49, 146, 0.05);
         }
 
         .tab-content {
@@ -119,8 +120,8 @@
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             padding: 14px 16px;
             font-weight: 600;
-            color: #059669;
-            border-bottom: 2px solid #34d399;
+            color: #2e3192;
+            border-bottom: 2px solid #80d1e9;
             position: sticky;
             top: 0;
         }
@@ -131,7 +132,7 @@
         }
 
         .data-table tr:hover td {
-            background: rgba(52, 211, 153, 0.1);
+            background: rgba(128, 209, 233, 0.1);
         }
 
         .scroll-container {
@@ -149,7 +150,7 @@
         }
 
         .scroll-container::-webkit-scrollbar-thumb {
-            background: #34d399;
+            background: #80d1e9;
             border-radius: 10px;
         }
 
@@ -270,8 +271,8 @@
 
         .filter-select:focus {
             outline: none;
-            border-color: #059669;
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+            border-color: #2e3192;
+            box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.1);
         }
 
         @media print {
@@ -306,14 +307,14 @@
                     <div class="hidden md:block border-r border-white/30 h-8 mx-2"></div>
                     <div class="hidden md:block">
                         <h1 class="text-lg font-bold" data-ar="لوحة قياس المشتريات" data-en="Procurement Dashboard">لوحة قياس المشتريات</h1>
-                        <p class="text-xs text-emerald-100" data-ar="تقارير طلبات الشراء وتقييم الموردين" data-en="PR Reports & Vendor Evaluation">تقارير طلبات الشراء وتقييم الموردين</p>
+                        <p class="text-xs text-blue-100" data-ar="تقارير طلبات الشراء وتقييم الموردين" data-en="PR Reports & Vendor Evaluation">تقارير طلبات الشراء وتقييم الموردين</p>
                     </div>
                 </div>
 
                 <!-- Header Actions -->
                 <div class="flex items-center gap-3 lg:gap-6">
                     <div class="text-left hidden sm:block">
-                        <p class="text-xs text-emerald-100" data-ar="آخر تحديث" data-en="Last Update">آخر تحديث</p>
+                        <p class="text-xs text-blue-100" data-ar="آخر تحديث" data-en="Last Update">آخر تحديث</p>
                         <p class="text-sm font-semibold" id="lastUpdateDate">8 ديسمبر 2025</p>
                     </div>
                     <button onclick="toggleLanguage()" class="lang-toggle" id="langBtn">
@@ -419,10 +420,10 @@
                     <!-- PR Return KPIs -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
                         <!-- Total PRs Approved -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white" onclick="showKPIDetails('approved')">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white" onclick="showKPIDetails('approved')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-emerald-100 text-xs lg:text-sm mb-1" data-ar="PRs معتمدة" data-en="PRs Approved">PRs معتمدة</p>
+                                    <p class="text-blue-100 text-xs lg:text-sm mb-1" data-ar="PRs معتمدة" data-en="PRs Approved">PRs معتمدة</p>
                                     <p class="text-2xl lg:text-3xl font-bold" id="kpi-approved">242</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
@@ -431,7 +432,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-emerald-100">
+                            <div class="text-xs text-blue-100">
                                 <span data-ar="اضغط للتفاصيل" data-en="Click for details">اضغط للتفاصيل</span>
                             </div>
                         </div>
@@ -647,10 +648,10 @@
                         </div>
 
                         <!-- POs Issued (Month) -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white" onclick="showPOKPIDetails('pos-issued-month')">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white" onclick="showPOKPIDetails('pos-issued-month')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-emerald-100 text-xs lg:text-sm mb-1" data-ar="POs صادرة" data-en="POs Issued">POs صادرة</p>
+                                    <p class="text-blue-100 text-xs lg:text-sm mb-1" data-ar="POs صادرة" data-en="POs Issued">POs صادرة</p>
                                     <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-issued-month">198</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
@@ -659,7 +660,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-emerald-100">
+                            <div class="text-xs text-blue-100">
                                 <span data-ar="اضغط للتفاصيل" data-en="Click for details">اضغط للتفاصيل</span>
                             </div>
                         </div>
@@ -710,7 +711,7 @@
                         </div>
                         <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('pos-issued-ytd')">
                             <p class="text-gray-500 text-xs mb-1" data-ar="POs صادرة YTD" data-en="POs Issued YTD">POs صادرة YTD</p>
-                            <p class="text-xl lg:text-2xl font-bold text-emerald-600" id="po-kpi-issued-ytd">1,650</p>
+                            <p class="text-xl lg:text-2xl font-bold text-blue-600" id="po-kpi-issued-ytd">1,650</p>
                         </div>
                         <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('within30-ytd')">
                             <p class="text-gray-500 text-xs mb-1" data-ar="خلال 30 يوم YTD" data-en="≤30 Days YTD">خلال 30 يوم YTD</p>
@@ -830,10 +831,10 @@
                         </div>
 
                         <!-- Evaluations Done -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-emerald-100 text-xs lg:text-sm mb-1" data-ar="تقييمات مكتملة" data-en="Evaluations Done">تقييمات مكتملة</p>
+                                    <p class="text-blue-100 text-xs lg:text-sm mb-1" data-ar="تقييمات مكتملة" data-en="Evaluations Done">تقييمات مكتملة</p>
                                     <p class="text-2xl lg:text-3xl font-bold" id="vendor-kpi-done">40</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
@@ -842,7 +843,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-emerald-100">
+                            <div class="text-xs text-blue-100">
                                 <span id="vendor-kpi-completion">88.9%</span> <span data-ar="نسبة الإنجاز" data-en="completion rate">نسبة الإنجاز</span>
                             </div>
                         </div>
@@ -902,9 +903,9 @@
                             <p class="text-gray-500 text-xs mb-1" data-ar="60% - 70%" data-en="60% - 70%">60% - 70%</p>
                             <p class="text-xl lg:text-2xl font-bold text-blue-600" id="vendor-dist-60-70">14</p>
                         </div>
-                        <div class="card p-3 lg:p-4 text-center border-r-4 border-emerald-500">
+                        <div class="card p-3 lg:p-4 text-center border-r-4 border-blue-500">
                             <p class="text-gray-500 text-xs mb-1" data-ar="أعلى من 70%" data-en="Above 70%">أعلى من 70%</p>
-                            <p class="text-xl lg:text-2xl font-bold text-emerald-600" id="vendor-dist-above70">12</p>
+                            <p class="text-xl lg:text-2xl font-bold text-blue-600" id="vendor-dist-above70">12</p>
                         </div>
                     </div>
 
@@ -1306,7 +1307,7 @@
                         datasets: [{
                             label: currentLang === 'ar' ? 'معتمدة' : 'Approved',
                             data: approvedData.slice(0, 11),
-                            backgroundColor: '#10b981',
+                            backgroundColor: '#2e3192',
                             borderRadius: 4
                         }, {
                             label: currentLang === 'ar' ? 'مرتجعة' : 'Returned',
@@ -1364,7 +1365,7 @@
                                 prData?.summary?.status_breakdown?.INCOMPLETE || 118,
                                 prData?.summary?.status_breakdown?.['IN PROCESS'] || 114
                             ],
-                            backgroundColor: ['#10b981', '#ef4444', '#f97316', '#fbbf24', '#6366f1'],
+                            backgroundColor: ['#2e3192', '#ef4444', '#f97316', '#fbbf24', '#6366f1'],
                             borderWidth: 0
                         }]
                     },
@@ -1386,8 +1387,8 @@
                         datasets: [{
                             label: currentLang === 'ar' ? 'نسبة الإرجاع %' : 'Return Rate %',
                             data: returnRateData.slice(0, 11),
-                            borderColor: '#059669',
-                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            borderColor: '#2e3192',
+                            backgroundColor: 'rgba(46, 49, 146, 0.1)',
                             tension: 0.4,
                             borderWidth: 3,
                             fill: true
@@ -1460,7 +1461,7 @@
                         }, {
                             label: currentLang === 'ar' ? 'POs صادرة' : 'POs Issued',
                             data: approvedData.slice(0, 11).map(v => Math.round(v * 0.85)),
-                            backgroundColor: '#10b981',
+                            backgroundColor: '#2e3192',
                             borderRadius: 4
                         }]
                     },
@@ -1540,7 +1541,7 @@
                         datasets: [{
                             label: currentLang === 'ar' ? 'نسبة الالتزام %' : 'Compliance Rate %',
                             data: [85, 82, 88, 79, 84, 90, 81, 86, 78, 83, 85],
-                            backgroundColor: '#10b981',
+                            backgroundColor: '#2e3192',
                             borderRadius: 4
                         }]
                     },
@@ -1571,7 +1572,7 @@
                                 vendorData?.score_distribution?.['60_70'] || 14,
                                 vendorData?.score_distribution?.above_70 || 12
                             ],
-                            backgroundColor: ['#ef4444', '#f97316', '#fbbf24', '#3b82f6', '#10b981'],
+                            backgroundColor: ['#ef4444', '#f97316', '#fbbf24', '#3b82f6', '#2e3192'],
                             borderRadius: 6
                         }]
                     },
@@ -1598,7 +1599,7 @@
                                 vendorData?.summary?.evaluations_done || 40,
                                 vendorData?.summary?.evaluations_pending || 5
                             ],
-                            backgroundColor: ['#10b981', '#ef4444'],
+                            backgroundColor: ['#2e3192', '#ef4444'],
                             borderWidth: 0
                         }]
                     },
@@ -1660,7 +1661,7 @@
                     attachmentsHtml = `
                         <a href="${v.local_pdf}"
                            target="_blank"
-                           class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 text-xs cursor-pointer"
+                           class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-xs cursor-pointer"
                            title="${currentLang === 'ar' ? 'عرض التقييم' : 'View Evaluation'}">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
@@ -1690,7 +1691,7 @@
                         <td>${i + 1}</td>
                         <td class="font-medium">${v.name}</td>
                         <td>${v.category || (currentLang === 'ar' ? 'غير مصنف' : 'Unclassified')}</td>
-                        <td class="font-bold ${v.score >= 70 ? 'text-emerald-600' : v.score >= 60 ? 'text-blue-600' : v.score >= 40 ? 'text-amber-600' : v.score > 0 ? 'text-red-600' : 'text-gray-400'}">${v.score > 0 ? v.score.toFixed(1) + '%' : '-'}</td>
+                        <td class="font-bold ${v.score >= 70 ? 'text-blue-600' : v.score >= 60 ? 'text-blue-600' : v.score >= 40 ? 'text-amber-600' : v.score > 0 ? 'text-red-600' : 'text-gray-400'}">${v.score > 0 ? v.score.toFixed(1) + '%' : '-'}</td>
                         <td><span class="${statusClass} px-2 py-1 rounded text-xs font-semibold">${statusText}</span></td>
                         <td class="text-center">${attachmentsHtml}</td>
                     </tr>
@@ -2415,7 +2416,7 @@
                         labels: categoryEntries.map(c => c[0]),
                         datasets: [{
                             data: categoryEntries.map(c => c[1]),
-                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'],
+                            backgroundColor: ['#2e3192', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'],
                             borderWidth: 0
                         }]
                     },
@@ -2449,7 +2450,7 @@
                         datasets: [{
                             label: currentLang === 'ar' ? 'قيمة PRs (SAR)' : 'PR Value (SAR)',
                             data: topValueVendors.map(v => v[1]),
-                            backgroundColor: '#10b981',
+                            backgroundColor: '#2e3192',
                             borderRadius: 4
                         }]
                     },
@@ -2654,11 +2655,11 @@
 
             return `
                 <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
-                    <span class="text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">${countLabel}</span>
+                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">${countLabel}</span>
                     <div class="flex items-center gap-2">
                         <input type="text" id="modalSearch" placeholder="${currentLang === 'ar' ? 'بحث...' : 'Search...'}"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500 w-48">
-                        <button onclick="exportToCSV()" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center gap-1">
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
+                        <button onclick="exportToCSV()" class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             ${currentLang === 'ar' ? 'تصدير' : 'Export'}
                         </button>
@@ -2872,11 +2873,11 @@
 
             return `
                 <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
-                    <span class="text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">${countLabel}</span>
+                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">${countLabel}</span>
                     <div class="flex items-center gap-2">
                         <input type="text" id="modalSearch" placeholder="${currentLang === 'ar' ? 'بحث...' : 'Search...'}"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500 w-48">
-                        <button onclick="exportPOToCSV('${type}')" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center gap-1">
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
+                        <button onclick="exportPOToCSV('${type}')" class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             ${currentLang === 'ar' ? 'تصدير' : 'Export'}
                         </button>
