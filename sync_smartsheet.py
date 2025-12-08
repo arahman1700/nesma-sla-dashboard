@@ -305,8 +305,73 @@ def calculate_payments_kpis(orders):
         'monthly_trend': monthly_trend
     }
 
+def prepare_transportation_full_data(orders):
+    """Prepare full transportation data with records and filters"""
+    records = []
+    for o in orders:
+        if o.get('performed') == 'Yes' and o.get('completion_date'):
+            status = 'Done'
+        elif o.get('performed') == 'Yes' and not o.get('completion_date'):
+            status = 'In Progress'
+        else:
+            status = 'Not Done'
+
+        record = {
+            'job_order_no': o.get('job_order_no', ''),
+            'request_date': o.get('job_order_date', ''),
+            'project': o.get('project', 'Unknown'),
+            'supplier': o.get('supplier', 'Unknown'),
+            'equipment_1': o.get('equipment_type', 'Unknown'),
+            'requester': o.get('requester', ''),
+            'total_amount': parse_cost(o.get('cost')),
+            'status': status,
+            'duration': parse_days(o.get('completion_days')),
+            'rent_type': 'Daily'
+        }
+        records.append(record)
+
+    projects = sorted(set(r['project'] for r in records if r['project'] and r['project'] != 'Unknown'))
+    suppliers = sorted(set(r['supplier'] for r in records if r['supplier'] and r['supplier'] != 'Unknown'))
+    equipment = sorted(set(r['equipment_1'] for r in records if r['equipment_1'] and r['equipment_1'] != 'Unknown'))
+
+    return {
+        'metadata': {'last_update': datetime.utcnow().strftime('%Y-%m-%d'), 'total_records': len(records)},
+        'filters': {'projects': projects, 'suppliers': suppliers, 'equipment': equipment, 'status': ['Done', 'In Progress', 'Not Done'], 'rent_types': ['Daily', 'Monthly', 'Hourly']},
+        'records': records
+    }
+
+def prepare_payments_full_data(orders):
+    """Prepare full payments data with records and filters"""
+    invoice_orders = [o for o in orders if o.get('invoice_applicable') == 'Yes']
+    records = []
+    for o in invoice_orders:
+        record = {
+            'job_order_no': o.get('job_order_no', ''),
+            'request_date': o.get('job_order_date', ''),
+            'project': o.get('project', 'Unknown'),
+            'supplier': o.get('supplier', 'Unknown'),
+            'equipment_1': o.get('equipment_type', 'Unknown'),
+            'requester': o.get('requester', ''),
+            'total_amount': parse_cost(o.get('cost')),
+            'payment_status': o.get('payment_status', 'Unknown'),
+            'invoice_received': o.get('invoice_received', 'No'),
+            'invoice_receive_days': parse_days(o.get('invoice_receive_days')),
+            'payment_cycle_days': parse_days(o.get('payment_cycle_days'))
+        }
+        records.append(record)
+
+    projects = sorted(set(r['project'] for r in records if r['project'] and r['project'] != 'Unknown'))
+    suppliers = sorted(set(r['supplier'] for r in records if r['supplier'] and r['supplier'] != 'Unknown'))
+    payment_statuses = sorted(set(r['payment_status'] for r in records if r['payment_status']))
+
+    return {
+        'metadata': {'last_update': datetime.utcnow().strftime('%Y-%m-%d'), 'total_records': len(records)},
+        'filters': {'projects': projects, 'suppliers': suppliers, 'payment_statuses': payment_statuses},
+        'records': records
+    }
+
 def write_data_js(sla_data, transportation_data, payments_data, orders):
-    """Write all data to data.js"""
+    """Write all data to data.js and JSON files"""
     js_content = f'''// NESMA Supply Chain Management - Dashboard Data
 // Auto-synced from Smartsheet
 // Last updated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}
@@ -327,7 +392,17 @@ const ORDERS_DATA = {json.dumps(orders[:200], ensure_ascii=False, indent=2)};
     with open('data.js', 'w', encoding='utf-8') as f:
         f.write(js_content)
 
+    transportation_full = prepare_transportation_full_data(orders)
+    with open('transportation_full_data.json', 'w', encoding='utf-8') as f:
+        json.dump(transportation_full, f, ensure_ascii=False, indent=2)
+
+    payments_full = prepare_payments_full_data(orders)
+    with open('payments_full_data.json', 'w', encoding='utf-8') as f:
+        json.dump(payments_full, f, ensure_ascii=False, indent=2)
+
     print(f"Written {len(orders)} orders to data.js")
+    print(f"Written {len(transportation_full['records'])} records to transportation_full_data.json")
+    print(f"Written {len(payments_full['records'])} records to payments_full_data.json")
 
 def main():
     if not SMARTSHEET_TOKEN:
