@@ -2552,7 +2552,7 @@
             }
 
             currentModalData = filteredPRs;
-            contentHTML = generateDetailedPRTable(filteredPRs, kpiType);
+            const contentHTML = generateDetailedPRTable(filteredPRs, kpiType);
 
             title.textContent = titleText;
             content.innerHTML = contentHTML;
