@@ -1430,17 +1430,22 @@
 
                 // Generate attachments HTML - check for attachments array
                 let attachmentsHtml = '-';
+                const VENDOR_SHEET_ID = '1185309157969796';
                 if (v.attachments && v.attachments.length > 0) {
                     const pdfAttachment = v.attachments.find(a => a.name && a.name.toLowerCase().endsWith('.pdf'));
                     if (pdfAttachment) {
-                        // Link to Smartsheet attachment (opens in new tab)
+                        // Link to Smartsheet row with attachment
+                        const smartsheetUrl = `https://app.smartsheet.com/sheets/${VENDOR_SHEET_ID}?rowId=${v.row_id}`;
                         attachmentsHtml = `
-                            <span class="inline-flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                            <a href="${smartsheetUrl}"
+                               target="_blank"
+                               class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 text-xs cursor-pointer"
+                               title="${currentLang === 'ar' ? 'عرض في Smartsheet' : 'View in Smartsheet'}">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
                                 </svg>
                                 ${v.attachments.length} PDF
-                            </span>
+                            </a>
                         `;
                     }
                 } else if (v.local_pdf) {
