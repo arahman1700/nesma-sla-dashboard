@@ -1805,105 +1805,132 @@
             const content = document.getElementById('modalContent');
 
             let titleText = '';
-            let contentHTML = '';
+            let filteredPRs = [];
 
-            const allPRs = prData?.recent_prs || [];
+            // Use filtered PRs based on current filters
+            const basePRs = getFilteredPRs();
+
+            // Build filter description
+            const monthNames = currentLang === 'ar'
+                ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+                : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            let filterDesc = currentFilters.year;
+            if (currentFilters.month) filterDesc = monthNames[parseInt(currentFilters.month)] + ' ' + filterDesc;
+            if (currentFilters.project) filterDesc += ' - ' + currentFilters.project.substring(0, 25) + '...';
 
             switch(kpiType) {
                 case 'prs-received-month':
-                    titleText = currentLang === 'ar' ? 'PRs المستلمة هذا الشهر' : 'PRs Received This Month';
-                    const receivedPRs = allPRs.filter(pr => pr.status === 'APPROVED').slice(0, 20);
-                    contentHTML = generatePRTable(receivedPRs);
+                    titleText = currentLang === 'ar' ? `PRs المستلمة - ${filterDesc}` : `PRs Received - ${filterDesc}`;
+                    filteredPRs = basePRs.filter(pr => pr.status === 'APPROVED');
                     break;
                 case 'pos-issued-month':
-                    titleText = currentLang === 'ar' ? 'POs الصادرة هذا الشهر' : 'POs Issued This Month';
-                    const issuedPOs = allPRs.filter(pr => pr.pr_to_po_days !== null).slice(0, 20);
-                    contentHTML = generatePOTable(issuedPOs);
+                    titleText = currentLang === 'ar' ? `POs الصادرة - ${filterDesc}` : `POs Issued - ${filterDesc}`;
+                    filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null);
                     break;
                 case 'within30days':
-                    titleText = currentLang === 'ar' ? 'POs صادرة خلال 30 يوم' : 'POs Issued Within 30 Days';
-                    const within30 = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30).slice(0, 20);
-                    contentHTML = generatePOTable(within30);
+                    titleText = currentLang === 'ar' ? `POs صادرة خلال 30 يوم - ${filterDesc}` : `POs Within 30 Days - ${filterDesc}`;
+                    filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30);
                     break;
                 case 'after30days':
-                    titleText = currentLang === 'ar' ? 'POs صادرة بعد 30 يوم' : 'POs Issued After 30 Days';
-                    const after30 = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days > 30).slice(0, 20);
-                    contentHTML = generatePOTable(after30);
+                    titleText = currentLang === 'ar' ? `POs صادرة بعد 30 يوم - ${filterDesc}` : `POs After 30 Days - ${filterDesc}`;
+                    filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days > 30);
                     break;
                 default:
                     titleText = currentLang === 'ar' ? 'التفاصيل' : 'Details';
-                    contentHTML = `<p class="text-gray-600">${currentLang === 'ar' ? 'لا توجد بيانات' : 'No data available'}</p>`;
+                    filteredPRs = [];
             }
+
+            currentModalData = filteredPRs;
+            const contentHTML = generateDetailedPOTable(filteredPRs, kpiType);
 
             title.textContent = titleText;
             content.innerHTML = contentHTML;
             modal.classList.add('show');
+            setupModalSearch();
         }
 
-        function generatePRTable(prs) {
-            if (prs.length === 0) {
-                return `<p class="text-gray-500">${currentLang === 'ar' ? 'لا توجد بيانات' : 'No data available'}</p>`;
+        function generateDetailedPOTable(prs, type) {
+            const count = prs.length;
+            const countLabel = currentLang === 'ar' ? `إجمالي: ${count} طلب` : `Total: ${count} records`;
+
+            if (count === 0) {
+                return `<p class="text-gray-500 text-center py-8">${currentLang === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}</p>`;
             }
 
+            const isPOType = type === 'pos-issued-month' || type === 'within30days' || type === 'after30days';
+
             return `
-                <div class="overflow-x-auto">
-                    <table class="data-table text-sm">
+                <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
+                    <span class="text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">${countLabel}</span>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="modalSearch" placeholder="${currentLang === 'ar' ? 'بحث...' : 'Search...'}"
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500 w-48">
+                        <button onclick="exportPOToCSV('${type}')" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            ${currentLang === 'ar' ? 'تصدير' : 'Export'}
+                        </button>
+                    </div>
+                </div>
+                <div class="scroll-container" style="max-height: 450px;">
+                    <table class="data-table text-sm w-full" id="modalTable">
                         <thead>
                             <tr>
+                                <th class="text-center">#</th>
                                 <th>PR #</th>
+                                <th>${currentLang === 'ar' ? 'المشروع' : 'Project'}</th>
                                 <th>${currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
                                 <th>${currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
-                                <th>${currentLang === 'ar' ? 'القيمة' : 'Value'}</th>
+                                <th>${currentLang === 'ar' ? 'قيمة PR' : 'PR Value'}</th>
+                                ${isPOType ? `<th>${currentLang === 'ar' ? 'قيمة PO' : 'PO Value'}</th>` : ''}
+                                <th>${currentLang === 'ar' ? 'تاريخ الإرسال' : 'Submitted'}</th>
+                                <th>${currentLang === 'ar' ? 'تاريخ الاعتماد' : 'Approved'}</th>
+                                ${isPOType ? `<th>${currentLang === 'ar' ? 'أيام PR→PO' : 'PR→PO Days'}</th>` : ''}
                                 <th>${currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${prs.map(pr => `
-                                <tr>
-                                    <td>${pr.pr_num || '-'}</td>
-                                    <td class="max-w-xs truncate">${pr.description || '-'}</td>
-                                    <td class="max-w-xs truncate">${pr.vendor || '-'}</td>
-                                    <td>${pr.pr_value ? pr.pr_value.toLocaleString() + ' SAR' : '-'}</td>
-                                    <td><span class="px-2 py-1 rounded text-xs ${pr.status === 'APPROVED' ? 'bg-green-100 text-green-800' : pr.status === 'RETURNED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">${pr.status}</span></td>
-                                </tr>
-                            `).join('')}
+                            ${prs.map((pr, i) => {
+                                const prToPoDays = pr.pr_to_po_days;
+                                return `<tr class="modal-row">
+                                    <td class="text-center text-gray-500">${i + 1}</td>
+                                    <td class="font-medium">${pr.pr_num || '-'}</td>
+                                    <td class="max-w-[100px] truncate" title="${pr.project || ''}">${pr.project || '-'}</td>
+                                    <td class="max-w-[150px] truncate" title="${pr.description || ''}">${pr.description || '-'}</td>
+                                    <td class="max-w-[100px] truncate" title="${pr.vendor || ''}">${pr.vendor || '-'}</td>
+                                    <td>${pr.pr_value ? Number(pr.pr_value).toLocaleString() + ' SAR' : '-'}</td>
+                                    ${isPOType ? `<td>${pr.po_value ? Number(pr.po_value).toLocaleString() + ' SAR' : '-'}</td>` : ''}
+                                    <td>${pr.submission_date || '-'}</td>
+                                    <td>${pr.approved_date || '-'}</td>
+                                    ${isPOType ? `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${prToPoDays !== null && prToPoDays <= 30 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${prToPoDays !== null ? prToPoDays + (currentLang === 'ar' ? ' يوم' : ' days') : '-'}</span></td>` : ''}
+                                    <td><span class="px-2 py-1 rounded text-xs ${pr.status === 'APPROVED' ? 'bg-green-100 text-green-800' : pr.status === 'RETURNED' ? 'bg-red-100 text-red-800' : pr.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">${pr.status || '-'}</span></td>
+                                </tr>`;
+                            }).join('')}
                         </tbody>
                     </table>
-                </div>
-            `;
+                </div>`;
         }
 
-        function generatePOTable(prs) {
-            if (prs.length === 0) {
-                return `<p class="text-gray-500">${currentLang === 'ar' ? 'لا توجد بيانات' : 'No data available'}</p>`;
-            }
+        function exportPOToCSV(type) {
+            if (!currentModalData || currentModalData.length === 0) return;
+            const isPOType = type === 'pos-issued-month' || type === 'within30days' || type === 'after30days';
 
-            return `
-                <div class="overflow-x-auto">
-                    <table class="data-table text-sm">
-                        <thead>
-                            <tr>
-                                <th>PR #</th>
-                                <th>${currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
-                                <th>${currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
-                                <th>${currentLang === 'ar' ? 'قيمة PO' : 'PO Value'}</th>
-                                <th>${currentLang === 'ar' ? 'أيام PR→PO' : 'PR→PO Days'}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${prs.map(pr => `
-                                <tr>
-                                    <td>${pr.pr_num || '-'}</td>
-                                    <td class="max-w-xs truncate">${pr.description || '-'}</td>
-                                    <td class="max-w-xs truncate">${pr.vendor || '-'}</td>
-                                    <td>${pr.po_value ? pr.po_value.toLocaleString() + ' SAR' : '-'}</td>
-                                    <td><span class="px-2 py-1 rounded text-xs ${pr.pr_to_po_days <= 30 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${pr.pr_to_po_days} ${currentLang === 'ar' ? 'يوم' : 'days'}</span></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            const headers = isPOType
+                ? ['PR #', 'Project', 'Description', 'Vendor', 'PR Value', 'PO Value', 'Submitted', 'Approved', 'PR to PO Days', 'Status']
+                : ['PR #', 'Project', 'Description', 'Vendor', 'PR Value', 'Submitted', 'Approved', 'Status'];
+
+            const rows = currentModalData.map(pr => isPOType
+                ? [pr.pr_num || '', pr.project || '', pr.description || '', pr.vendor || '', pr.pr_value || '', pr.po_value || '', pr.submission_date || '', pr.approved_date || '', pr.pr_to_po_days || '', pr.status || '']
+                : [pr.pr_num || '', pr.project || '', pr.description || '', pr.vendor || '', pr.pr_value || '', pr.submission_date || '', pr.approved_date || '', pr.status || '']
+            );
+
+            let csv = '\uFEFF' + headers.join(',') + '\n';
+            rows.forEach(r => { csv += r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',') + '\n'; });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${type}_Export_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
         }
 
         function closeModal() {
