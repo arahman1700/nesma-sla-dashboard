@@ -1516,40 +1516,157 @@
         }
 
         // Modal Functions
+        let currentModalData = [];
+
+        function getCurrentDisplayMonth() {
+            let month = new Date().getMonth();
+            if (prData?.monthly?.approved) {
+                while (month >= 0 && prData.monthly.approved[month] === 0) month--;
+                if (month < 0) month = 10;
+            }
+            return month;
+        }
+
+        function filterPRsByMonth(prs, month, year = 2025) {
+            return prs.filter(pr => {
+                if (!pr.approved_date) return false;
+                const date = new Date(pr.approved_date);
+                return date.getMonth() === month && date.getFullYear() === year;
+            });
+        }
+
         function showKPIDetails(kpiType) {
             const modal = document.getElementById('kpiModal');
             const title = document.getElementById('modalTitle');
             const content = document.getElementById('modalContent');
 
+            const allPRs = prData?.recent_prs || [];
+            const currentMonth = getCurrentDisplayMonth();
+            const monthNames = currentLang === 'ar'
+                ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+                : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthName = monthNames[currentMonth];
+
             let titleText = '';
             let contentHTML = '';
-
-            const allPRs = prData?.recent_prs || [];
+            let filteredPRs = [];
 
             switch(kpiType) {
                 case 'approved':
-                    titleText = currentLang === 'ar' ? 'تفاصيل PRs المعتمدة' : 'Approved PRs Details';
-                    const approvedPRs = allPRs.filter(pr => pr.status === 'APPROVED').slice(0, 20);
-                    contentHTML = generatePRTable(approvedPRs);
+                    titleText = currentLang === 'ar' ? `PRs المعتمدة - ${monthName} 2025` : `Approved PRs - ${monthName} 2025`;
+                    filteredPRs = filterPRsByMonth(allPRs, currentMonth).filter(pr => pr.status === 'APPROVED');
                     break;
                 case 'returned':
-                    titleText = currentLang === 'ar' ? 'تفاصيل PRs المرتجعة' : 'Returned PRs Details';
-                    const returnedPRs = allPRs.filter(pr => pr.status === 'RETURNED').slice(0, 20);
-                    contentHTML = generatePRTable(returnedPRs);
+                    titleText = currentLang === 'ar' ? `PRs المرتجعة - ${monthName} 2025` : `Returned PRs - ${monthName} 2025`;
+                    filteredPRs = filterPRsByMonth(allPRs, currentMonth).filter(pr => pr.return_date);
                     break;
                 case 'within2days':
-                    titleText = currentLang === 'ar' ? 'PRs مرتجعة خلال يومين' : 'PRs Returned Within 2 Days';
-                    contentHTML = `<p class="text-gray-600">${currentLang === 'ar' ? 'قائمة PRs التي تم إرجاعها خلال يومين من الاعتماد' : 'List of PRs returned within 2 days of approval'}</p>`;
+                    titleText = currentLang === 'ar' ? `PRs مرتجعة خلال يومين - ${monthName}` : `PRs Returned ≤2 Days - ${monthName}`;
+                    filteredPRs = filterPRsByMonth(allPRs, currentMonth).filter(pr => {
+                        if (!pr.return_date || !pr.approved_date) return false;
+                        const days = Math.floor((new Date(pr.return_date) - new Date(pr.approved_date)) / 86400000);
+                        return days <= 2;
+                    });
                     break;
                 case 'after2days':
-                    titleText = currentLang === 'ar' ? 'PRs مرتجعة بعد يومين' : 'PRs Returned After 2 Days';
-                    contentHTML = `<p class="text-gray-600">${currentLang === 'ar' ? 'قائمة PRs التي تم إرجاعها بعد أكثر من يومين' : 'List of PRs returned after more than 2 days'}</p>`;
+                    titleText = currentLang === 'ar' ? `PRs مرتجعة بعد يومين - ${monthName}` : `PRs Returned >2 Days - ${monthName}`;
+                    filteredPRs = filterPRsByMonth(allPRs, currentMonth).filter(pr => {
+                        if (!pr.return_date || !pr.approved_date) return false;
+                        const days = Math.floor((new Date(pr.return_date) - new Date(pr.approved_date)) / 86400000);
+                        return days > 2;
+                    });
                     break;
             }
+
+            currentModalData = filteredPRs;
+            contentHTML = generateDetailedPRTable(filteredPRs, kpiType);
 
             title.textContent = titleText;
             content.innerHTML = contentHTML;
             modal.classList.add('show');
+            setupModalSearch();
+        }
+
+        function generateDetailedPRTable(prs, type) {
+            const count = prs.length;
+            const countLabel = currentLang === 'ar' ? `إجمالي: ${count} طلب` : `Total: ${count} PRs`;
+
+            if (count === 0) {
+                return `<p class="text-gray-500 text-center py-8">${currentLang === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}</p>`;
+            }
+
+            const showReturnCols = type === 'returned' || type === 'within2days' || type === 'after2days';
+
+            return `
+                <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
+                    <span class="text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">${countLabel}</span>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="modalSearch" placeholder="${currentLang === 'ar' ? 'بحث...' : 'Search...'}"
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500 w-48">
+                        <button onclick="exportToCSV()" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            ${currentLang === 'ar' ? 'تصدير' : 'Export'}
+                        </button>
+                    </div>
+                </div>
+                <div class="scroll-container" style="max-height: 400px;">
+                    <table class="data-table text-sm w-full" id="modalTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>PR #</th>
+                                <th>${currentLang === 'ar' ? 'المشروع' : 'Project'}</th>
+                                <th>${currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
+                                <th>${currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
+                                <th>${currentLang === 'ar' ? 'القيمة' : 'Value'}</th>
+                                <th>${currentLang === 'ar' ? 'تاريخ الاعتماد' : 'Approved'}</th>
+                                ${showReturnCols ? `<th>${currentLang === 'ar' ? 'تاريخ الإرجاع' : 'Returned'}</th><th>${currentLang === 'ar' ? 'أيام' : 'Days'}</th>` : ''}
+                                <th>${currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${prs.map((pr, i) => {
+                                const days = pr.return_date && pr.approved_date ? Math.floor((new Date(pr.return_date) - new Date(pr.approved_date)) / 86400000) : '-';
+                                return `<tr class="modal-row">
+                                    <td class="text-center text-gray-500">${i + 1}</td>
+                                    <td class="font-medium">${pr.pr_num || '-'}</td>
+                                    <td class="max-w-[120px] truncate" title="${pr.project || ''}">${pr.project || '-'}</td>
+                                    <td class="max-w-[180px] truncate" title="${pr.description || ''}">${pr.description || '-'}</td>
+                                    <td class="max-w-[120px] truncate" title="${pr.vendor || ''}">${pr.vendor || '-'}</td>
+                                    <td>${pr.pr_value ? Number(pr.pr_value).toLocaleString() + ' SAR' : '-'}</td>
+                                    <td>${pr.approved_date || '-'}</td>
+                                    ${showReturnCols ? `<td>${pr.return_date || '-'}</td><td class="text-center font-medium ${days > 2 ? 'text-amber-600' : 'text-blue-600'}">${days}</td>` : ''}
+                                    <td><span class="px-2 py-1 rounded text-xs ${pr.status === 'APPROVED' ? 'bg-green-100 text-green-800' : pr.status === 'RETURNED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">${pr.status || '-'}</span></td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+
+        function setupModalSearch() {
+            const searchInput = document.getElementById('modalSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const term = this.value.toLowerCase();
+                    document.querySelectorAll('#modalTable tbody tr').forEach(row => {
+                        row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+                    });
+                });
+            }
+        }
+
+        function exportToCSV() {
+            if (!currentModalData || currentModalData.length === 0) return;
+            const headers = ['PR #', 'Project', 'Description', 'Vendor', 'Value', 'Approved Date', 'Return Date', 'Status'];
+            const rows = currentModalData.map(pr => [pr.pr_num || '', pr.project || '', pr.description || '', pr.vendor || '', pr.pr_value || '', pr.approved_date || '', pr.return_date || '', pr.status || '']);
+            let csv = '\uFEFF' + headers.join(',') + '\n';
+            rows.forEach(r => { csv += r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',') + '\n'; });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `PRs_Export_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
         }
 
         function showPOKPIDetails(kpiType) {
