@@ -1738,7 +1738,7 @@
             document.getElementById('kpi-in-process').textContent = stats.inProcess.toLocaleString();
             document.getElementById('kpi-avg-pr-to-po').textContent = stats.avgPrToPo;
 
-            // PR to PO KPIs
+            // PR to PO KPIs (Current Month - based on filtered data)
             document.getElementById('po-kpi-received-month').textContent = stats.approved.toLocaleString();
             document.getElementById('po-kpi-issued-month').textContent = stats.posIssued.toLocaleString();
             document.getElementById('po-kpi-within30').textContent = stats.within30days.toLocaleString();
@@ -1747,6 +1747,46 @@
             const after30Pct = stats.posIssued > 0 ? ((stats.after30days / stats.posIssued) * 100).toFixed(1) : 0;
             document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
             document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
+
+            // PR to PO YTD KPIs (based on filtered year and project, not month)
+            const allPRs = prData?.all_prs || filteredPRData || [];
+            const ytdYear = currentFilters.year || '2025';
+            const ytdProject = currentFilters.project || '';
+
+            const ytdPRs = allPRs.filter(pr => {
+                // Year filter - check all date fields
+                const dateField = pr.approved_date || pr.submission_date || pr.po_approved_date;
+                if (dateField && !dateField.startsWith(ytdYear)) return false;
+
+                // Project filter
+                if (ytdProject && pr.project) {
+                    if (!pr.project.toLowerCase().includes(ytdProject.toLowerCase())) return false;
+                }
+                return true;
+            });
+
+            // Count PRs with APPROVED status
+            const ytdApproved = ytdPRs.filter(pr => pr.pr_status === 'APPROVED').length;
+
+            // Count PRs that have pr_to_po_days (meaning PO was issued)
+            const ytdPosIssued = ytdPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && !isNaN(pr.pr_to_po_days)).length;
+
+            // Count within 30 days
+            const ytdWithin30 = ytdPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 30).length;
+            const ytdAfter30 = ytdPosIssued - ytdWithin30;
+
+            // Update YTD KPI elements
+            const ytdReceivedEl = document.getElementById('po-kpi-received-ytd');
+            const ytdIssuedEl = document.getElementById('po-kpi-issued-ytd');
+            const ytdWithin30El = document.getElementById('po-kpi-within30-ytd');
+            const ytdAfter30El = document.getElementById('po-kpi-after30-ytd');
+
+            if (ytdReceivedEl) ytdReceivedEl.textContent = ytdApproved.toLocaleString();
+            if (ytdIssuedEl) ytdIssuedEl.textContent = ytdPosIssued.toLocaleString();
+            if (ytdWithin30El) ytdWithin30El.textContent = ytdWithin30.toLocaleString();
+            if (ytdAfter30El) ytdAfter30El.textContent = ytdAfter30.toLocaleString();
+
+            console.log(`📊 YTD Stats (${ytdYear}): Approved=${ytdApproved}, POs Issued=${ytdPosIssued}, Within30=${ytdWithin30}, After30=${ytdAfter30}`);
 
             // Update filter label to show what's filtered
             updateFilterLabel();
@@ -1833,15 +1873,18 @@
             currentFilters.month = document.getElementById('filterMonthPO').value;
             currentFilters.year = document.getElementById('filterYearPO').value;
             updateFilteredKPIs();
+            updateChartsWithFilteredData();
+            updatePOChartsWithFilteredData();
         }
 
         function resetPOFilters() {
             document.getElementById('filterProjectPO').value = '';
             document.getElementById('filterMonthPO').value = '';
             document.getElementById('filterYearPO').value = '2025';
-            currentFilters = { project: '', month: '', year: '2025', status: '' };
+            currentFilters = { project: '', month: '', year: '2025', status: '', vendor: '', agent: '' };
             updateFilteredKPIs();
             updateChartsWithFilteredData();
+            updatePOChartsWithFilteredData();
         }
 
         // Update all charts based on current filters
@@ -1982,6 +2025,91 @@
             const returnRate = totalApproved > 0 ? ((totalReturned / totalApproved) * 100).toFixed(1) : 0;
 
             console.log(`📊 Filters applied: ${totalFiltered} PRs | Approved: ${totalApproved} | Returned: ${totalReturned} | Rate: ${returnRate}%`);
+        }
+
+        // Function to update PR to PO charts with filtered data
+        function updatePOChartsWithFilteredData() {
+            const filteredPRs = getFilteredPRs();
+            const monthLabels = getMonthLabels();
+
+            // Initialize monthly stats for PR to PO analysis
+            const monthlyPOStats = {};
+            for (let i = 1; i <= 12; i++) {
+                monthlyPOStats[i] = { within30: 0, after30: 0, totalDays: 0, count: 0 };
+            }
+
+            // Calculate totals for doughnut chart
+            let totalWithin30 = 0;
+            let totalAfter30 = 0;
+
+            // Process filtered PRs
+            filteredPRs.forEach(pr => {
+                const prToPoDays = pr.pr_to_po_days;
+
+                // Only count PRs that have pr_to_po_days value
+                if (prToPoDays !== null && prToPoDays !== undefined && !isNaN(prToPoDays)) {
+                    // Count within/after 30 days
+                    if (prToPoDays <= 30) {
+                        totalWithin30++;
+                    } else {
+                        totalAfter30++;
+                    }
+
+                    // Get month from PO date or approved date
+                    const dateStr = pr.po_approved_date || pr.approved_date || pr.submission_date;
+                    if (dateStr) {
+                        try {
+                            const date = new Date(dateStr);
+                            const month = date.getMonth() + 1;
+                            if (month >= 1 && month <= 12) {
+                                if (prToPoDays <= 30) {
+                                    monthlyPOStats[month].within30++;
+                                } else {
+                                    monthlyPOStats[month].after30++;
+                                }
+                                monthlyPOStats[month].totalDays += prToPoDays;
+                                monthlyPOStats[month].count++;
+                            }
+                        } catch (e) {}
+                    }
+                }
+            });
+
+            // Build arrays for charts
+            const avgDaysData = [];
+            const complianceData = [];
+
+            for (let i = 1; i <= 12; i++) {
+                const stats = monthlyPOStats[i];
+                // Average days
+                const avgDays = stats.count > 0 ? Math.round(stats.totalDays / stats.count) : 0;
+                avgDaysData.push(avgDays);
+
+                // Compliance rate (within 30 days / total)
+                const total = stats.within30 + stats.after30;
+                const compliance = total > 0 ? Math.round((stats.within30 / total) * 100) : 0;
+                complianceData.push(compliance);
+            }
+
+            // Update PO Time Doughnut Chart
+            if (charts.poTime) {
+                charts.poTime.data.datasets[0].data = [totalWithin30, totalAfter30];
+                charts.poTime.update();
+            }
+
+            // Update Average PR to PO Line Chart
+            if (charts.avgPRtoPO) {
+                charts.avgPRtoPO.data.datasets[0].data = avgDaysData.slice(0, 11);
+                charts.avgPRtoPO.update();
+            }
+
+            // Update Compliance Bar Chart
+            if (charts.compliance) {
+                charts.compliance.data.datasets[0].data = complianceData.slice(0, 11);
+                charts.compliance.update();
+            }
+
+            console.log(`📊 PO Charts updated: Within30=${totalWithin30}, After30=${totalAfter30}`);
         }
 
         // ========================
