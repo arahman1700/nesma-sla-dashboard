@@ -936,7 +936,12 @@
         function updatePRKPIs() {
             if (!prData) return;
 
-            const currentMonth = new Date().getMonth();
+            // Find the latest month with data (not necessarily current month)
+            let currentMonth = new Date().getMonth();
+            // If current month has no data, use previous month
+            if (prData.monthly.approved[currentMonth] === 0 && currentMonth > 0) {
+                currentMonth = currentMonth - 1;
+            }
             const monthApproved = prData.monthly.approved[currentMonth] || 0;
             const monthReturned = prData.monthly.returned[currentMonth] || 0;
 
@@ -969,7 +974,12 @@
         function updatePOKPIs() {
             if (!prData) return;
 
-            const currentMonth = new Date().getMonth();
+            // Find the latest month with data (not necessarily current month)
+            let currentMonth = new Date().getMonth();
+            // If current month has no data, use previous month
+            if (prData.monthly.approved[currentMonth] === 0 && currentMonth > 0) {
+                currentMonth = currentMonth - 1;
+            }
             const monthApproved = prData.monthly.approved[currentMonth] || 0;
 
             // Calculate POs issued (PRs with pr_to_po_days value)
