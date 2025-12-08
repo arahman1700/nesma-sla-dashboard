@@ -1404,6 +1404,10 @@
             if (!tbody) return;
 
             const vendors = vendorData?.vendors || [];
+            console.log('Populating vendor table with', vendors.length, 'vendors');
+            if (vendors.length > 0) {
+                console.log('First vendor attachments:', vendors[0].attachments);
+            }
 
             tbody.innerHTML = vendors.map((v, i) => {
                 let statusClass, statusText;
