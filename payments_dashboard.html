@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nesma SLA - Payments Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e3192;
+            --secondary: #80d1e9;
+            --accent: #1a1a6e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        body.ltr {
+            direction: ltr;
+            font-family: 'Inter', 'Cairo', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .gradient-secondary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #5bbad5 100%);
+        }
+
+        .stat-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(46, 49, 146, 0.2);
+        }
+
+        .filter-select {
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.1);
+        }
+
+        .data-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .data-table tr:hover td {
+            background-color: #f0f4ff;
+        }
+
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #d1fae5; color: #059669; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
+        .badge-info { background: #dbeafe; color: #2563eb; }
+
+        .search-input {
+            padding-right: 2.5rem;
+        }
+
+        body.ltr .search-input {
+            padding-right: 1rem;
+            padding-left: 2.5rem;
+        }
+    </style>
+</head>
+<body class="rtl">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-gray-600" id="loadingText">جاري تحميل البيانات...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="gradient-primary text-white py-4 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="portal.html" class="text-white/80 hover:text-white transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold" id="pageTitle">داشبورد الدفعات والفواتير</h1>
+                    <p class="text-white/70 text-sm" id="pageSubtitle">تحليل شامل لأوامر العمل والمدفوعات</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleLanguage()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition flex items-center gap-2">
+                    <span id="langIcon">🌐</span>
+                    <span id="langText">English</span>
+                </button>
+                <button onclick="exportData()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    <span id="exportText">تصدير</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filters Section -->
+    <section class="max-w-7xl mx-auto px-6 py-6">
+        <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-gray-800" id="filtersTitle">الفلاتر التفاعلية</h2>
+                <button onclick="resetFilters()" class="text-sm text-[#2e3192] hover:underline" id="resetBtn">إعادة تعيين</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                <!-- Project Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="projectLabel">المشروع</label>
+                    <select id="filterProject" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+                <!-- Supplier Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="supplierLabel">المورد</label>
+                    <select id="filterSupplier" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+                <!-- Equipment Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="equipmentLabel">المعدات</label>
+                    <select id="filterEquipment" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+                <!-- Status Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="statusLabel">حالة الدفع</label>
+                    <select id="filterStatus" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+                <!-- Date From -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="dateFromLabel">من تاريخ</label>
+                    <input type="date" id="filterDateFrom" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
+                </div>
+                <!-- Date To -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="dateToLabel">إلى تاريخ</label>
+                    <input type="date" id="filterDateTo" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
+                </div>
+            </div>
+            <!-- Active Filters Display -->
+            <div id="activeFilters" class="mt-4 flex flex-wrap gap-2 hidden">
+                <!-- Active filter badges will be inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- KPI Cards -->
+    <section class="max-w-7xl mx-auto px-6 pb-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="stat-card glass-card rounded-xl p-4">
+                <div class="text-3xl mb-2">📋</div>
+                <div class="text-2xl font-bold text-[#2e3192]" id="kpiTotalInvoices">0</div>
+                <div class="text-sm text-gray-500" id="kpiTotalInvoicesLabel">إجمالي الفواتير</div>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-4">
+                <div class="text-3xl mb-2">💰</div>
+                <div class="text-2xl font-bold text-[#2e3192]" id="kpiTotalAmount">0</div>
+                <div class="text-sm text-gray-500" id="kpiTotalAmountLabel">إجمالي المبلغ (ريال)</div>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-4">
+                <div class="text-3xl mb-2">✅</div>
+                <div class="text-2xl font-bold text-green-600" id="kpiPaidCount">0</div>
+                <div class="text-sm text-gray-500" id="kpiPaidLabel">مدفوعة</div>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-4">
+                <div class="text-3xl mb-2">⏳</div>
+                <div class="text-2xl font-bold text-yellow-600" id="kpiPendingCount">0</div>
+                <div class="text-sm text-gray-500" id="kpiPendingLabel">قيد الموافقة</div>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-4">
+                <div class="text-3xl mb-2">⚡</div>
+                <div class="text-2xl font-bold text-[#80d1e9]" id="kpiAvgDays">0</div>
+                <div class="text-sm text-gray-500" id="kpiAvgDaysLabel">متوسط أيام الإنجاز</div>
+            </div>
+            <div class="stat-card glass-card rounded-xl p-4">
+                <div class="text-3xl mb-2">🔄</div>
+                <div class="text-2xl font-bold text-purple-600" id="kpiPaymentCycle">0</div>
+                <div class="text-sm text-gray-500" id="kpiPaymentCycleLabel">دورة الدفع (يوم)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabs -->
+    <section class="max-w-7xl mx-auto px-6 pb-6">
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="flex border-b overflow-x-auto">
+                <button onclick="switchTab('overview')" class="tab-btn active flex-1 px-6 py-3 text-center font-medium" id="tabOverview">نظرة عامة</button>
+                <button onclick="switchTab('suppliers')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabSuppliers">الموردين</button>
+                <button onclick="switchTab('projects')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabProjects">المشاريع</button>
+                <button onclick="switchTab('equipment')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabEquipment">المعدات</button>
+                <button onclick="switchTab('details')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabDetails">التفاصيل</button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="p-6">
+                <!-- Overview Tab -->
+                <div id="overviewContent" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="monthlyTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <div class="chart-container" style="height: 350px;">
+                            <canvas id="supplierBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suppliers Tab -->
+                <div id="suppliersContent" class="tab-content hidden">
+                    <div class="overflow-x-auto">
+                        <table class="data-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-3 text-right" id="thSupplier">المورد</th>
+                                    <th class="px-4 py-3 text-right" id="thInvoiceCount">عدد الفواتير</th>
+                                    <th class="px-4 py-3 text-right" id="thTotalAmount">إجمالي المبلغ</th>
+                                    <th class="px-4 py-3 text-right" id="thAvgAmount">متوسط المبلغ</th>
+                                    <th class="px-4 py-3 text-right" id="thPercentage">النسبة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="suppliersTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 chart-container">
+                        <canvas id="supplierPieChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Projects Tab -->
+                <div id="projectsContent" class="tab-content hidden">
+                    <div class="overflow-x-auto max-h-96">
+                        <table class="data-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-3 text-right" id="thProject">المشروع</th>
+                                    <th class="px-4 py-3 text-right" id="thProjectInvoices">عدد الفواتير</th>
+                                    <th class="px-4 py-3 text-right" id="thProjectTotal">إجمالي المبلغ</th>
+                                    <th class="px-4 py-3 text-right" id="thProjectAvg">متوسط الإنجاز</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 chart-container" style="height: 400px;">
+                        <canvas id="projectBarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Equipment Tab -->
+                <div id="equipmentContent" class="tab-content hidden">
+                    <div class="overflow-x-auto max-h-96">
+                        <table class="data-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-3 text-right" id="thEquipmentName">المعدة</th>
+                                    <th class="px-4 py-3 text-right" id="thEquipmentCount">العدد</th>
+                                    <th class="px-4 py-3 text-right" id="thEquipmentTotal">إجمالي المبلغ</th>
+                                    <th class="px-4 py-3 text-right" id="thEquipmentAvg">متوسط السعر</th>
+                                </tr>
+                            </thead>
+                            <tbody id="equipmentTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 chart-container" style="height: 400px;">
+                        <canvas id="equipmentChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div id="detailsContent" class="tab-content hidden">
+                    <div class="mb-4 flex items-center gap-4">
+                        <div class="relative flex-1">
+                            <input type="text" id="searchInput" onkeyup="searchRecords()" placeholder="بحث..." class="search-input filter-select w-full px-4 py-2 rounded-lg outline-none">
+                            <svg class="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            <span id="recordsShowing">0</span> <span id="recordsOfLabel">من</span> <span id="recordsTotal">0</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto max-h-[500px]">
+                        <table class="data-table w-full text-sm">
+                            <thead>
+                                <tr>
+                                    <th class="px-3 py-2 text-right">#</th>
+                                    <th class="px-3 py-2 text-right" id="thDetailJobOrder">رقم الأمر</th>
+                                    <th class="px-3 py-2 text-right" id="thDetailDate">التاريخ</th>
+                                    <th class="px-3 py-2 text-right" id="thDetailProject">المشروع</th>
+                                    <th class="px-3 py-2 text-right" id="thDetailSupplier">المورد</th>
+                                    <th class="px-3 py-2 text-right" id="thDetailEquipment">المعدة</th>
+                                    <th class="px-3 py-2 text-right" id="thDetailAmount">المبلغ</th>
+                                    <th class="px-3 py-2 text-right" id="thDetailStatus">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailsTableBody"></tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="mt-4 flex items-center justify-center gap-2" id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-gray-500 text-sm">
+        <p id="footerText">نظام إدارة اتفاقيات مستوى الخدمة - نسما للتكنولوجيا والصناعة</p>
+        <p class="mt-1" id="lastUpdateText">آخر تحديث: <span id="lastUpdate">-</span></p>
+    </footer>
+
+    <script>
+        // Global variables
+        let allData = null;
+        let filteredRecords = [];
+        let currentPage = 1;
+        const recordsPerPage = 50;
+        let charts = {};
+        let currentLang = 'ar';
+
+        // Language translations
+        const translations = {
+            ar: {
+                pageTitle: 'داشبورد الدفعات والفواتير',
+                pageSubtitle: 'تحليل شامل لأوامر العمل والمدفوعات',
+                langText: 'English',
+                exportText: 'تصدير',
+                filtersTitle: 'الفلاتر التفاعلية',
+                resetBtn: 'إعادة تعيين',
+                projectLabel: 'المشروع',
+                supplierLabel: 'المورد',
+                equipmentLabel: 'المعدات',
+                statusLabel: 'حالة الدفع',
+                dateFromLabel: 'من تاريخ',
+                dateToLabel: 'إلى تاريخ',
+                kpiTotalInvoicesLabel: 'إجمالي الفواتير',
+                kpiTotalAmountLabel: 'إجمالي المبلغ (ريال)',
+                kpiPaidLabel: 'مدفوعة',
+                kpiPendingLabel: 'قيد الموافقة',
+                kpiAvgDaysLabel: 'متوسط أيام الإنجاز',
+                kpiPaymentCycleLabel: 'دورة الدفع (يوم)',
+                tabOverview: 'نظرة عامة',
+                tabSuppliers: 'الموردين',
+                tabProjects: 'المشاريع',
+                tabEquipment: 'المعدات',
+                tabDetails: 'التفاصيل',
+                thSupplier: 'المورد',
+                thInvoiceCount: 'عدد الفواتير',
+                thTotalAmount: 'إجمالي المبلغ',
+                thAvgAmount: 'متوسط المبلغ',
+                thPercentage: 'النسبة',
+                thProject: 'المشروع',
+                thProjectInvoices: 'عدد الفواتير',
+                thProjectTotal: 'إجمالي المبلغ',
+                thProjectAvg: 'متوسط الإنجاز',
+                thEquipmentName: 'المعدة',
+                thEquipmentCount: 'العدد',
+                thEquipmentTotal: 'إجمالي المبلغ',
+                thEquipmentAvg: 'متوسط السعر',
+                thDetailJobOrder: 'رقم الأمر',
+                thDetailDate: 'التاريخ',
+                thDetailProject: 'المشروع',
+                thDetailSupplier: 'المورد',
+                thDetailEquipment: 'المعدة',
+                thDetailAmount: 'المبلغ',
+                thDetailStatus: 'الحالة',
+                recordsOfLabel: 'من',
+                footerText: 'نظام إدارة اتفاقيات مستوى الخدمة - نسما للتكنولوجيا والصناعة',
+                lastUpdateText: 'آخر تحديث:',
+                loadingText: 'جاري تحميل البيانات...',
+                all: 'الكل',
+                paid: 'مدفوعة',
+                pending: 'قيد الموافقة',
+                statusPaid: 'مدفوع',
+                statusPending: 'قيد الموافقة',
+                chartPaymentStatus: 'حالة الدفعات',
+                chartMonthlyTrend: 'الاتجاه الشهري',
+                chartSupplierDistribution: 'توزيع الموردين',
+                chartProjectDistribution: 'توزيع المشاريع'
+            },
+            en: {
+                pageTitle: 'Payments & Invoices Dashboard',
+                pageSubtitle: 'Comprehensive Analysis of Job Orders and Payments',
+                langText: 'العربية',
+                exportText: 'Export',
+                filtersTitle: 'Interactive Filters',
+                resetBtn: 'Reset',
+                projectLabel: 'Project',
+                supplierLabel: 'Supplier',
+                equipmentLabel: 'Equipment',
+                statusLabel: 'Payment Status',
+                dateFromLabel: 'From Date',
+                dateToLabel: 'To Date',
+                kpiTotalInvoicesLabel: 'Total Invoices',
+                kpiTotalAmountLabel: 'Total Amount (SAR)',
+                kpiPaidLabel: 'Paid',
+                kpiPendingLabel: 'Under Approval',
+                kpiAvgDaysLabel: 'Avg. Completion Days',
+                kpiPaymentCycleLabel: 'Payment Cycle (Days)',
+                tabOverview: 'Overview',
+                tabSuppliers: 'Suppliers',
+                tabProjects: 'Projects',
+                tabEquipment: 'Equipment',
+                tabDetails: 'Details',
+                thSupplier: 'Supplier',
+                thInvoiceCount: 'Invoice Count',
+                thTotalAmount: 'Total Amount',
+                thAvgAmount: 'Avg. Amount',
+                thPercentage: 'Percentage',
+                thProject: 'Project',
+                thProjectInvoices: 'Invoice Count',
+                thProjectTotal: 'Total Amount',
+                thProjectAvg: 'Avg. Completion',
+                thEquipmentName: 'Equipment',
+                thEquipmentCount: 'Count',
+                thEquipmentTotal: 'Total Amount',
+                thEquipmentAvg: 'Avg. Price',
+                thDetailJobOrder: 'Job Order',
+                thDetailDate: 'Date',
+                thDetailProject: 'Project',
+                thDetailSupplier: 'Supplier',
+                thDetailEquipment: 'Equipment',
+                thDetailAmount: 'Amount',
+                thDetailStatus: 'Status',
+                recordsOfLabel: 'of',
+                footerText: 'SLA Management System - Nesma Technology & Industry',
+                lastUpdateText: 'Last Update:',
+                loadingText: 'Loading data...',
+                all: 'All',
+                paid: 'Paid',
+                pending: 'Pending',
+                statusPaid: 'Paid',
+                statusPending: 'Pending',
+                chartPaymentStatus: 'Payment Status',
+                chartMonthlyTrend: 'Monthly Trend',
+                chartSupplierDistribution: 'Supplier Distribution',
+                chartProjectDistribution: 'Project Distribution'
+            }
+        };
+
+        // Format number - ALWAYS use English numerals
+        function formatNumber(num, decimals = 0) {
+            if (num === null || num === undefined || isNaN(num)) return '0';
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }).format(num);
+        }
+
+        // Format currency - ALWAYS use English numerals
+        function formatCurrency(num) {
+            if (num === null || num === undefined || isNaN(num)) return '0';
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(num);
+        }
+
+        // Toggle language
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.body.classList.toggle('ltr', currentLang === 'en');
+
+            const t = translations[currentLang];
+
+            // Update all text elements
+            Object.keys(t).forEach(key => {
+                const el = document.getElementById(key);
+                if (el) {
+                    if (el.tagName === 'INPUT') {
+                        el.placeholder = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            // Update select options
+            updateFilterOptions();
+
+            // Rebuild charts with new language
+            if (allData) {
+                updateDashboard();
+            }
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                const response = await fetch('payments_full_data.json');
+                if (!response.ok) throw new Error('Failed to load data');
+                allData = await response.json();
+
+                // Initialize
+                populateFilters();
+                filteredRecords = [...allData.records];
+                updateDashboard();
+
+                // Update last update time
+                document.getElementById('lastUpdate').textContent = allData.metadata.last_update;
+
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loadingText').textContent = 'خطأ في تحميل البيانات';
+            }
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            const filters = allData.filters;
+
+            // Project filter
+            const projectSelect = document.getElementById('filterProject');
+            projectSelect.innerHTML = '<option value="">' + translations[currentLang].all + '</option>';
+            filters.projects.forEach(p => {
+                projectSelect.innerHTML += `<option value="${p}">${p}</option>`;
+            });
+
+            // Supplier filter
+            const supplierSelect = document.getElementById('filterSupplier');
+            supplierSelect.innerHTML = '<option value="">' + translations[currentLang].all + '</option>';
+            filters.suppliers.forEach(s => {
+                supplierSelect.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+
+            // Equipment filter
+            const equipmentSelect = document.getElementById('filterEquipment');
+            equipmentSelect.innerHTML = '<option value="">' + translations[currentLang].all + '</option>';
+            filters.equipment.forEach(e => {
+                equipmentSelect.innerHTML += `<option value="${e}">${e}</option>`;
+            });
+
+            // Status filter
+            const statusSelect = document.getElementById('filterStatus');
+            statusSelect.innerHTML = '<option value="">' + translations[currentLang].all + '</option>';
+            filters.status.forEach(s => {
+                statusSelect.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+        }
+
+        // Update filter options for language change
+        function updateFilterOptions() {
+            const selects = ['filterProject', 'filterSupplier', 'filterEquipment', 'filterStatus'];
+            selects.forEach(id => {
+                const select = document.getElementById(id);
+                if (select && select.options[0]) {
+                    select.options[0].text = translations[currentLang].all;
+                }
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const project = document.getElementById('filterProject').value;
+            const supplier = document.getElementById('filterSupplier').value;
+            const equipment = document.getElementById('filterEquipment').value;
+            const status = document.getElementById('filterStatus').value;
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+
+            filteredRecords = allData.records.filter(record => {
+                if (project && record.project !== project) return false;
+                if (supplier && record.supplier !== supplier) return false;
+                if (equipment && record.equipment !== equipment) return false;
+                if (status && record.payment_status !== status) return false;
+                if (dateFrom && record.date < dateFrom) return false;
+                if (dateTo && record.date > dateTo) return false;
+                return true;
+            });
+
+            currentPage = 1;
+            updateDashboard();
+            updateActiveFilters();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('filterProject').value = '';
+            document.getElementById('filterSupplier').value = '';
+            document.getElementById('filterEquipment').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+
+            filteredRecords = [...allData.records];
+            currentPage = 1;
+            updateDashboard();
+            updateActiveFilters();
+        }
+
+        // Update active filters display
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const filters = [];
+
+            const project = document.getElementById('filterProject').value;
+            const supplier = document.getElementById('filterSupplier').value;
+            const equipment = document.getElementById('filterEquipment').value;
+            const status = document.getElementById('filterStatus').value;
+
+            if (project) filters.push({ label: translations[currentLang].projectLabel, value: project });
+            if (supplier) filters.push({ label: translations[currentLang].supplierLabel, value: supplier });
+            if (equipment) filters.push({ label: translations[currentLang].equipmentLabel, value: equipment });
+            if (status) filters.push({ label: translations[currentLang].statusLabel, value: status });
+
+            if (filters.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            container.innerHTML = filters.map(f => `
+                <span class="badge badge-info">
+                    ${f.label}: ${f.value}
+                </span>
+            `).join('');
+        }
+
+        // Update entire dashboard
+        function updateDashboard() {
+            updateKPIs();
+            updateCharts();
+            updateTables();
+        }
+
+        // Update KPIs
+        function updateKPIs() {
+            const records = filteredRecords;
+
+            const totalInvoices = records.length;
+            const totalAmount = records.reduce((sum, r) => sum + (r.cost || 0), 0);
+            const paidCount = records.filter(r => r.payment_status === 'Paid').length;
+            const pendingCount = records.filter(r => r.payment_status && r.payment_status.includes('Under')).length;
+            const avgDays = records.reduce((sum, r) => sum + (r.completion_days || 0), 0) / records.length || 0;
+            const avgCycle = records.reduce((sum, r) => sum + (r.payment_cycle_days || 0), 0) / records.length || 0;
+
+            document.getElementById('kpiTotalInvoices').textContent = formatNumber(totalInvoices);
+            document.getElementById('kpiTotalAmount').textContent = formatCurrency(totalAmount);
+            document.getElementById('kpiPaidCount').textContent = formatNumber(paidCount);
+            document.getElementById('kpiPendingCount').textContent = formatNumber(pendingCount);
+            document.getElementById('kpiAvgDays').textContent = formatNumber(avgDays, 1);
+            document.getElementById('kpiPaymentCycle').textContent = formatNumber(avgCycle, 1);
+        }
+
+        // Update all charts
+        function updateCharts() {
+            updateStatusChart();
+            updateMonthlyTrendChart();
+            updateSupplierBarChart();
+            updateSupplierPieChart();
+            updateProjectBarChart();
+            updateEquipmentChart();
+        }
+
+        // Status distribution chart
+        function updateStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+
+            // Aggregate by status
+            const statusCounts = {};
+            filteredRecords.forEach(r => {
+                const status = r.payment_status || 'Unknown';
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+            });
+
+            const labels = Object.keys(statusCounts);
+            const data = Object.values(statusCounts);
+            const colors = ['#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
+
+            if (charts.statusChart) charts.statusChart.destroy();
+
+            charts.statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: currentLang === 'ar' ? 'right' : 'left'
+                        },
+                        title: {
+                            display: true,
+                            text: translations[currentLang].chartPaymentStatus,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Monthly trend chart
+        function updateMonthlyTrendChart() {
+            const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
+
+            // Aggregate by month
+            const monthlyData = {};
+            filteredRecords.forEach(r => {
+                if (r.date) {
+                    const month = r.date.substring(0, 7);
+                    if (!monthlyData[month]) {
+                        monthlyData[month] = { count: 0, amount: 0 };
+                    }
+                    monthlyData[month].count++;
+                    monthlyData[month].amount += r.cost || 0;
+                }
+            });
+
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const counts = sortedMonths.map(m => monthlyData[m].count);
+            const amounts = sortedMonths.map(m => monthlyData[m].amount);
+
+            if (charts.monthlyTrendChart) charts.monthlyTrendChart.destroy();
+
+            charts.monthlyTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [{
+                        label: currentLang === 'ar' ? 'عدد الفواتير' : 'Invoice Count',
+                        data: counts,
+                        borderColor: '#2e3192',
+                        backgroundColor: 'rgba(46, 49, 146, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: translations[currentLang].chartMonthlyTrend,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Supplier bar chart
+        function updateSupplierBarChart() {
+            const ctx = document.getElementById('supplierBarChart').getContext('2d');
+
+            // Aggregate by supplier
+            const supplierData = {};
+            filteredRecords.forEach(r => {
+                const supplier = r.supplier || 'Unknown';
+                if (!supplierData[supplier]) {
+                    supplierData[supplier] = { count: 0, amount: 0 };
+                }
+                supplierData[supplier].count++;
+                supplierData[supplier].amount += r.cost || 0;
+            });
+
+            const sorted = Object.entries(supplierData)
+                .sort((a, b) => b[1].amount - a[1].amount)
+                .slice(0, 10);
+
+            const labels = sorted.map(s => s[0]);
+            const amounts = sorted.map(s => s[1].amount);
+
+            if (charts.supplierBarChart) charts.supplierBarChart.destroy();
+
+            charts.supplierBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: currentLang === 'ar' ? 'إجمالي المبلغ' : 'Total Amount',
+                        data: amounts,
+                        backgroundColor: '#2e3192',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: translations[currentLang].chartSupplierDistribution,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Supplier pie chart
+        function updateSupplierPieChart() {
+            const ctx = document.getElementById('supplierPieChart').getContext('2d');
+
+            // Aggregate by supplier
+            const supplierData = {};
+            filteredRecords.forEach(r => {
+                const supplier = r.supplier || 'Unknown';
+                supplierData[supplier] = (supplierData[supplier] || 0) + (r.cost || 0);
+            });
+
+            const sorted = Object.entries(supplierData).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            const labels = sorted.map(s => s[0]);
+            const data = sorted.map(s => s[1]);
+
+            const colors = ['#2e3192', '#80d1e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
+
+            if (charts.supplierPieChart) charts.supplierPieChart.destroy();
+
+            charts.supplierPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Project bar chart
+        function updateProjectBarChart() {
+            const ctx = document.getElementById('projectBarChart').getContext('2d');
+
+            // Aggregate by project
+            const projectData = {};
+            filteredRecords.forEach(r => {
+                const project = r.project || 'Unknown';
+                if (!projectData[project]) {
+                    projectData[project] = { count: 0, amount: 0 };
+                }
+                projectData[project].count++;
+                projectData[project].amount += r.cost || 0;
+            });
+
+            const sorted = Object.entries(projectData)
+                .sort((a, b) => b[1].amount - a[1].amount)
+                .slice(0, 15);
+
+            const labels = sorted.map(s => s[0]);
+            const amounts = sorted.map(s => s[1].amount);
+
+            if (charts.projectBarChart) charts.projectBarChart.destroy();
+
+            charts.projectBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: currentLang === 'ar' ? 'إجمالي المبلغ' : 'Total Amount',
+                        data: amounts,
+                        backgroundColor: '#80d1e9',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: translations[currentLang].chartProjectDistribution,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Equipment chart
+        function updateEquipmentChart() {
+            const ctx = document.getElementById('equipmentChart').getContext('2d');
+
+            // Aggregate by equipment
+            const eqData = {};
+            filteredRecords.forEach(r => {
+                const eq = r.equipment || 'Unknown';
+                if (!eqData[eq]) {
+                    eqData[eq] = { count: 0, amount: 0 };
+                }
+                eqData[eq].count++;
+                eqData[eq].amount += r.cost || 0;
+            });
+
+            const sorted = Object.entries(eqData)
+                .sort((a, b) => b[1].count - a[1].count)
+                .slice(0, 15);
+
+            const labels = sorted.map(s => s[0]);
+            const counts = sorted.map(s => s[1].count);
+
+            if (charts.equipmentChart) charts.equipmentChart.destroy();
+
+            charts.equipmentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: currentLang === 'ar' ? 'العدد' : 'Count',
+                        data: counts,
+                        backgroundColor: '#10b981',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y'
+                }
+            });
+        }
+
+        // Update all tables
+        function updateTables() {
+            updateSuppliersTable();
+            updateProjectsTable();
+            updateEquipmentTable();
+            updateDetailsTable();
+        }
+
+        // Suppliers table
+        function updateSuppliersTable() {
+            const tbody = document.getElementById('suppliersTableBody');
+
+            // Aggregate by supplier
+            const supplierData = {};
+            const totalAmount = filteredRecords.reduce((sum, r) => sum + (r.cost || 0), 0);
+
+            filteredRecords.forEach(r => {
+                const supplier = r.supplier || 'Unknown';
+                if (!supplierData[supplier]) {
+                    supplierData[supplier] = { count: 0, amount: 0 };
+                }
+                supplierData[supplier].count++;
+                supplierData[supplier].amount += r.cost || 0;
+            });
+
+            const sorted = Object.entries(supplierData).sort((a, b) => b[1].amount - a[1].amount);
+
+            tbody.innerHTML = sorted.map(([supplier, data]) => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium">${supplier}</td>
+                    <td class="px-4 py-3">${formatNumber(data.count)}</td>
+                    <td class="px-4 py-3">${formatCurrency(data.amount)}</td>
+                    <td class="px-4 py-3">${formatCurrency(data.amount / data.count)}</td>
+                    <td class="px-4 py-3">${formatNumber((data.amount / totalAmount * 100), 1)}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // Projects table
+        function updateProjectsTable() {
+            const tbody = document.getElementById('projectsTableBody');
+
+            // Aggregate by project
+            const projectData = {};
+
+            filteredRecords.forEach(r => {
+                const project = r.project || 'Unknown';
+                if (!projectData[project]) {
+                    projectData[project] = { count: 0, amount: 0, days: [] };
+                }
+                projectData[project].count++;
+                projectData[project].amount += r.cost || 0;
+                if (r.completion_days) projectData[project].days.push(r.completion_days);
+            });
+
+            const sorted = Object.entries(projectData).sort((a, b) => b[1].amount - a[1].amount);
+
+            tbody.innerHTML = sorted.map(([project, data]) => {
+                const avgDays = data.days.length > 0 ? data.days.reduce((a, b) => a + b, 0) / data.days.length : 0;
+                return `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-3 font-medium">${project}</td>
+                        <td class="px-4 py-3">${formatNumber(data.count)}</td>
+                        <td class="px-4 py-3">${formatCurrency(data.amount)}</td>
+                        <td class="px-4 py-3">${formatNumber(avgDays, 1)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Equipment table
+        function updateEquipmentTable() {
+            const tbody = document.getElementById('equipmentTableBody');
+
+            // Aggregate by equipment
+            const eqData = {};
+
+            filteredRecords.forEach(r => {
+                const eq = r.equipment || 'Unknown';
+                if (!eqData[eq]) {
+                    eqData[eq] = { count: 0, amount: 0 };
+                }
+                eqData[eq].count++;
+                eqData[eq].amount += r.cost || 0;
+            });
+
+            const sorted = Object.entries(eqData).sort((a, b) => b[1].count - a[1].count);
+
+            tbody.innerHTML = sorted.map(([eq, data]) => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium">${eq}</td>
+                    <td class="px-4 py-3">${formatNumber(data.count)}</td>
+                    <td class="px-4 py-3">${formatCurrency(data.amount)}</td>
+                    <td class="px-4 py-3">${formatCurrency(data.amount / data.count)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Details table with pagination
+        function updateDetailsTable() {
+            const tbody = document.getElementById('detailsTableBody');
+            const start = (currentPage - 1) * recordsPerPage;
+            const end = start + recordsPerPage;
+            const pageRecords = filteredRecords.slice(start, end);
+
+            document.getElementById('recordsShowing').textContent = formatNumber(Math.min(end, filteredRecords.length));
+            document.getElementById('recordsTotal').textContent = formatNumber(filteredRecords.length);
+
+            tbody.innerHTML = pageRecords.map((r, i) => {
+                const statusClass = r.payment_status === 'Paid' ? 'badge-success' :
+                                   r.payment_status && r.payment_status.includes('Under') ? 'badge-warning' : 'badge-info';
+                return `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-3 py-2">${formatNumber(start + i + 1)}</td>
+                        <td class="px-3 py-2 font-mono">${r.job_order_no || '-'}</td>
+                        <td class="px-3 py-2">${r.date || '-'}</td>
+                        <td class="px-3 py-2">${r.project || '-'}</td>
+                        <td class="px-3 py-2">${r.supplier || '-'}</td>
+                        <td class="px-3 py-2">${r.equipment || '-'}</td>
+                        <td class="px-3 py-2 font-medium">${formatCurrency(r.cost || 0)}</td>
+                        <td class="px-3 py-2"><span class="badge ${statusClass}">${r.payment_status || '-'}</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            updatePagination();
+        }
+
+        // Pagination
+        function updatePagination() {
+            const container = document.getElementById('pagination');
+            const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // Previous button
+            html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}
+                     class="px-3 py-1 rounded border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">
+                     ${currentLang === 'ar' ? 'السابق' : 'Prev'}
+                     </button>`;
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button onclick="goToPage(${i})"
+                             class="px-3 py-1 rounded ${i === currentPage ? 'bg-[#2e3192] text-white' : 'hover:bg-gray-100'}">
+                             ${formatNumber(i)}
+                             </button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += '<span class="px-2">...</span>';
+                }
+            }
+
+            // Next button
+            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}
+                     class="px-3 py-1 rounded border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">
+                     ${currentLang === 'ar' ? 'التالي' : 'Next'}
+                     </button>`;
+
+            container.innerHTML = html;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            updateDetailsTable();
+        }
+
+        // Search records
+        function searchRecords() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+
+            if (!query) {
+                applyFilters();
+                return;
+            }
+
+            const project = document.getElementById('filterProject').value;
+            const supplier = document.getElementById('filterSupplier').value;
+            const equipment = document.getElementById('filterEquipment').value;
+            const status = document.getElementById('filterStatus').value;
+
+            filteredRecords = allData.records.filter(r => {
+                // Apply existing filters first
+                if (project && r.project !== project) return false;
+                if (supplier && r.supplier !== supplier) return false;
+                if (equipment && r.equipment !== equipment) return false;
+                if (status && r.payment_status !== status) return false;
+
+                // Then search
+                const searchFields = [
+                    r.job_order_no, r.project, r.supplier, r.equipment,
+                    r.requester, r.payment_status
+                ].filter(Boolean).join(' ').toLowerCase();
+
+                return searchFields.includes(query);
+            });
+
+            currentPage = 1;
+            updateDashboard();
+        }
+
+        // Switch tab
+        function switchTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Show selected content
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // Export data
+        function exportData() {
+            const data = filteredRecords.map(r => ({
+                'Job Order': r.job_order_no,
+                'Date': r.date,
+                'Project': r.project,
+                'Supplier': r.supplier,
+                'Equipment': r.equipment,
+                'Cost': r.cost,
+                'Status': r.payment_status
+            }));
+
+            const csv = [
+                Object.keys(data[0]).join(','),
+                ...data.map(row => Object.values(row).map(v => `"${v || ''}"`).join(','))
+            ].join('\n');
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'payments_data_export.csv';
+            link.click();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

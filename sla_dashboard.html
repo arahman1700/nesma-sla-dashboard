@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NESMA | SLA Dashboard - لوحة قياس اتفاقية مستوى الخدمة</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nesma-primary: #2e3192;
+            --nesma-secondary: #80d1e9;
+            --nesma-dark: #1a1a2e;
+            --nesma-gradient: linear-gradient(135deg, #2e3192 0%, #1a1a5e 100%);
+        }
+
+        * { font-family: 'Cairo', 'Inter', sans-serif; }
+        [lang="en"] * { font-family: 'Inter', 'Cairo', sans-serif; }
+
+        body {
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .nesma-header {
+            background: var(--nesma-gradient);
+            box-shadow: 0 4px 20px rgba(46, 49, 146, 0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(46, 49, 146, 0.05);
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(46, 49, 146, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .kpi-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -30%;
+            width: 60%;
+            height: 120%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(-30deg);
+            pointer-events: none;
+        }
+
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--nesma-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tab-btn.active::after {
+            transform: scaleX(1);
+        }
+
+        .tab-btn.active {
+            color: var(--nesma-primary);
+            background: rgba(46, 49, 146, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-done { background: #d1fae5; color: #065f46; }
+        .status-progress { background: #fef3c7; color: #92400e; }
+        .status-not { background: #fee2e2; color: #991b1b; }
+        .status-available { background: #d1fae5; color: #065f46; }
+        .status-partial { background: #fef3c7; color: #92400e; }
+        .status-coming { background: #e0e7ff; color: #3730a3; }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 14px 16px;
+            font-weight: 600;
+            color: var(--nesma-primary);
+            border-bottom: 2px solid var(--nesma-secondary);
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(128, 209, 233, 0.1);
+        }
+
+        .filter-input {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-input:focus {
+            border-color: var(--nesma-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--nesma-gradient);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 49, 146, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--nesma-primary);
+            border: 2px solid var(--nesma-primary);
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: var(--nesma-primary);
+            color: white;
+        }
+
+        .scroll-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: var(--nesma-secondary);
+            border-radius: 10px;
+        }
+
+        .lang-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .lang-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .alert-card {
+            border-right: 4px solid;
+            border-radius: 12px;
+        }
+
+        [dir="ltr"] .alert-card {
+            border-right: none;
+            border-left: 4px solid;
+        }
+
+        .alert-critical { border-color: #ef4444; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); }
+        .alert-warning { border-color: #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); }
+        .alert-success { border-color: #10b981; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); }
+
+        .report-card {
+            transition: all 0.3s ease;
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .coming-soon {
+            background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+            opacity: 0.8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+            .card { box-shadow: none; border: 1px solid #e2e8f0; }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: var(--nesma-gradient);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 20px 20px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        [dir="ltr"] .modal-close {
+            left: auto;
+            right: 16px;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            border-right: 4px solid var(--nesma-primary);
+        }
+
+        [dir="ltr"] .detail-item {
+            border-right: none;
+            border-left: 4px solid var(--nesma-primary);
+        }
+
+        .detail-item label {
+            font-size: 12px;
+            color: #64748b;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .detail-item .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Export Buttons */
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .export-excel {
+            background: #10b981;
+            color: white;
+        }
+
+        .export-excel:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .export-pdf {
+            background: #ef4444;
+            color: white;
+        }
+
+        .export-pdf:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* Clickable Cards */
+        .kpi-card.clickable,
+        .report-card.clickable {
+            cursor: pointer;
+        }
+
+        .kpi-card.clickable:hover,
+        .report-card.clickable:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(46, 49, 146, 0.2);
+        }
+
+        .kpi-card.clickable::before,
+        .report-card.clickable::before {
+            content: '👆';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        [dir="ltr"] .kpi-card.clickable::before,
+        [dir="ltr"] .report-card.clickable::before {
+            left: auto;
+            right: 8px;
+        }
+
+        .kpi-card.clickable:hover::before,
+        .report-card.clickable:hover::before {
+            opacity: 1;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.green { background: linear-gradient(90deg, #10b981, #34d399); }
+        .progress-fill.amber { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .progress-fill.red { background: linear-gradient(90deg, #ef4444, #f87171); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="nesma-header text-white sticky top-0 z-50 no-print">
+        <div class="container mx-auto px-4 lg:px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo & Back -->
+                <div class="flex items-center gap-4">
+                    <a href="logistics_portal.html" class="flex items-center gap-2 text-white/70 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        <span class="text-sm hidden sm:inline" data-ar="رجوع" data-en="Back">رجوع</span>
+                    </a>
+                    <div class="h-6 w-px bg-white/30 hidden sm:block"></div>
+                    <svg class="w-32 lg:w-40 h-10" viewBox="0 0 150.02 32.68" xmlns="http://www.w3.org/2000/svg">
+                        <polygon points="112.73 9.37 112.73 .05 123.95 .05 112.73 9.37" fill="#80d1e9"/>
+                        <rect x="126.61" y=".08" width="11.23" height="32.51" fill="#fff"/>
+                        <rect x="77.12" y=".05" width="11.23" height="32.6" fill="#fff"/>
+                        <path d="M110.07,17.69v14.86s0,.02,0,0l-19.07-18.16s0,0,0,0V.1s0-.02,0,0l19.07,17.59s0,0,0,0" fill="#fff"/>
+                        <rect x="112.73" y="11.44" width="11.23" height="21.16" fill="#fff"/>
+                        <rect x="140" y="11.98" width="10.03" height="7.8" fill="#fff"/>
+                    </svg>
+                    <div class="hidden md:block border-r border-white/30 h-8 mx-2"></div>
+                    <div class="hidden md:block">
+                        <h1 class="text-lg font-bold" data-ar="لوحة قياس SLA" data-en="SLA Dashboard">لوحة قياس SLA</h1>
+                        <p class="text-xs text-cyan-200" data-ar="اتفاقية مستوى الخدمة" data-en="Service Level Agreement">اتفاقية مستوى الخدمة</p>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-3 lg:gap-6">
+                    <!-- Export Buttons -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportToExcel()" class="export-btn export-excel">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="hidden sm:inline" data-ar="Excel" data-en="Excel">Excel</span>
+                        </button>
+                        <button onclick="exportToPDF()" class="export-btn export-pdf">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="hidden sm:inline" data-ar="PDF" data-en="PDF">PDF</span>
+                        </button>
+                    </div>
+                    <div class="text-left hidden sm:block">
+                        <p class="text-xs text-cyan-200" data-ar="آخر تحديث" data-en="Last Update">آخر تحديث</p>
+                        <p class="text-sm font-semibold" id="lastUpdate">نوفمبر 2025</p>
+                    </div>
+                    <button onclick="toggleLanguage()" class="lang-toggle" id="langBtn">
+                        <span id="langText">EN</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
+            <!-- On-Time Rate -->
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-red-500 to-red-600 text-white" onclick="showKpiDetails('ontime')" title="اضغط للتفاصيل">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="text-red-100 text-xs lg:text-sm mb-1" data-ar="معدل التسليم في الوقت" data-en="On-Time Delivery Rate">معدل التسليم في الوقت</p>
+                        <p class="text-2xl lg:text-3xl font-bold">87.8%</p>
+                    </div>
+                    <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                        <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="bg-white/20 px-2 py-1 rounded" data-ar="الهدف: ≥95%" data-en="Target: ≥95%">الهدف: ≥95%</span>
+                    <span class="text-red-200">↓ 7.2%</span>
+                </div>
+            </div>
+
+            <!-- Open Orders -->
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white" onclick="showKpiDetails('openorders')" title="اضغط للتفاصيل">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="text-amber-100 text-xs lg:text-sm mb-1" data-ar="الطلبات المفتوحة" data-en="Open Orders">الطلبات المفتوحة</p>
+                        <p class="text-2xl lg:text-3xl font-bold">19</p>
+                    </div>
+                    <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                        <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="text-xs">
+                    <span class="bg-white/20 px-2 py-1 rounded" data-ar="متوسط: 110 يوم" data-en="Avg: 110 days">متوسط: 110 يوم</span>
+                </div>
+            </div>
+
+            <!-- Total Orders -->
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-[#2e3192] to-[#1a1a5e] text-white" onclick="showKpiDetails('totalorders')" title="اضغط للتفاصيل">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="text-blue-100 text-xs lg:text-sm mb-1" data-ar="إجمالي الطلبات" data-en="Total Orders">إجمالي الطلبات</p>
+                        <p class="text-2xl lg:text-3xl font-bold">643</p>
+                    </div>
+                    <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                        <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 100 4h2a2 2 0 100-4h-.5a1 1 0 000-2H14a2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="bg-white/20 px-2 py-1 rounded">NIT: 481</span>
+                    <span class="bg-white/20 px-2 py-1 rounded">NP: 112</span>
+                </div>
+            </div>
+
+            <!-- Total Amount -->
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-purple-600 to-purple-700 text-white" onclick="showKpiDetails('totalamount')" title="اضغط للتفاصيل">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="text-purple-100 text-xs lg:text-sm mb-1" data-ar="إجمالي القيمة" data-en="Total Amount">إجمالي القيمة</p>
+                        <p class="text-2xl lg:text-3xl font-bold">4.9M</p>
+                    </div>
+                    <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                        <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-xs text-purple-200" data-ar="ريال سعودي" data-en="SAR">ريال سعودي</p>
+            </div>
+        </div>
+
+        <!-- Secondary KPIs -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
+            <div class="card p-3 lg:p-4 text-center">
+                <p class="text-gray-500 text-xs mb-1" data-ar="متوسط التسليم" data-en="Avg. Delivery">متوسط التسليم</p>
+                <p class="text-xl lg:text-2xl font-bold text-gray-800">1.81 <span class="text-sm" data-ar="يوم" data-en="day">يوم</span></p>
+            </div>
+            <div class="card p-3 lg:p-4 text-center">
+                <p class="text-gray-500 text-xs mb-1">Median (P50)</p>
+                <p class="text-xl lg:text-2xl font-bold text-gray-800">1.0 <span class="text-sm" data-ar="يوم" data-en="day">يوم</span></p>
+            </div>
+            <div class="card p-3 lg:p-4 text-center">
+                <p class="text-gray-500 text-xs mb-1">P90</p>
+                <p class="text-xl lg:text-2xl font-bold text-gray-800">4.0 <span class="text-sm" data-ar="أيام" data-en="days">أيام</span></p>
+            </div>
+            <div class="card p-3 lg:p-4 text-center">
+                <p class="text-gray-500 text-xs mb-1" data-ar="معدل الإكمال" data-en="Completion Rate">معدل الإكمال</p>
+                <p class="text-xl lg:text-2xl font-bold text-emerald-600">94.9%</p>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="card mb-6 lg:mb-8">
+            <div class="border-b border-gray-200 no-print">
+                <div class="flex overflow-x-auto">
+                    <button class="tab-btn active px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('overview')" data-ar="نظرة عامة" data-en="Overview">
+                        نظرة عامة
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('reports')" data-ar="التقارير" data-en="Reports">
+                        التقارير
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('suppliers')" data-ar="الموردين" data-en="Suppliers">
+                        الموردين
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('projects')" data-ar="المشاريع" data-en="Projects">
+                        المشاريع
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('requirements')" data-ar="المتطلبات" data-en="Requirements">
+                        المتطلبات
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 lg:p-6">
+                <!-- Overview Tab -->
+                <div id="tab-overview" class="tab-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="توزيع حالات الطلبات" data-en="Order Status Distribution">توزيع حالات الطلبات</h3>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="توزيع الشركات" data-en="Company Distribution">توزيع الشركات</h3>
+                            <div class="chart-container">
+                                <canvas id="companyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerts -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="التنبيهات والإجراءات" data-en="Alerts & Actions">التنبيهات والإجراءات</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="alert-card alert-critical p-4">
+                                <h4 class="font-semibold text-gray-800 mb-1" data-ar="معدل التسليم تحت الهدف" data-en="On-Time Rate Below Target">معدل التسليم تحت الهدف</h4>
+                                <p class="text-sm text-gray-600 mb-2" data-ar="المعدل الحالي 87.8% - الهدف 95%" data-en="Current rate 87.8% - Target 95%">المعدل الحالي 87.8% - الهدف 95%</p>
+                                <p class="text-xs text-gray-500" data-ar="تحسين عملية التسليم" data-en="Improve delivery process">تحسين عملية التسليم</p>
+                            </div>
+                            <div class="alert-card alert-warning p-4">
+                                <h4 class="font-semibold text-gray-800 mb-1" data-ar="طلبات مفتوحة قديمة" data-en="Aged Open Orders">طلبات مفتوحة قديمة</h4>
+                                <p class="text-sm text-gray-600 mb-2" data-ar="19 طلب مفتوح بمتوسط 110 يوم" data-en="19 open orders avg 110 days">19 طلب مفتوح بمتوسط 110 يوم</p>
+                                <p class="text-xs text-gray-500" data-ar="مراجعة الطلبات المعلقة" data-en="Review pending orders">مراجعة الطلبات المعلقة</p>
+                            </div>
+                            <div class="alert-card alert-success p-4">
+                                <h4 class="font-semibold text-gray-800 mb-1" data-ar="أداء متوسط التسليم" data-en="Median Delivery Performance">أداء متوسط التسليم</h4>
+                                <p class="text-sm text-gray-600 mb-2" data-ar="متوسط التسليم 1 يوم - ممتاز" data-en="Median delivery 1 day - Excellent">متوسط التسليم 1 يوم - ممتاز</p>
+                                <p class="text-xs text-gray-500" data-ar="الحفاظ على الأداء" data-en="Maintain performance">الحفاظ على الأداء</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="tab-reports" class="tab-content">
+                    <!-- Logistics Services Section -->
+                    <h3 class="text-lg font-bold text-gray-800 mb-6" data-ar="خدمات اللوجستيات" data-en="Logistics Services">خدمات اللوجستيات</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <!-- Equipment Request -->
+                        <div class="report-card clickable card p-5" onclick="showServiceDetails('equipment_request')" title="اضغط للتفاصيل">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="طلبات المعدات" data-en="Equipment Request">طلبات المعدات</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="نشط" data-en="Active">نشط</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg">
+                                <p class="text-3xl font-bold text-emerald-600">98.5%</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="الهدف: ≥95% خلال 1 يوم" data-en="Target: ≥95% within 1 day">الهدف: ≥95% خلال 1 يوم</p>
+                                <div class="mt-2 flex items-center text-xs text-green-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"/></svg>
+                                    <span data-ar="ممتاز" data-en="Excellent">ممتاز</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Equipment Delivery -->
+                        <div class="report-card clickable card p-5" onclick="showServiceDetails('equipment_delivery')" title="اضغط للتفاصيل">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="تسليم المعدات" data-en="Equipment Delivery">تسليم المعدات</h4>
+                                <span class="status-partial text-xs font-medium px-2 py-0.5 rounded" data-ar="تحسين" data-en="Improving">تحسين</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-amber-50 to-yellow-50 p-4 rounded-lg">
+                                <p class="text-3xl font-bold text-amber-600">88%</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="الهدف: ≥95% خلال 2-3 يوم" data-en="Target: ≥95% within 2-3 days">الهدف: ≥95% خلال 2-3 يوم</p>
+                                <div class="mt-2 flex items-center text-xs text-amber-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"/></svg>
+                                    <span data-ar="تحت الهدف 7%" data-en="7% below target">تحت الهدف 7%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scrap Removal -->
+                        <div class="report-card clickable card p-5" onclick="showServiceDetails('scrap_removal')" title="اضغط للتفاصيل">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="إزالة الخردة" data-en="Scrap Removal">إزالة الخردة</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="نشط" data-en="Active">نشط</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-50 to-violet-50 p-4 rounded-lg">
+                                <p class="text-3xl font-bold text-purple-600">97.8%</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="الهدف: ≥95% خلال 3 يوم" data-en="Target: ≥95% within 3 days">الهدف: ≥95% خلال 3 يوم</p>
+                                <div class="mt-2 flex items-center text-xs text-green-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"/></svg>
+                                    <span data-ar="فوق الهدف" data-en="Above Target">فوق الهدف</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Material Handling Section -->
+                    <h3 class="text-lg font-bold text-gray-800 mb-6" data-ar="خدمات مناولة المواد" data-en="Material Handling Services">خدمات مناولة المواد</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <!-- Stock Confirmation -->
+                        <div class="report-card clickable card p-5" onclick="showServiceDetails('stock_confirmation')" title="اضغط للتفاصيل">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="تأكيد المخزون" data-en="Stock Confirmation">تأكيد المخزون</h4>
+                                <span class="status-partial text-xs font-medium px-2 py-0.5 rounded" data-ar="تطوير" data-en="Improving">تطوير</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-cyan-50 to-sky-50 p-4 rounded-lg">
+                                <p class="text-xl font-bold text-cyan-600" data-ar="تم تطبيق الآلية" data-en="Process Applied">تم تطبيق الآلية</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="الهدف: ≥95% خلال 1 يوم" data-en="Target: ≥95% within 1 day">الهدف: ≥95% خلال 1 يوم</p>
+                                <div class="mt-2 flex items-center text-xs text-amber-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"/></svg>
+                                    <span data-ar="جاري التحسين والتطوير" data-en="Under improvement">جاري التحسين والتطوير</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Material Movement -->
+                        <div class="report-card clickable card p-5" onclick="showServiceDetails('material_movement')" title="اضغط للتفاصيل">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="نقل المواد" data-en="Material Movement">نقل المواد</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="نشط" data-en="Active">نشط</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-teal-50 to-emerald-50 p-4 rounded-lg">
+                                <p class="text-3xl font-bold text-teal-600">95.7%</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="الهدف: ≥95% خلال 2 يوم" data-en="Target: ≥95% within 2 days">الهدف: ≥95% خلال 2 يوم</p>
+                                <div class="mt-2 flex items-center text-xs text-green-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"/></svg>
+                                    <span data-ar="فوق الهدف" data-en="Above Target">فوق الهدف</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Storage Compliance -->
+                        <div class="report-card clickable card p-5" onclick="showServiceDetails('storage_compliance')" title="اضغط للتفاصيل">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="امتثال التخزين" data-en="Storage Compliance">امتثال التخزين</h4>
+                                <span class="status-partial text-xs font-medium px-2 py-0.5 rounded" data-ar="تطوير" data-en="Improving">تطوير</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 p-4 rounded-lg">
+                                <p class="text-xl font-bold text-indigo-600" data-ar="جاري التحسين" data-en="Under Improvement">جاري التحسين</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="الهدف: ≥98% (تدقيق)" data-en="Target: ≥98% (audit)">الهدف: ≥98% (تدقيق)</p>
+                                <div class="mt-2 flex items-center text-xs text-amber-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"/></svg>
+                                    <span data-ar="جاري التحسين والتطوير" data-en="Under improvement">جاري التحسين والتطوير</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Incident Reporting -->
+                        <div class="report-card clickable card p-5" onclick="showServiceDetails('incident_reporting')" title="اضغط للتفاصيل">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="تقارير الحوادث" data-en="Incident Reporting">تقارير الحوادث</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="نشط" data-en="Active">نشط</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-rose-50 to-pink-50 p-4 rounded-lg">
+                                <p class="text-3xl font-bold text-rose-600">100%</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="الهدف: 100% فوري" data-en="Target: 100% Immediate">الهدف: 100% فوري</p>
+                                <div class="mt-2 flex items-center text-xs text-green-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                                    <span data-ar="ممتاز" data-en="Excellent">ممتاز</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Storage Reports Section (Annex A) -->
+                    <h3 class="text-lg font-bold text-gray-800 mb-6" data-ar="تقارير المستودعات (Annex A)" data-en="Storage Reports (Annex A)">تقارير المستودعات (Annex A)</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Free Stock List -->
+                        <div class="report-card card p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="قائمة المخزون الحر" data-en="Free Stock List">قائمة المخزون الحر</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="متوفر" data-en="Available">متوفر</span>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <p class="text-xl font-bold text-green-600" data-ar="✓ أسبوعياً" data-en="✓ Weekly">✓ أسبوعياً</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="يتم إصداره كل أسبوع" data-en="Issued weekly">يتم إصداره كل أسبوع</p>
+                            </div>
+                        </div>
+
+                        <!-- Material from Free Stock -->
+                        <div class="report-card card p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="المواد من المخزون الحر" data-en="Material from Free Stock">المواد من المخزون الحر</h4>
+                                <span class="status-partial text-xs font-medium px-2 py-0.5 rounded" data-ar="تطوير" data-en="Improving">تطوير</span>
+                            </div>
+                            <div class="bg-gradient-to-br from-amber-50 to-yellow-50 p-3 rounded-lg">
+                                <p class="text-xl font-bold text-amber-600" data-ar="جاري تطبيق الآلية" data-en="Process Being Applied">جاري تطبيق الآلية</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="تتبع النقل بين المشاريع" data-en="Inter-project transfers">تتبع النقل بين المشاريع</p>
+                                <div class="mt-2 flex items-center text-xs text-amber-600">
+                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+                                    <span data-ar="جاري التحسين والتطوير" data-en="Under improvement">جاري التحسين والتطوير</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCRAP List -->
+                        <div class="report-card card p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="قائمة الخردة التراكمية" data-en="Cumulative SCRAP">قائمة الخردة التراكمية</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="متوفر" data-en="Available">متوفر</span>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <p class="text-xl font-bold text-green-600">483,940 SAR</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="132 عملية - AWTAD" data-en="132 ops - AWTAD">132 عملية - AWTAD</p>
+                            </div>
+                        </div>
+
+                        <!-- Quarterly Inventory -->
+                        <div class="report-card card p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="الجرد الربعي" data-en="Quarterly Inventory">الجرد الربعي</h4>
+                                <span class="status-partial text-xs font-medium px-2 py-0.5 rounded" data-ar="جزئي" data-en="Partial">جزئي</span>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-xl font-bold text-yellow-600">70%</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="متوفر لـ 70% من المشاريع" data-en="70% of projects">متوفر لـ 70% من المشاريع</p>
+                            </div>
+                        </div>
+
+                        <!-- Retained Material Summary -->
+                        <div class="report-card card p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="المواد المحتجزة" data-en="Retained Material">المواد المحتجزة</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="متوفر" data-en="Available">متوفر</span>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <p class="text-xl font-bold text-green-600" data-ar="✓ شهرياً" data-en="✓ Monthly">✓ شهرياً</p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="ملخص المواد المحتجزة كمخزون حر" data-en="Retained as free stock">ملخص المواد المحتجزة كمخزون حر</p>
+                            </div>
+                        </div>
+
+                        <!-- Material Days in Custody -->
+                        <div class="report-card card p-5 coming-soon">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-white" data-ar="أيام المواد في الحجز" data-en="Material Days in Custody">أيام المواد في الحجز</h4>
+                                <span class="bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded animate-pulse" data-ar="قريباً" data-en="Coming">قريباً</span>
+                            </div>
+                            <div class="bg-gray-700/30 p-3 rounded-lg">
+                                <p class="text-lg font-bold text-white">Coming Soon</p>
+                                <p class="text-xs text-gray-300 mt-1" data-ar="ديسمبر 2025" data-en="December 2025">ديسمبر 2025</p>
+                            </div>
+                        </div>
+
+                        <!-- Theft/Damage Cases -->
+                        <div class="report-card card p-5 coming-soon">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-white" data-ar="حالات السرقة/الضرر" data-en="Theft/Damage Cases">حالات السرقة/الضرر</h4>
+                                <span class="bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded animate-pulse" data-ar="قريباً" data-en="Coming">قريباً</span>
+                            </div>
+                            <div class="bg-gray-700/30 p-3 rounded-lg">
+                                <p class="text-lg font-bold text-white">Coming Soon</p>
+                                <p class="text-xs text-gray-300 mt-1" data-ar="بالتنسيق مع الأمن" data-en="With Security">بالتنسيق مع الأمن</p>
+                            </div>
+                        </div>
+
+                        <!-- SC Reply Average -->
+                        <div class="report-card card p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-700" data-ar="متوسط رد SC" data-en="Avg SC Reply">متوسط رد SC</h4>
+                                <span class="status-available text-xs font-medium px-2 py-0.5 rounded" data-ar="متوفر" data-en="Available">متوفر</span>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg">
+                                <p class="text-xl font-bold text-blue-600">0.8 <span class="text-sm" data-ar="يوم" data-en="day">يوم</span></p>
+                                <p class="text-xs text-gray-600 mt-1" data-ar="متوسط وقت الرد والتسليم" data-en="Avg reply & delivery time">متوسط وقت الرد والتسليم</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suppliers Tab -->
+                <div id="tab-suppliers" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="أداء الموردين" data-en="Supplier Performance">أداء الموردين</h3>
+                            <div class="chart-container">
+                                <canvas id="suppliersChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="تفاصيل الموردين" data-en="Supplier Details">تفاصيل الموردين</h3>
+                            <div class="scroll-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-ar="المورد" data-en="Supplier">المورد</th>
+                                            <th data-ar="عدد الطلبات" data-en="Orders">عدد الطلبات</th>
+                                            <th data-ar="النسبة" data-en="Percentage">النسبة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="font-medium">AWTAD</td><td>131</td><td>20.4%</td></tr>
+                                        <tr><td class="font-medium">Zad Alomran</td><td>123</td><td>19.1%</td></tr>
+                                        <tr><td class="font-medium">ALMAMORAH</td><td>121</td><td>18.8%</td></tr>
+                                        <tr><td class="font-medium">FIFO</td><td>83</td><td>12.9%</td></tr>
+                                        <tr><td class="font-medium">CPCC</td><td>66</td><td>10.3%</td></tr>
+                                        <tr><td class="font-medium">ALBURAQ</td><td>55</td><td>8.6%</td></tr>
+                                        <tr><td class="font-medium">albede</td><td>40</td><td>6.2%</td></tr>
+                                        <tr><td class="font-medium">AlhayAlsayeed</td><td>22</td><td>3.4%</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Tab -->
+                <div id="tab-projects" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="أكبر المشاريع" data-en="Top Projects">أكبر المشاريع</h3>
+                            <div class="chart-container">
+                                <canvas id="projectsChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="تفاصيل المشاريع" data-en="Project Details">تفاصيل المشاريع</h3>
+                            <div class="scroll-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-ar="المشروع" data-en="Project">المشروع</th>
+                                            <th data-ar="القيمة (SAR)" data-en="Amount (SAR)">القيمة (SAR)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="font-medium">WEST-JAZERA ROYAL</td><td>777,340</td></tr>
+                                        <tr><td class="font-medium">EST-JAFURAH</td><td>424,900</td></tr>
+                                        <tr><td class="font-medium">MED-RUH-Diriyahy</td><td>304,610</td></tr>
+                                        <tr><td class="font-medium">MED-RUH-Murjan</td><td>235,820</td></tr>
+                                        <tr><td class="font-medium">WEST-Makkah</td><td>223,625</td></tr>
+                                        <tr><td class="font-medium">NORTH-NEOM</td><td>216,700</td></tr>
+                                        <tr><td class="font-medium">NORTH-MED-TAIBA</td><td>207,598</td></tr>
+                                        <tr><td class="font-medium">WEST-JED-Buhaiyrat</td><td>190,430</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requirements Tab -->
+                <div id="tab-requirements" class="tab-content">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6" data-ar="معايير الخدمة (SLA)" data-en="Service Standards (SLA)">معايير الخدمة (SLA)</h3>
+
+                    <!-- SLA Service Standards Table -->
+                    <div class="card mb-8 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="data-table text-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="text-right" data-ar="الخدمة" data-en="Service">الخدمة</th>
+                                        <th class="text-right" data-ar="المعيار (SLA)" data-en="Standard (SLA)">المعيار (SLA)</th>
+                                        <th class="text-center" data-ar="الهدف" data-en="Target">الهدف</th>
+                                        <th class="text-center" data-ar="الحالي" data-en="Current">الحالي</th>
+                                        <th class="text-center" data-ar="الحالة" data-en="Status">الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-medium" data-ar="الموافقة على طلب المعدات" data-en="Equipment Request Approval">الموافقة على طلب المعدات</td>
+                                        <td data-ar="خلال 1 يوم عمل" data-en="Within 1 business day">خلال 1 يوم عمل</td>
+                                        <td class="text-center">≥95%</td>
+                                        <td class="text-center font-bold text-green-600">98.5%</td>
+                                        <td class="text-center"><span class="status-done px-2 py-1 rounded text-xs">✓</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium" data-ar="تسليم المعدات" data-en="Equipment Delivery">تسليم المعدات</td>
+                                        <td data-ar="2-3 أيام عمل" data-en="2-3 business days">2-3 أيام عمل</td>
+                                        <td class="text-center">≥95%</td>
+                                        <td class="text-center font-bold text-amber-600">88%</td>
+                                        <td class="text-center"><span class="status-progress px-2 py-1 rounded text-xs">!</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium" data-ar="امتثال التخزين" data-en="Storage Compliance">امتثال التخزين</td>
+                                        <td data-ar="تطبيق توصيات التخزين" data-en="Apply storage recommendations">تطبيق توصيات التخزين</td>
+                                        <td class="text-center">≥98%</td>
+                                        <td class="text-center font-bold text-green-600">98.2%</td>
+                                        <td class="text-center"><span class="status-done px-2 py-1 rounded text-xs">✓</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium" data-ar="رد تأكيد المخزون" data-en="Stock Confirmation Reply">رد تأكيد المخزون</td>
+                                        <td data-ar="خلال 1 يوم عمل" data-en="Within 1 business day">خلال 1 يوم عمل</td>
+                                        <td class="text-center">≥95%</td>
+                                        <td class="text-center font-bold text-amber-600" data-ar="تطوير" data-en="Improving">تطوير</td>
+                                        <td class="text-center"><span class="status-partial px-2 py-1 rounded text-xs" title="تم تطبيق الآلية - جاري التحسين">⚙</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium" data-ar="تسليم نقل المواد" data-en="Material Transfer Delivery">تسليم نقل المواد</td>
+                                        <td data-ar="خلال 2 يوم عمل" data-en="Within 2 business days">خلال 2 يوم عمل</td>
+                                        <td class="text-center">≥95%</td>
+                                        <td class="text-center font-bold text-green-600">95.7%</td>
+                                        <td class="text-center"><span class="status-done px-2 py-1 rounded text-xs">✓</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium" data-ar="تقارير الحوادث" data-en="Incident Reporting">تقارير الحوادث</td>
+                                        <td data-ar="فوري" data-en="Immediately">فوري</td>
+                                        <td class="text-center">100%</td>
+                                        <td class="text-center font-bold text-green-600">100%</td>
+                                        <td class="text-center"><span class="status-done px-2 py-1 rounded text-xs">✓</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium" data-ar="إزالة الخردة" data-en="Scrap Removal">إزالة الخردة</td>
+                                        <td data-ar="خلال 3 أيام عمل" data-en="Within 3 business days">خلال 3 أيام عمل</td>
+                                        <td class="text-center">≥95%</td>
+                                        <td class="text-center font-bold text-green-600">97.8%</td>
+                                        <td class="text-center"><span class="status-done px-2 py-1 rounded text-xs">✓</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- KPIs Coming Soon -->
+                    <h3 class="text-lg font-bold text-gray-800 mb-6" data-ar="مؤشرات قادمة" data-en="Coming Soon KPIs">مؤشرات قادمة</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <!-- First-time Ready Rate -->
+                        <div class="report-card card p-5 coming-soon">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-white" data-ar="معدل الجاهزية الأولى" data-en="First-time Ready Rate">معدل الجاهزية الأولى</h4>
+                                <span class="bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded animate-pulse" data-ar="قريباً" data-en="Coming">قريباً</span>
+                            </div>
+                            <div class="text-center py-3">
+                                <p class="text-lg font-bold text-white" data-ar="الهدف: قياس" data-en="Target: Measure">الهدف: قياس</p>
+                                <p class="text-xs text-gray-300 mt-1">December 2025</p>
+                            </div>
+                        </div>
+
+                        <!-- Internal OTIF -->
+                        <div class="report-card card p-5 coming-soon">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-white" data-ar="OTIF الداخلي" data-en="Internal OTIF">OTIF الداخلي</h4>
+                                <span class="bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded animate-pulse" data-ar="قريباً" data-en="Coming">قريباً</span>
+                            </div>
+                            <div class="text-center py-3">
+                                <p class="text-lg font-bold text-white" data-ar="الهدف: ≥95%" data-en="Target: ≥95%">الهدف: ≥95%</p>
+                                <p class="text-xs text-gray-300 mt-1">January 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Early Utilization -->
+                        <div class="report-card card p-5 coming-soon">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-white" data-ar="الاستخدام المبكر" data-en="Early Utilization">الاستخدام المبكر</h4>
+                                <span class="bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded animate-pulse" data-ar="قريباً" data-en="Coming">قريباً</span>
+                            </div>
+                            <div class="text-center py-3">
+                                <p class="text-lg font-bold text-white" data-ar="7 أيام" data-en="7-day">7 أيام</p>
+                                <p class="text-xs text-gray-300 mt-1">January 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Damage-on-handling -->
+                        <div class="report-card card p-5 coming-soon">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-white" data-ar="معدل التلف" data-en="Damage Rate">معدل التلف</h4>
+                                <span class="bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded animate-pulse" data-ar="قريباً" data-en="Coming">قريباً</span>
+                            </div>
+                            <div class="text-center py-3">
+                                <p class="text-lg font-bold text-white" data-ar="الهدف: قياس" data-en="Target: Measure">الهدف: قياس</p>
+                                <p class="text-xs text-gray-300 mt-1">December 2025</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Critical Actions -->
+                    <div class="bg-red-50 border-r-4 border-red-500 rounded-xl p-6">
+                        <h3 class="text-xl font-bold text-red-800 mb-4" data-ar="إجراءات مطلوبة" data-en="Required Actions">إجراءات مطلوبة</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold text-red-700 mb-2" data-ar="فورية (خلال أسبوع):" data-en="Immediate (within a week):">فورية (خلال أسبوع):</h4>
+                                <ul class="space-y-2 text-sm text-gray-700">
+                                    <li class="flex items-start">
+                                        <span class="text-red-500 ml-2">•</span>
+                                        <span data-ar="معالجة 19 طلب مفتوح (متوسط عمر 110 يوم)" data-en="Process 19 open orders (avg age 110 days)">معالجة 19 طلب مفتوح (متوسط عمر 110 يوم)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-red-500 ml-2">•</span>
+                                        <span data-ar="تحسين تسليم المعدات من 88% إلى 95%" data-en="Improve equipment delivery from 88% to 95%">تحسين تسليم المعدات من 88% إلى 95%</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-red-500 ml-2">•</span>
+                                        <span data-ar="معالجة مشاكل تطبيق نظام تأكيد المخزون" data-en="Resolve Stock Confirmation system issues">معالجة مشاكل تطبيق نظام تأكيد المخزون</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-amber-700 mb-2" data-ar="قريبة (خلال شهر):" data-en="Near-term (within a month):">قريبة (خلال شهر):</h4>
+                                <ul class="space-y-2 text-sm text-gray-700">
+                                    <li class="flex items-start">
+                                        <span class="text-amber-500 ml-2">•</span>
+                                        <span data-ar="إنشاء تقرير أيام المواد في الحجز" data-en="Create Material Days in Custody report">إنشاء تقرير أيام المواد في الحجز</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-amber-500 ml-2">•</span>
+                                        <span data-ar="تفعيل تتبع حالات السرقة/التلف" data-en="Enable theft/damage case tracking">تفعيل تتبع حالات السرقة/التلف</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="text-amber-500 ml-2">•</span>
+                                        <span data-ar="إكمال الجرد الربعي لـ 100% من المشاريع" data-en="Complete quarterly inventory for 100% of projects">إكمال الجرد الربعي لـ 100% من المشاريع</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Trends -->
+        <div class="card p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-6" data-ar="الاتجاهات الشهرية" data-en="Monthly Trends">الاتجاهات الشهرية</h2>
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="trendsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center py-6 text-gray-500 text-sm">
+            <p class="mb-2" data-ar="نظام إدارة أداء سلسلة التوريد - شركة نسما للبنية التحتية والتكنولوجيا" data-en="Supply Chain Performance System - NESMA Infrastructure & Technology">
+                نظام إدارة أداء سلسلة التوريد - شركة نسما للبنية التحتية والتكنولوجيا
+            </p>
+            <p class="text-xs">Version 3.0 | November 2025</p>
+        </footer>
+    </main>
+
+    <!-- Modal -->
+    <div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header relative">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <h2 id="modalTitle" class="text-xl font-bold">تفاصيل</h2>
+                <p id="modalSubtitle" class="text-sm text-cyan-200 mt-1"></p>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be injected here -->
+            </div>
+            <div class="p-4 border-t bg-gray-50 flex gap-3 justify-end rounded-b-xl">
+                <button onclick="exportModalToExcel()" class="export-btn export-excel">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    <span data-ar="تصدير Excel" data-en="Export Excel">تصدير Excel</span>
+                </button>
+                <button onclick="exportModalToPDF()" class="export-btn export-pdf">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span data-ar="تصدير PDF" data-en="Export PDF">تصدير PDF</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'ar';
+        let currentModalData = null;
+
+        // Chart.js Config
+        Chart.defaults.font.family = 'Cairo';
+        Chart.defaults.font.size = 12;
+
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', () => {
+            createCharts();
+        });
+
+        function createCharts() {
+            // Status Chart
+            const statusCtx = document.getElementById('statusChart')?.getContext('2d');
+            if (statusCtx) {
+                new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: currentLang === 'ar' ? ['مكتمل', 'قيد التنفيذ', 'غير مكتمل'] : ['Done', 'In Progress', 'Not Done'],
+                        datasets: [{
+                            data: [610, 27, 4],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            // Company Chart
+            const companyCtx = document.getElementById('companyChart')?.getContext('2d');
+            if (companyCtx) {
+                new Chart(companyCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['NIT', 'NP', 'LOGISTIC', 'OVERHEAD'],
+                        datasets: [{
+                            data: [481, 112, 43, 7],
+                            backgroundColor: ['#2e3192', '#80d1e9', '#6366f1', '#8b5cf6'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            // Suppliers Chart
+            const suppliersCtx = document.getElementById('suppliersChart')?.getContext('2d');
+            if (suppliersCtx) {
+                new Chart(suppliersCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['AWTAD', 'Zad Alomran', 'ALMAMORAH', 'FIFO', 'CPCC', 'ALBURAQ', 'albede', 'AlhayAlsayeed'],
+                        datasets: [{
+                            label: currentLang === 'ar' ? 'عدد الطلبات' : 'Orders',
+                            data: [131, 123, 121, 83, 66, 55, 40, 22],
+                            backgroundColor: '#2e3192',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: { legend: { display: false } },
+                        scales: { x: { beginAtZero: true } }
+                    }
+                });
+            }
+
+            // Projects Chart
+            const projectsCtx = document.getElementById('projectsChart')?.getContext('2d');
+            if (projectsCtx) {
+                new Chart(projectsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['WEST-JAZERA', 'EST-JAFURAH', 'MED-RUH-Dir', 'MED-RUH-Mur', 'WEST-Makkah', 'NORTH-NEOM', 'NORTH-TAIBA', 'WEST-JED'],
+                        datasets: [{
+                            label: currentLang === 'ar' ? 'القيمة (SAR)' : 'Amount (SAR)',
+                            data: [777340, 424900, 304610, 235820, 223625, 216700, 207598, 190430],
+                            backgroundColor: '#80d1e9',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: v => (v / 1000).toFixed(0) + 'K' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Trends Chart
+            const trendsCtx = document.getElementById('trendsChart')?.getContext('2d');
+            if (trendsCtx) {
+                const months = currentLang === 'ar'
+                    ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر']
+                    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
+                new Chart(trendsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: currentLang === 'ar' ? 'معدل التسليم %' : 'On-Time Rate %',
+                            data: [92, 89, 91, 88, 86, 85, 87, 89, 88, 87, 88],
+                            borderColor: '#2e3192',
+                            backgroundColor: 'rgba(46, 49, 146, 0.1)',
+                            tension: 0.4,
+                            borderWidth: 3,
+                            fill: true
+                        }, {
+                            label: currentLang === 'ar' ? 'الهدف 95%' : 'Target 95%',
+                            data: Array(11).fill(95),
+                            borderColor: '#10b981',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: { y: { min: 80, max: 100, ticks: { callback: v => v + '%' } } }
+                    }
+                });
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Language Toggle
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('langText').textContent = currentLang === 'ar' ? 'EN' : 'عربي';
+
+            Chart.defaults.font.family = currentLang === 'ar' ? 'Cairo' : 'Inter';
+
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        // KPI Data Store
+        const kpiData = {
+            ontime: {
+                title: { ar: 'معدل التسليم في الوقت المحدد', en: 'On-Time Delivery Rate' },
+                subtitle: { ar: 'تفاصيل الأداء الشهري', en: 'Monthly Performance Details' },
+                value: '87.8%',
+                target: '95%',
+                status: 'below',
+                details: [
+                    { label: { ar: 'القيمة الحالية', en: 'Current Value' }, value: '87.8%' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '≥95%' },
+                    { label: { ar: 'الفجوة', en: 'Gap' }, value: '-7.2%' },
+                    { label: { ar: 'الاتجاه', en: 'Trend' }, value: '↓' }
+                ],
+                breakdown: [
+                    { month: 'يناير', value: 92 },
+                    { month: 'فبراير', value: 89 },
+                    { month: 'مارس', value: 91 },
+                    { month: 'أبريل', value: 88 },
+                    { month: 'مايو', value: 86 },
+                    { month: 'يونيو', value: 85 },
+                    { month: 'يوليو', value: 87 },
+                    { month: 'أغسطس', value: 89 },
+                    { month: 'سبتمبر', value: 88 },
+                    { month: 'أكتوبر', value: 87 },
+                    { month: 'نوفمبر', value: 88 }
+                ],
+                recommendations: [
+                    { ar: 'تحسين التنسيق مع الموردين', en: 'Improve supplier coordination' },
+                    { ar: 'تفعيل نظام التنبيهات المبكرة', en: 'Enable early warning system' },
+                    { ar: 'مراجعة أوقات التسليم المتفق عليها', en: 'Review agreed delivery times' }
+                ]
+            },
+            openorders: {
+                title: { ar: 'الطلبات المفتوحة', en: 'Open Orders' },
+                subtitle: { ar: 'تفاصيل الطلبات المعلقة', en: 'Pending Orders Details' },
+                value: '19',
+                details: [
+                    { label: { ar: 'إجمالي الطلبات المفتوحة', en: 'Total Open Orders' }, value: '19' },
+                    { label: { ar: 'متوسط العمر', en: 'Average Age' }, value: '110 يوم' },
+                    { label: { ar: 'أقدم طلب', en: 'Oldest Order' }, value: '245 يوم' },
+                    { label: { ar: 'القيمة الإجمالية', en: 'Total Value' }, value: '1.2M SAR' }
+                ],
+                breakdown: [
+                    { category: 'أقل من 30 يوم', count: 3 },
+                    { category: '30-60 يوم', count: 5 },
+                    { category: '60-90 يوم', count: 4 },
+                    { category: 'أكثر من 90 يوم', count: 7 }
+                ]
+            },
+            totalorders: {
+                title: { ar: 'إجمالي الطلبات', en: 'Total Orders' },
+                subtitle: { ar: 'توزيع الطلبات حسب الشركة', en: 'Orders Distribution by Company' },
+                value: '643',
+                details: [
+                    { label: { ar: 'إجمالي الطلبات', en: 'Total Orders' }, value: '643' },
+                    { label: { ar: 'مكتمل', en: 'Completed' }, value: '610 (94.9%)' },
+                    { label: { ar: 'قيد التنفيذ', en: 'In Progress' }, value: '27 (4.2%)' },
+                    { label: { ar: 'غير مكتمل', en: 'Not Done' }, value: '4 (0.6%)' }
+                ],
+                breakdown: [
+                    { company: 'NIT', orders: 481, percentage: '74.8%' },
+                    { company: 'NP', orders: 112, percentage: '17.4%' },
+                    { company: 'LOGISTIC', orders: 43, percentage: '6.7%' },
+                    { company: 'OVERHEAD', orders: 7, percentage: '1.1%' }
+                ]
+            },
+            totalamount: {
+                title: { ar: 'إجمالي القيمة', en: 'Total Amount' },
+                subtitle: { ar: 'توزيع القيمة حسب المشاريع', en: 'Value Distribution by Projects' },
+                value: '4.9M SAR',
+                details: [
+                    { label: { ar: 'إجمالي القيمة', en: 'Total Value' }, value: '4,914,523 SAR' },
+                    { label: { ar: 'متوسط قيمة الطلب', en: 'Avg Order Value' }, value: '7,643 SAR' },
+                    { label: { ar: 'أعلى طلب', en: 'Highest Order' }, value: '125,000 SAR' },
+                    { label: { ar: 'أقل طلب', en: 'Lowest Order' }, value: '250 SAR' }
+                ],
+                breakdown: [
+                    { project: 'WEST-JAZERA ROYAL', amount: 777340 },
+                    { project: 'EST-JAFURAH', amount: 424900 },
+                    { project: 'MED-RUH-Diriyahy', amount: 304610 },
+                    { project: 'MED-RUH-Murjan', amount: 235820 },
+                    { project: 'WEST-Makkah', amount: 223625 },
+                    { project: 'NORTH-NEOM', amount: 216700 }
+                ]
+            }
+        };
+
+        // Service Data Store
+        const serviceData = {
+            equipment_request: {
+                title: { ar: 'طلبات المعدات', en: 'Equipment Request' },
+                subtitle: { ar: 'تفاصيل خدمة طلب المعدات', en: 'Equipment Request Service Details' },
+                value: '98.5%',
+                target: '95%',
+                status: 'above',
+                details: [
+                    { label: { ar: 'نسبة الإنجاز', en: 'Completion Rate' }, value: '98.5%' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '≥95%' },
+                    { label: { ar: 'المعيار الزمني', en: 'Time Standard' }, value: '1 يوم عمل' },
+                    { label: { ar: 'الحالة', en: 'Status' }, value: 'ممتاز ✓' }
+                ],
+                description: {
+                    ar: 'يتم الموافقة على طلبات المعدات خلال يوم عمل واحد بنسبة نجاح 98.5%',
+                    en: 'Equipment requests are approved within 1 business day with 98.5% success rate'
+                }
+            },
+            equipment_delivery: {
+                title: { ar: 'تسليم المعدات', en: 'Equipment Delivery' },
+                subtitle: { ar: 'تفاصيل خدمة تسليم المعدات', en: 'Equipment Delivery Service Details' },
+                value: '88%',
+                target: '95%',
+                status: 'below',
+                details: [
+                    { label: { ar: 'نسبة الإنجاز', en: 'Completion Rate' }, value: '88%' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '≥95%' },
+                    { label: { ar: 'المعيار الزمني', en: 'Time Standard' }, value: '2-3 أيام عمل' },
+                    { label: { ar: 'الفجوة', en: 'Gap' }, value: '-7%' }
+                ],
+                recommendations: [
+                    { ar: 'تحسين التنسيق مع شركات النقل', en: 'Improve coordination with transport companies' },
+                    { ar: 'زيادة عدد الشاحنات المتاحة', en: 'Increase available trucks' }
+                ]
+            },
+            scrap_removal: {
+                title: { ar: 'إزالة الخردة', en: 'Scrap Removal' },
+                subtitle: { ar: 'تفاصيل خدمة إزالة الخردة', en: 'Scrap Removal Service Details' },
+                value: '97.8%',
+                target: '95%',
+                status: 'above',
+                details: [
+                    { label: { ar: 'نسبة الإنجاز', en: 'Completion Rate' }, value: '97.8%' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '≥95%' },
+                    { label: { ar: 'المعيار الزمني', en: 'Time Standard' }, value: '3 أيام عمل' },
+                    { label: { ar: 'الحالة', en: 'Status' }, value: 'ممتاز ✓' }
+                ],
+                stats: [
+                    { label: { ar: 'إجمالي عمليات الخردة', en: 'Total Scrap Operations' }, value: '132' },
+                    { label: { ar: 'القيمة الإجمالية', en: 'Total Value' }, value: '483,940 SAR' },
+                    { label: { ar: 'المورد الرئيسي', en: 'Main Vendor' }, value: 'AWTAD' }
+                ]
+            },
+            stock_confirmation: {
+                title: { ar: 'تأكيد المخزون', en: 'Stock Confirmation' },
+                subtitle: { ar: 'تفاصيل خدمة تأكيد المخزون', en: 'Stock Confirmation Service Details' },
+                value: 'تطوير',
+                target: '95%',
+                status: 'developing',
+                details: [
+                    { label: { ar: 'الحالة', en: 'Status' }, value: 'تم تطبيق الآلية' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '≥95% خلال 1 يوم' },
+                    { label: { ar: 'المرحلة', en: 'Phase' }, value: 'التحسين والتطوير' }
+                ],
+                description: {
+                    ar: 'جاري تطبيق آلية تأكيد المخزون وتحسين العملية للوصول للهدف المطلوب',
+                    en: 'Stock confirmation process is being implemented and improved to reach target'
+                }
+            },
+            material_movement: {
+                title: { ar: 'نقل المواد', en: 'Material Movement' },
+                subtitle: { ar: 'تفاصيل خدمة نقل المواد', en: 'Material Movement Service Details' },
+                value: '95.7%',
+                target: '95%',
+                status: 'above',
+                details: [
+                    { label: { ar: 'نسبة الإنجاز', en: 'Completion Rate' }, value: '95.7%' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '≥95%' },
+                    { label: { ar: 'المعيار الزمني', en: 'Time Standard' }, value: '2 يوم عمل' },
+                    { label: { ar: 'الحالة', en: 'Status' }, value: 'يتجاوز الهدف ✓' }
+                ]
+            },
+            storage_compliance: {
+                title: { ar: 'امتثال التخزين', en: 'Storage Compliance' },
+                subtitle: { ar: 'تفاصيل امتثال التخزين', en: 'Storage Compliance Details' },
+                value: 'تحسين',
+                target: '98%',
+                status: 'developing',
+                details: [
+                    { label: { ar: 'الحالة', en: 'Status' }, value: 'جاري التحسين' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '≥98%' },
+                    { label: { ar: 'نوع القياس', en: 'Measurement' }, value: 'تدقيق دوري' }
+                ],
+                description: {
+                    ar: 'جاري العمل على تحسين امتثال التخزين وفقاً لتوصيات الموردين والمعايير',
+                    en: 'Working on improving storage compliance per vendor recommendations and standards'
+                }
+            },
+            incident_reporting: {
+                title: { ar: 'تقارير الحوادث', en: 'Incident Reporting' },
+                subtitle: { ar: 'تفاصيل الإبلاغ عن الحوادث', en: 'Incident Reporting Details' },
+                value: '100%',
+                target: '100%',
+                status: 'above',
+                details: [
+                    { label: { ar: 'نسبة الإبلاغ', en: 'Reporting Rate' }, value: '100%' },
+                    { label: { ar: 'الهدف', en: 'Target' }, value: '100%' },
+                    { label: { ar: 'المعيار الزمني', en: 'Time Standard' }, value: 'فوري' },
+                    { label: { ar: 'الحالة', en: 'Status' }, value: 'ممتاز ✓' }
+                ]
+            }
+        };
+
+        // Show KPI Details Modal
+        function showKpiDetails(kpiId) {
+            const kpi = kpiData[kpiId];
+            if (!kpi) return;
+
+            currentModalData = { type: 'kpi', id: kpiId, data: kpi };
+
+            document.getElementById('modalTitle').textContent = kpi.title[currentLang];
+            document.getElementById('modalSubtitle').textContent = kpi.subtitle[currentLang];
+
+            let bodyHtml = '<div class="detail-grid">';
+            kpi.details.forEach(detail => {
+                bodyHtml += `
+                    <div class="detail-item">
+                        <label>${detail.label[currentLang]}</label>
+                        <div class="value">${detail.value}</div>
+                    </div>
+                `;
+            });
+            bodyHtml += '</div>';
+
+            // Progress bar
+            const percentage = parseFloat(kpi.value) || 0;
+            const progressClass = kpi.status === 'above' ? 'green' : (kpi.status === 'below' ? 'red' : 'amber');
+            bodyHtml += `
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>${currentLang === 'ar' ? 'التقدم' : 'Progress'}</span>
+                        <span>${kpi.value}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${progressClass}" style="width: ${Math.min(percentage, 100)}%"></div>
+                    </div>
+                </div>
+            `;
+
+            // Breakdown table if exists
+            if (kpi.breakdown && kpi.breakdown.length > 0) {
+                bodyHtml += `<h4 class="font-bold text-gray-800 mb-3">${currentLang === 'ar' ? 'التفصيل' : 'Breakdown'}</h4>`;
+                bodyHtml += '<div class="overflow-x-auto"><table class="data-table text-sm">';
+                bodyHtml += '<thead><tr>';
+                Object.keys(kpi.breakdown[0]).forEach(key => {
+                    bodyHtml += `<th>${key}</th>`;
+                });
+                bodyHtml += '</tr></thead><tbody>';
+                kpi.breakdown.forEach(row => {
+                    bodyHtml += '<tr>';
+                    Object.values(row).forEach(val => {
+                        bodyHtml += `<td>${typeof val === 'number' ? val.toLocaleString() : val}</td>`;
+                    });
+                    bodyHtml += '</tr>';
+                });
+                bodyHtml += '</tbody></table></div>';
+            }
+
+            // Recommendations if exists
+            if (kpi.recommendations && kpi.recommendations.length > 0) {
+                bodyHtml += `<h4 class="font-bold text-gray-800 mb-3 mt-6">${currentLang === 'ar' ? 'التوصيات' : 'Recommendations'}</h4>`;
+                bodyHtml += '<ul class="space-y-2">';
+                kpi.recommendations.forEach(rec => {
+                    bodyHtml += `<li class="flex items-start text-sm"><span class="text-[#2e3192] ml-2 mr-2">•</span>${rec[currentLang]}</li>`;
+                });
+                bodyHtml += '</ul>';
+            }
+
+            document.getElementById('modalBody').innerHTML = bodyHtml;
+            document.getElementById('detailModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show Service Details Modal
+        function showServiceDetails(serviceId) {
+            const service = serviceData[serviceId];
+            if (!service) return;
+
+            currentModalData = { type: 'service', id: serviceId, data: service };
+
+            document.getElementById('modalTitle').textContent = service.title[currentLang];
+            document.getElementById('modalSubtitle').textContent = service.subtitle[currentLang];
+
+            let bodyHtml = '<div class="detail-grid">';
+            service.details.forEach(detail => {
+                bodyHtml += `
+                    <div class="detail-item">
+                        <label>${detail.label[currentLang]}</label>
+                        <div class="value">${detail.value}</div>
+                    </div>
+                `;
+            });
+            bodyHtml += '</div>';
+
+            // Description if exists
+            if (service.description) {
+                bodyHtml += `<div class="bg-blue-50 p-4 rounded-lg mb-4"><p class="text-sm text-blue-800">${service.description[currentLang]}</p></div>`;
+            }
+
+            // Stats if exists
+            if (service.stats && service.stats.length > 0) {
+                bodyHtml += `<h4 class="font-bold text-gray-800 mb-3">${currentLang === 'ar' ? 'الإحصائيات' : 'Statistics'}</h4>`;
+                bodyHtml += '<div class="grid grid-cols-3 gap-3 mb-4">';
+                service.stats.forEach(stat => {
+                    bodyHtml += `
+                        <div class="bg-gray-50 p-3 rounded-lg text-center">
+                            <p class="text-xs text-gray-500">${stat.label[currentLang]}</p>
+                            <p class="font-bold text-gray-800">${stat.value}</p>
+                        </div>
+                    `;
+                });
+                bodyHtml += '</div>';
+            }
+
+            // Recommendations if exists
+            if (service.recommendations && service.recommendations.length > 0) {
+                bodyHtml += `<h4 class="font-bold text-gray-800 mb-3">${currentLang === 'ar' ? 'التوصيات' : 'Recommendations'}</h4>`;
+                bodyHtml += '<ul class="space-y-2">';
+                service.recommendations.forEach(rec => {
+                    bodyHtml += `<li class="flex items-start text-sm"><span class="text-[#2e3192] ml-2 mr-2">•</span>${rec[currentLang]}</li>`;
+                });
+                bodyHtml += '</ul>';
+            }
+
+            document.getElementById('modalBody').innerHTML = bodyHtml;
+            document.getElementById('detailModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('detailModal').classList.remove('active');
+            document.body.style.overflow = '';
+            currentModalData = null;
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Export to Excel (Full Dashboard)
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+
+            // KPIs Sheet
+            const kpiSheet = [
+                ['مؤشر الأداء', 'القيمة', 'الهدف', 'الحالة'],
+                ['معدل التسليم في الوقت', '87.8%', '≥95%', 'تحت الهدف'],
+                ['الطلبات المفتوحة', '19', '-', 'تحتاج متابعة'],
+                ['إجمالي الطلبات', '643', '-', 'NIT: 481, NP: 112'],
+                ['إجمالي القيمة', '4.9M SAR', '-', '-'],
+                ['متوسط التسليم', '1.81 يوم', '-', '-'],
+                ['Median (P50)', '1.0 يوم', '-', '-'],
+                ['P90', '4.0 أيام', '-', '-'],
+                ['معدل الإكمال', '94.9%', '-', 'جيد']
+            ];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(kpiSheet), 'KPIs');
+
+            // Services Sheet
+            const servicesSheet = [
+                ['الخدمة', 'النسبة', 'الهدف', 'المعيار الزمني', 'الحالة'],
+                ['طلبات المعدات', '98.5%', '≥95%', '1 يوم عمل', 'ممتاز'],
+                ['تسليم المعدات', '88%', '≥95%', '2-3 أيام عمل', 'تحسين'],
+                ['إزالة الخردة', '97.8%', '≥95%', '3 أيام عمل', 'ممتاز'],
+                ['تأكيد المخزون', 'تطوير', '≥95%', '1 يوم عمل', 'جاري'],
+                ['نقل المواد', '95.7%', '≥95%', '2 يوم عمل', 'فوق الهدف'],
+                ['امتثال التخزين', 'تحسين', '≥98%', 'تدقيق', 'جاري'],
+                ['تقارير الحوادث', '100%', '100%', 'فوري', 'ممتاز']
+            ];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(servicesSheet), 'Services');
+
+            // Suppliers Sheet
+            const suppliersSheet = [
+                ['المورد', 'عدد الطلبات', 'النسبة'],
+                ['AWTAD', 131, '20.4%'],
+                ['Zad Alomran', 123, '19.1%'],
+                ['ALMAMORAH', 121, '18.8%'],
+                ['FIFO', 83, '12.9%'],
+                ['CPCC', 66, '10.3%'],
+                ['ALBURAQ', 55, '8.6%'],
+                ['albede', 40, '6.2%'],
+                ['AlhayAlsayeed', 22, '3.4%']
+            ];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(suppliersSheet), 'Suppliers');
+
+            // Projects Sheet
+            const projectsSheet = [
+                ['المشروع', 'القيمة (SAR)'],
+                ['WEST-JAZERA ROYAL', 777340],
+                ['EST-JAFURAH', 424900],
+                ['MED-RUH-Diriyahy', 304610],
+                ['MED-RUH-Murjan', 235820],
+                ['WEST-Makkah', 223625],
+                ['NORTH-NEOM', 216700],
+                ['NORTH-MED-TAIBA', 207598],
+                ['WEST-JED-Buhaiyrat', 190430]
+            ];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(projectsSheet), 'Projects');
+
+            XLSX.writeFile(wb, 'NESMA_SLA_Dashboard_' + new Date().toISOString().split('T')[0] + '.xlsx');
+        }
+
+        // Export to PDF (Full Dashboard)
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+
+            // Add Arabic font support
+            doc.setFont('helvetica');
+
+            // Title
+            doc.setFontSize(18);
+            doc.setTextColor(46, 49, 146);
+            doc.text('NESMA SLA Dashboard Report', 105, 20, { align: 'center' });
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text('Generated: ' + new Date().toLocaleDateString(), 105, 28, { align: 'center' });
+
+            // KPIs Table
+            doc.setFontSize(14);
+            doc.setTextColor(46, 49, 146);
+            doc.text('Key Performance Indicators', 14, 40);
+
+            doc.autoTable({
+                startY: 45,
+                head: [['KPI', 'Value', 'Target', 'Status']],
+                body: [
+                    ['On-Time Delivery Rate', '87.8%', '>=95%', 'Below Target'],
+                    ['Open Orders', '19', '-', 'Needs Follow-up'],
+                    ['Total Orders', '643', '-', 'NIT: 481, NP: 112'],
+                    ['Total Amount', '4.9M SAR', '-', '-'],
+                    ['Avg Delivery', '1.81 days', '-', '-'],
+                    ['Completion Rate', '94.9%', '-', 'Good']
+                ],
+                theme: 'grid',
+                headStyles: { fillColor: [46, 49, 146] },
+                styles: { fontSize: 9 }
+            });
+
+            // Services Table
+            doc.setFontSize(14);
+            doc.setTextColor(46, 49, 146);
+            doc.text('Service Level Performance', 14, doc.lastAutoTable.finalY + 15);
+
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 20,
+                head: [['Service', 'Rate', 'Target', 'Standard', 'Status']],
+                body: [
+                    ['Equipment Request', '98.5%', '>=95%', '1 day', 'Excellent'],
+                    ['Equipment Delivery', '88%', '>=95%', '2-3 days', 'Improving'],
+                    ['Scrap Removal', '97.8%', '>=95%', '3 days', 'Excellent'],
+                    ['Stock Confirmation', 'Developing', '>=95%', '1 day', 'In Progress'],
+                    ['Material Movement', '95.7%', '>=95%', '2 days', 'Above Target'],
+                    ['Storage Compliance', 'Improving', '>=98%', 'Audit', 'In Progress'],
+                    ['Incident Reporting', '100%', '100%', 'Immediate', 'Excellent']
+                ],
+                theme: 'grid',
+                headStyles: { fillColor: [46, 49, 146] },
+                styles: { fontSize: 9 }
+            });
+
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            doc.text('NESMA Infrastructure & Technology - Supply Chain Performance System', 105, 285, { align: 'center' });
+
+            doc.save('NESMA_SLA_Report_' + new Date().toISOString().split('T')[0] + '.pdf');
+        }
+
+        // Export Modal Data to Excel
+        function exportModalToExcel() {
+            if (!currentModalData) return;
+
+            const wb = XLSX.utils.book_new();
+            const data = currentModalData.data;
+
+            // Details Sheet
+            const detailsSheet = [
+                [data.title[currentLang]],
+                [''],
+                ...data.details.map(d => [d.label[currentLang], d.value])
+            ];
+
+            if (data.breakdown) {
+                detailsSheet.push(['']);
+                detailsSheet.push([currentLang === 'ar' ? 'التفصيل' : 'Breakdown']);
+                const headers = Object.keys(data.breakdown[0]);
+                detailsSheet.push(headers);
+                data.breakdown.forEach(row => {
+                    detailsSheet.push(Object.values(row));
+                });
+            }
+
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(detailsSheet), 'Details');
+            XLSX.writeFile(wb, `${currentModalData.id}_details_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        // Export Modal Data to PDF
+        function exportModalToPDF() {
+            if (!currentModalData) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const data = currentModalData.data;
+
+            doc.setFontSize(16);
+            doc.setTextColor(46, 49, 146);
+            doc.text(data.title.en, 105, 20, { align: 'center' });
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(data.subtitle.en, 105, 28, { align: 'center' });
+
+            doc.autoTable({
+                startY: 40,
+                head: [['Field', 'Value']],
+                body: data.details.map(d => [d.label.en, d.value]),
+                theme: 'grid',
+                headStyles: { fillColor: [46, 49, 146] }
+            });
+
+            if (data.breakdown) {
+                const headers = Object.keys(data.breakdown[0]);
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 15,
+                    head: [headers],
+                    body: data.breakdown.map(row => Object.values(row)),
+                    theme: 'grid',
+                    headStyles: { fillColor: [128, 209, 233] }
+                });
+            }
+
+            doc.save(`${currentModalData.id}_report_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+    </script>
+</body>
+</html>

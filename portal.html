@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NESMA | Supply Chain Management Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nesma-primary: #2e3192;
+            --nesma-secondary: #80d1e9;
+        }
+
+        * { font-family: 'Cairo', 'Inter', sans-serif; }
+        [lang="en"] * { font-family: 'Inter', 'Cairo', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(ellipse at top, rgba(128, 209, 233, 0.15) 0%, transparent 70%),
+                        radial-gradient(ellipse at bottom right, rgba(46, 49, 146, 0.2) 0%, transparent 70%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(135deg, transparent 0%, rgba(128, 209, 233, 0.3) 50%, transparent 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .glass-card:hover::before { opacity: 1; }
+
+        .glass-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 40px 80px rgba(128, 209, 233, 0.2);
+        }
+
+        .department-card {
+            min-height: 320px;
+        }
+
+        .glow-text { text-shadow: 0 0 40px rgba(128, 209, 233, 0.5); }
+
+        .lang-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .lang-toggle:hover { background: rgba(255, 255, 255, 0.2); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-up { animation: fadeInUp 0.8s ease forwards; opacity: 0; }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--nesma-secondary);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: particleFloat 20s linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .logistics-gradient { background: linear-gradient(135deg, #2e3192 0%, #80d1e9 100%); }
+        .procurement-gradient { background: linear-gradient(135deg, #059669 0%, #34d399 100%); }
+        .facilities-gradient { background: linear-gradient(135deg, #dc2626 0%, #f97316 100%); }
+
+        .status-badge {
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-coming { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+
+        .feature-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main Content -->
+    <div class="relative z-10 hero-gradient min-h-screen">
+        <!-- Header -->
+        <header class="container mx-auto px-6 pt-8 pb-4">
+            <nav class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <svg class="w-36 lg:w-44 h-12" viewBox="0 0 150 32" xmlns="http://www.w3.org/2000/svg">
+                        <polygon points="112.73 9.37 112.73 .05 123.95 .05 112.73 9.37" fill="#80d1e9"/>
+                        <rect x="126.61" y=".08" width="11.23" height="32.51" fill="#fff"/>
+                        <rect x="77.12" y=".05" width="11.23" height="32.6" fill="#fff"/>
+                        <path d="M110.07,17.69v14.86s0,.02,0,0l-19.07-18.16s0,0,0,0V.1s0-.02,0,0l19.07,17.59s0,0,0,0" fill="#fff"/>
+                        <rect x="112.73" y="11.44" width="11.23" height="21.16" fill="#fff"/>
+                        <rect x="140" y="11.98" width="10.03" height="7.8" fill="#fff"/>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-400 text-sm hidden md:inline" data-ar="إدارة سلسلة التوريد" data-en="Supply Chain Management">إدارة سلسلة التوريد</span>
+                    <div class="h-6 w-px bg-gray-700 hidden md:block"></div>
+                    <span class="text-cyan-400 text-sm" id="currentTime"></span>
+                    <button onclick="toggleLanguage()" class="lang-toggle text-sm">
+                        <span id="langText">EN</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Hero -->
+        <section class="container mx-auto px-6 py-16 text-center">
+            <div class="fade-in-up stagger-1">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 glow-text" data-ar="بوابة إدارة سلسلة التوريد" data-en="Supply Chain Management Portal">بوابة إدارة سلسلة التوريد</h1>
+                <p class="text-xl text-gray-400 mb-2" data-ar="نظام متكامل لإدارة العمليات" data-en="Integrated Operations Management System">نظام متكامل لإدارة العمليات</p>
+                <p class="text-sm text-cyan-400/70" data-ar="اختر القسم للوصول إلى لوحات القياس" data-en="Select a department to access dashboards">اختر القسم للوصول إلى لوحات القياس</p>
+            </div>
+        </section>
+
+        <!-- Department Cards -->
+        <section class="container mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                <!-- Logistics -->
+                <a href="logistics_portal.html" class="glass-card department-card p-8 fade-in-up stagger-2 block text-center">
+                    <div class="flex justify-center">
+                        <div class="icon-box logistics-gradient">
+                            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1h5a1 1 0 001-1v-3a1 1 0 00-.293-.707l-2-2A1 1 0 0014 7h-3V5a1 1 0 00-1-1H3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <span class="status-badge badge-active mb-4 inline-block" data-ar="نشط" data-en="Active">نشط</span>
+                    <h3 class="text-2xl font-bold mb-3" data-ar="اللوجستيات" data-en="Logistics">اللوجستيات</h3>
+                    <p class="text-gray-400 text-sm mb-6" data-ar="إدارة النقل والمعدات والشحنات وتتبع الأداء" data-en="Transportation, equipment, shipments & performance tracking">إدارة النقل والمعدات والشحنات وتتبع الأداء</p>
+
+                    <div class="flex flex-wrap justify-center gap-2 mb-6">
+                        <span class="feature-tag" data-ar="النقل" data-en="Transport">النقل</span>
+                        <span class="feature-tag" data-ar="المعدات" data-en="Equipment">المعدات</span>
+                        <span class="feature-tag" data-ar="الفواتير" data-en="Invoices">الفواتير</span>
+                        <span class="feature-tag" data-ar="SLA" data-en="SLA">SLA</span>
+                    </div>
+
+                    <div class="flex items-center justify-center text-cyan-400 text-sm font-semibold">
+                        <span data-ar="دخول" data-en="Enter">دخول</span>
+                        <svg class="w-5 h-5 mr-2 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Procurement -->
+                <a href="procurement_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-3 block text-center">
+                    <div class="flex justify-center">
+                        <div class="icon-box procurement-gradient">
+                            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <span class="status-badge badge-active mb-4 inline-block" data-ar="نشط" data-en="Active">نشط</span>
+                    <h3 class="text-2xl font-bold mb-3" data-ar="المشتريات" data-en="Procurement">المشتريات</h3>
+                    <p class="text-gray-400 text-sm mb-6" data-ar="تحليل طلبات الشراء وتقييم الموردين" data-en="PR Analysis & Vendor Evaluation">تحليل طلبات الشراء وتقييم الموردين</p>
+
+                    <div class="flex flex-wrap justify-center gap-2 mb-6">
+                        <span class="feature-tag" data-ar="طلبات الشراء" data-en="PR Analysis">طلبات الشراء</span>
+                        <span class="feature-tag" data-ar="تقييم الموردين" data-en="Vendor Eval">تقييم الموردين</span>
+                    </div>
+
+                    <div class="flex items-center justify-center text-green-400 text-sm font-semibold">
+                        <span data-ar="دخول" data-en="Enter">دخول</span>
+                        <svg class="w-5 h-5 mr-2 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Facilities Management -->
+                <div class="glass-card department-card p-8 fade-in-up stagger-4 text-center opacity-60 cursor-not-allowed">
+                    <div class="flex justify-center">
+                        <div class="icon-box facilities-gradient">
+                            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <span class="status-badge badge-coming mb-4 inline-block" data-ar="قريباً" data-en="Coming Soon">قريباً</span>
+                    <h3 class="text-2xl font-bold mb-3" data-ar="إدارة المرافق" data-en="Facilities Management">إدارة المرافق</h3>
+                    <p class="text-gray-400 text-sm mb-6" data-ar="إدارة المباني والصيانة والخدمات" data-en="Buildings, maintenance & services management">إدارة المباني والصيانة والخدمات</p>
+
+                    <div class="flex flex-wrap justify-center gap-2 mb-6">
+                        <span class="feature-tag" data-ar="المباني" data-en="Buildings">المباني</span>
+                        <span class="feature-tag" data-ar="الصيانة" data-en="Maintenance">الصيانة</span>
+                        <span class="feature-tag" data-ar="الخدمات" data-en="Services">الخدمات</span>
+                    </div>
+
+                    <div class="flex items-center justify-center text-gray-500 text-sm font-semibold">
+                        <span data-ar="قيد التطوير" data-en="Under Development">قيد التطوير</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Stats Overview -->
+        <section class="container mx-auto px-6 py-12">
+            <div class="glass-card p-8 fade-in-up stagger-4">
+                <h3 class="text-xl font-bold text-center mb-8" data-ar="نظرة عامة على النظام" data-en="System Overview">نظرة عامة على النظام</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <p class="text-4xl font-bold text-cyan-400">3</p>
+                        <p class="text-sm text-gray-400 mt-2" data-ar="أقسام رئيسية" data-en="Main Departments">أقسام رئيسية</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-4xl font-bold text-green-400">5</p>
+                        <p class="text-sm text-gray-400 mt-2" data-ar="لوحات قياس نشطة" data-en="Active Dashboards">لوحات قياس نشطة</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-4xl font-bold text-purple-400">1,800+</p>
+                        <p class="text-sm text-gray-400 mt-2" data-ar="سجل بيانات" data-en="Data Records">سجل بيانات</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-4xl font-bold text-amber-400">18.5M</p>
+                        <p class="text-sm text-gray-400 mt-2" data-ar="ريال سعودي" data-en="SAR Value">ريال سعودي</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="container mx-auto px-6 py-8 text-center">
+            <div class="border-t border-gray-800 pt-6">
+                <p class="text-gray-500 text-sm mb-2" data-ar="شركة نسما للبنية التحتية والتكنولوجيا" data-en="NESMA Infrastructure & Technology">شركة نسما للبنية التحتية والتكنولوجيا</p>
+                <p class="text-gray-600 text-xs" data-ar="إدارة سلسلة التوريد" data-en="Supply Chain Management">إدارة سلسلة التوريد</p>
+                <p class="text-gray-700 text-xs mt-3">Version 4.0 | November 2025</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let currentLang = 'ar';
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (20 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'Asia/Riyadh' };
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', options);
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('langText').textContent = currentLang === 'ar' ? 'EN' : 'عربي';
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+    </script>
+</body>
+</html>
