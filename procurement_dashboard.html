@@ -355,6 +355,13 @@
             color: rgba(255, 255, 255, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
+
+        .comparison-new {
+            background: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            font-weight: 800;
+        }
     </style>
 </head>
 <body>
@@ -1150,7 +1157,15 @@
         }
 
         function getComparisonBadge(current, previous, isInverse = false) {
-            if (!previous || previous === 0) return '';
+            // If no previous data but current has data, show "NEW" badge
+            if ((!previous || previous === 0) && current > 0) {
+                return `<span class="comparison-badge comparison-new">NEW</span>`;
+            }
+            // If both are 0 or no current data, show neutral
+            if (current === 0 && (!previous || previous === 0)) {
+                return `<span class="comparison-badge comparison-neutral">-</span>`;
+            }
+            // Calculate percentage change
             const diff = current - previous;
             const pct = ((diff / previous) * 100).toFixed(0);
 
