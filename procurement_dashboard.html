@@ -320,19 +320,30 @@
             font-size: 14px;
         }
 
-        /* Auto-refresh indicator */
-        .refresh-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
+        /* Period Comparison Badge */
+        .comparison-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
         }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .comparison-up {
+            background: rgba(255, 255, 255, 0.25);
+            color: #dcfce7;
         }
 
-        .animate-spin {
-            animation: spin 1s linear infinite;
+        .comparison-down {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fecaca;
+        }
+
+        .comparison-neutral {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
         }
     </style>
 </head>
@@ -374,15 +385,9 @@
                 <!-- Header Actions -->
                 <div class="flex items-center gap-3 lg:gap-6">
                     <div class="text-left hidden sm:block">
-                        <p class="text-xs text-blue-100" data-ar="آخر تحديث" data-en="Last Refresh">آخر تحديث</p>
-                        <p class="text-sm font-semibold" id="lastRefreshTime">--:--</p>
+                        <p class="text-xs text-blue-100" data-ar="آخر تحديث" data-en="Last Update">آخر تحديث</p>
+                        <p class="text-sm font-semibold" id="lastUpdateDate">8 ديسمبر 2025</p>
                     </div>
-                    <button id="refreshBtn" onclick="manualRefresh()" class="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors" title="تحديث البيانات">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        <span class="hidden sm:inline text-sm" data-ar="تحديث" data-en="Refresh">تحديث</span>
-                    </button>
                     <button onclick="toggleLanguage()" class="lang-toggle" id="langBtn">
                         <span id="langText">EN</span>
                     </button>
@@ -608,24 +613,9 @@
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="الطلبات المعلقة حسب الفترة" data-en="Pending PRs by Duration">الطلبات المعلقة حسب الفترة</h3>
-                            <div id="pendingDurationSummary" class="space-y-3">
-                                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                                    <span class="text-green-700 font-medium">0-7 أيام</span>
-                                    <span id="pending-0-7" class="text-2xl font-bold text-green-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                                    <span class="text-yellow-700 font-medium">8-14 يوم</span>
-                                    <span id="pending-8-14" class="text-2xl font-bold text-yellow-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-orange-700 font-medium">15-30 يوم</span>
-                                    <span id="pending-15-30" class="text-2xl font-bold text-orange-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                                    <span class="text-red-700 font-medium">30+ يوم</span>
-                                    <span id="pending-30-plus" class="text-2xl font-bold text-red-600">0</span>
-                                </div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="نسبة الإرجاع الشهرية" data-en="Monthly Return Rate">نسبة الإرجاع الشهرية</h3>
+                            <div class="chart-container">
+                                <canvas id="returnRateChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -1149,86 +1139,17 @@
             return calculateFilteredStats(prevPRs);
         }
 
-        // Auto-refresh data every 5 minutes
-        let autoRefreshInterval = null;
-        const AUTO_REFRESH_MINUTES = 5;
+        function getComparisonBadge(current, previous, isInverse = false) {
+            if (!previous || previous === 0) return '';
+            const diff = current - previous;
+            const pct = ((diff / previous) * 100).toFixed(0);
 
-        function startAutoRefresh() {
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            autoRefreshInterval = setInterval(async () => {
-                console.log('Auto-refreshing data...');
-                await loadData();
-                updateFilteredKPIs();
-                updateChartsWithFilteredData();
-                updateLastRefreshTime();
-            }, AUTO_REFRESH_MINUTES * 60 * 1000);
-        }
+            // For inverse metrics (like return rate), increase is bad
+            const isPositive = isInverse ? diff < 0 : diff > 0;
+            const icon = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
+            const cssClass = diff === 0 ? 'comparison-neutral' : (isPositive ? 'comparison-up' : 'comparison-down');
 
-        function updateLastRefreshTime() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
-            const refreshEl = document.getElementById('lastRefreshTime');
-            if (refreshEl) {
-                refreshEl.textContent = timeStr;
-            }
-        }
-
-        async function manualRefresh() {
-            const btn = document.getElementById('refreshBtn');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
-            }
-
-            showLoading(currentLang === 'ar' ? 'جاري تحديث البيانات...' : 'Refreshing data...');
-
-            try {
-                await loadData();
-                updateFilteredKPIs();
-                updateChartsWithFilteredData();
-                updatePendingDurationSummary();
-                updateLastRefreshTime();
-            } finally {
-                hideLoading();
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
-                }
-            }
-        }
-
-        function updatePendingDurationSummary() {
-            const allPRs = prData?.all_prs || [];
-            const pendingPRs = allPRs.filter(pr => {
-                const status = (pr.status || '').toLowerCase();
-                return status.includes('pending') || status.includes('in process') || status.includes('submitted');
-            });
-
-            const today = new Date();
-            let count07 = 0, count814 = 0, count1530 = 0, count30plus = 0;
-
-            pendingPRs.forEach(pr => {
-                const pendingDate = pr.pending_since || pr.submission_date;
-                if (!pendingDate) return;
-
-                const date = new Date(pendingDate);
-                const daysDiff = Math.floor((today - date) / (1000 * 60 * 60 * 24));
-
-                if (daysDiff <= 7) count07++;
-                else if (daysDiff <= 14) count814++;
-                else if (daysDiff <= 30) count1530++;
-                else count30plus++;
-            });
-
-            const el07 = document.getElementById('pending-0-7');
-            const el814 = document.getElementById('pending-8-14');
-            const el1530 = document.getElementById('pending-15-30');
-            const el30plus = document.getElementById('pending-30-plus');
-
-            if (el07) el07.textContent = count07;
-            if (el814) el814.textContent = count814;
-            if (el1530) el1530.textContent = count1530;
-            if (el30plus) el30plus.textContent = count30plus;
+            return `<span class="comparison-badge ${cssClass}">${icon} ${Math.abs(pct)}%</span>`;
         }
 
         // Initialize Dashboard
@@ -1255,14 +1176,8 @@
                 createVendorAnalyticsCharts();
                 populateVendorTable();
 
-                // Update pending duration summary
-                updatePendingDurationSummary();
-
-                // Update last refresh time
-                updateLastRefreshTime();
-
-                // Start auto-refresh
-                startAutoRefresh();
+                // Calculate and store previous period stats for comparison
+                previousPeriodStats = calculatePreviousPeriodStats(currentFilters.year || '2025', currentFilters.month);
 
             } catch (error) {
                 console.error('Dashboard initialization error:', error);
@@ -2117,60 +2032,55 @@
         function updateFilteredKPIs() {
             const filteredPRs = getFilteredPRs();
             const stats = calculateFilteredStats(filteredPRs);
+            const prev = previousPeriodStats || {};
 
-            // PR Return KPIs (Top Row) - Simple textContent
+            // PR Return KPIs (Top Row) - with comparison badges
             const approvedEl = document.getElementById('kpi-approved');
             const returnedEl = document.getElementById('kpi-returned');
             const returnRateEl = document.getElementById('kpi-return-rate');
 
-            if (approvedEl) approvedEl.textContent = stats.approved.toLocaleString();
-            if (returnedEl) returnedEl.textContent = stats.returned.toLocaleString();
+            if (approvedEl) approvedEl.innerHTML = stats.approved.toLocaleString() + ' ' + getComparisonBadge(stats.approved, prev.approved);
+            if (returnedEl) returnedEl.innerHTML = stats.returned.toLocaleString() + ' ' + getComparisonBadge(stats.returned, prev.returned, true);
 
             const returnRate = stats.approved > 0 ? ((stats.returned / stats.approved) * 100).toFixed(1) : 0;
-            if (returnRateEl) returnRateEl.textContent = returnRate + '%';
+            const prevReturnRate = prev.approved > 0 ? ((prev.returned / prev.approved) * 100).toFixed(1) : 0;
+            if (returnRateEl) returnRateEl.innerHTML = returnRate + '% ' + getComparisonBadge(parseFloat(returnRate), parseFloat(prevReturnRate), true);
 
-            const kpiWithin2 = document.getElementById('kpi-within2');
-            const kpiAfter2 = document.getElementById('kpi-after2');
-            if (kpiWithin2) kpiWithin2.textContent = stats.within2days;
-            if (kpiAfter2) kpiAfter2.textContent = stats.after2days;
-
+            document.getElementById('kpi-within2').textContent = stats.within2days;
+            document.getElementById('kpi-after2').textContent = stats.after2days;
             const within2Pct = stats.returned > 0 ? ((stats.within2days / stats.returned) * 100).toFixed(1) : 0;
             const after2Pct = stats.returned > 0 ? ((stats.after2days / stats.returned) * 100).toFixed(1) : 0;
-            const kpiWithin2Pct = document.getElementById('kpi-within2-pct');
-            const kpiAfter2Pct = document.getElementById('kpi-after2-pct');
-            if (kpiWithin2Pct) kpiWithin2Pct.textContent = within2Pct + '%';
-            if (kpiAfter2Pct) kpiAfter2Pct.textContent = after2Pct + '%';
+            document.getElementById('kpi-within2-pct').textContent = within2Pct + '%';
+            document.getElementById('kpi-after2-pct').textContent = after2Pct + '%';
 
-            // Summary KPIs (Second Row - Dynamic) - Simple textContent
+            // Summary KPIs (Second Row - Dynamic) - with comparison badges
             const totalEl = document.getElementById('kpi-total-filtered');
             const rejectedEl = document.getElementById('kpi-rejected');
             const incompleteEl = document.getElementById('kpi-incomplete');
             const inProcessEl = document.getElementById('kpi-in-process');
             const avgPrToPoEl = document.getElementById('kpi-avg-pr-to-po');
 
-            if (totalEl) totalEl.textContent = stats.total.toLocaleString();
-            if (rejectedEl) rejectedEl.textContent = stats.rejected.toLocaleString();
-            if (incompleteEl) incompleteEl.textContent = stats.incomplete.toLocaleString();
-            if (inProcessEl) inProcessEl.textContent = stats.inProcess.toLocaleString();
-            if (avgPrToPoEl) avgPrToPoEl.textContent = stats.avgPrToPo;
+            if (totalEl) totalEl.innerHTML = stats.total.toLocaleString() + ' ' + getComparisonBadge(stats.total, prev.total);
+            if (rejectedEl) rejectedEl.innerHTML = stats.rejected.toLocaleString() + ' ' + getComparisonBadge(stats.rejected, prev.rejected, true);
+            if (incompleteEl) incompleteEl.innerHTML = stats.incomplete.toLocaleString() + ' ' + getComparisonBadge(stats.incomplete, prev.incomplete, true);
+            if (inProcessEl) inProcessEl.innerHTML = stats.inProcess.toLocaleString() + ' ' + getComparisonBadge(stats.inProcess, prev.inProcess);
+            if (avgPrToPoEl) avgPrToPoEl.innerHTML = stats.avgPrToPo + ' ' + getComparisonBadge(parseFloat(stats.avgPrToPo), parseFloat(prev.avgPrToPo), true);
 
-            // PR to PO KPIs (Current Month - based on filtered data) - Simple textContent
+            // PR to PO KPIs (Current Month - based on filtered data) - with comparison badges
             const poReceivedMonthEl = document.getElementById('po-kpi-received-month');
             const poIssuedMonthEl = document.getElementById('po-kpi-issued-month');
             const poWithin30El = document.getElementById('po-kpi-within30');
             const poAfter30El = document.getElementById('po-kpi-after30');
 
-            if (poReceivedMonthEl) poReceivedMonthEl.textContent = stats.approved.toLocaleString();
-            if (poIssuedMonthEl) poIssuedMonthEl.textContent = stats.posIssued.toLocaleString();
-            if (poWithin30El) poWithin30El.textContent = stats.within30days.toLocaleString();
-            if (poAfter30El) poAfter30El.textContent = stats.after30days.toLocaleString();
+            if (poReceivedMonthEl) poReceivedMonthEl.innerHTML = stats.approved.toLocaleString() + ' ' + getComparisonBadge(stats.approved, prev.approved);
+            if (poIssuedMonthEl) poIssuedMonthEl.innerHTML = stats.posIssued.toLocaleString() + ' ' + getComparisonBadge(stats.posIssued, prev.posIssued);
+            if (poWithin30El) poWithin30El.innerHTML = stats.within30days.toLocaleString() + ' ' + getComparisonBadge(stats.within30days, prev.within30days);
+            if (poAfter30El) poAfter30El.innerHTML = stats.after30days.toLocaleString() + ' ' + getComparisonBadge(stats.after30days, prev.after30days, true);
 
             const within30Pct = stats.posIssued > 0 ? ((stats.within30days / stats.posIssued) * 100).toFixed(1) : 0;
             const after30Pct = stats.posIssued > 0 ? ((stats.after30days / stats.posIssued) * 100).toFixed(1) : 0;
-            const poWithin30PctEl = document.getElementById('po-kpi-within30-pct');
-            const poAfter30PctEl = document.getElementById('po-kpi-after30-pct');
-            if (poWithin30PctEl) poWithin30PctEl.textContent = within30Pct + '%';
-            if (poAfter30PctEl) poAfter30PctEl.textContent = after30Pct + '%';
+            document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
+            document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
 
             // PR to PO YTD KPIs (based on filtered year and project, not month)
             const allPRs = prData?.all_prs || filteredPRData || [];
