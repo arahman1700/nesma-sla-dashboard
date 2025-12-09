@@ -280,80 +280,9 @@
             body { background: white; }
             .card { box-shadow: none; border: 1px solid #e2e8f0; }
         }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .loading-overlay.show {
-            display: flex;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #e5e7eb;
-            border-top-color: #2e3192;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            margin-top: 16px;
-            color: #2e3192;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        /* Period Comparison Badge */
-        .comparison-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .comparison-up {
-            background: rgba(255, 255, 255, 0.25);
-            color: #dcfce7;
-        }
-
-        .comparison-down {
-            background: rgba(255, 255, 255, 0.25);
-            color: #fecaca;
-        }
-
-        .comparison-neutral {
-            background: rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.9);
-        }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text" data-ar="جاري التحميل..." data-en="Loading...">جاري التحميل...</div>
-    </div>
-
     <!-- Header -->
     <header class="nesma-header text-white sticky top-0 z-50 no-print">
         <div class="container mx-auto px-4 lg:px-6 py-4">
@@ -1091,66 +1020,10 @@
         let vendorData = null;
         let charts = {};
         let filteredPRData = [];
-        let previousPeriodStats = null; // For comparison
 
         // Chart.js Config
         Chart.defaults.font.family = 'Cairo';
         Chart.defaults.font.size = 12;
-
-        // Loading Overlay Functions
-        function showLoading(message) {
-            const overlay = document.getElementById('loadingOverlay');
-            const textEl = overlay?.querySelector('.loading-text');
-            if (textEl && message) {
-                textEl.textContent = message;
-            }
-            overlay?.classList.add('show');
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay')?.classList.remove('show');
-        }
-
-        // Period Comparison Functions
-        function calculatePreviousPeriodStats(year, month) {
-            const allPRs = prData?.all_prs || [];
-            let prevYear = parseInt(year);
-            let prevMonth = month ? parseInt(month) - 1 : null;
-
-            // If month is 1, go to December of previous year
-            if (prevMonth === 0) {
-                prevMonth = 12;
-                prevYear--;
-            } else if (prevMonth === null) {
-                prevYear--;
-            }
-
-            const prevPRs = allPRs.filter(pr => {
-                const dateField = pr.approved_date || pr.submission_date;
-                if (!dateField) return false;
-                const date = new Date(dateField);
-                if (prevMonth) {
-                    return date.getFullYear() === prevYear && (date.getMonth() + 1) === prevMonth;
-                } else {
-                    return date.getFullYear() === prevYear;
-                }
-            });
-
-            return calculateFilteredStats(prevPRs);
-        }
-
-        function getComparisonBadge(current, previous, isInverse = false) {
-            if (!previous || previous === 0) return '';
-            const diff = current - previous;
-            const pct = ((diff / previous) * 100).toFixed(0);
-
-            // For inverse metrics (like return rate), increase is bad
-            const isPositive = isInverse ? diff < 0 : diff > 0;
-            const icon = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
-            const cssClass = diff === 0 ? 'comparison-neutral' : (isPositive ? 'comparison-up' : 'comparison-down');
-
-            return `<span class="comparison-badge ${cssClass}">${icon} ${Math.abs(pct)}%</span>`;
-        }
 
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', async () => {
@@ -1160,93 +1033,20 @@
                 applyLanguage();
             }
 
-            // Show loading overlay
-            showLoading(currentLang === 'ar' ? 'جاري تحميل البيانات...' : 'Loading data...');
+            // Load data from JSON files
+            await loadData();
 
-            try {
-                // Load data from JSON files
-                await loadData();
+            // Populate project filters from data
+            populateProjectDropdown();
+            populateVendorCategoryDropdown();
 
-                // Populate project filters from data
-                populateProjectDropdown();
-                populateVendorCategoryDropdown();
-
-                // Create charts and populate table
-                createCharts();
-                createVendorAnalyticsCharts();
-                populateVendorTable();
-
-                // Calculate and store previous period stats for comparison
-                previousPeriodStats = calculatePreviousPeriodStats(currentFilters.year || '2025', currentFilters.month);
-
-            } catch (error) {
-                console.error('Dashboard initialization error:', error);
-            } finally {
-                // Hide loading overlay
-                hideLoading();
-            }
+            // Create charts and populate table
+            createCharts();
+            createVendorAnalyticsCharts();
+            populateVendorTable();
         });
 
         // Load data from JSON files with cache-busting
-        // Transform data from Smartsheet export format to dashboard format
-        function transformPRData(data) {
-            // Create status_breakdown from pr_status_breakdown
-            if (data.summary && data.summary.pr_status_breakdown && !data.summary.status_breakdown) {
-                data.summary.status_breakdown = data.summary.pr_status_breakdown;
-            }
-
-            // Transform monthly data from dict format to array format for charts
-            if (data.monthly && typeof data.monthly === 'object' && !Array.isArray(data.monthly.labels)) {
-                const currentYear = new Date().getFullYear();
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const approved = [];
-                const returned = [];
-                const rejected = [];
-                const submitted = [];
-
-                for (let m = 1; m <= 12; m++) {
-                    const key = `${currentYear}-${String(m).padStart(2, '0')}`;
-                    const monthData = data.monthly[key] || {};
-                    approved.push(monthData.approved || 0);
-                    returned.push(monthData.returned || 0);
-                    rejected.push(monthData.rejected || 0);
-                    submitted.push(monthData.submitted || 0);
-                }
-
-                // Calculate return rate
-                const return_rate = approved.map((a, i) => a > 0 ? Math.round((returned[i] / a * 100) * 10) / 10 : 0);
-
-                data.monthly = {
-                    labels: months,
-                    approved: approved,
-                    returned: returned,
-                    rejected: rejected,
-                    submitted: submitted,
-                    return_rate: return_rate
-                };
-            }
-
-            // Calculate 2025 totals from all_prs if not present
-            if (data.all_prs && data.all_prs.length > 0) {
-                const prs2025 = data.all_prs.filter(pr => {
-                    const date = pr.approved_date || pr.submission_date;
-                    return date && date.startsWith('2025');
-                });
-
-                if (!data.summary.total_approved_2025) {
-                    data.summary.total_approved_2025 = prs2025.filter(pr => pr.pr_status === 'APPROVED').length;
-                }
-                if (!data.summary.total_returned_2025) {
-                    data.summary.total_returned_2025 = prs2025.filter(pr => pr.return_date).length;
-                }
-                if (!data.summary.return_rate_2025 && data.summary.total_approved_2025 > 0) {
-                    data.summary.return_rate_2025 = Math.round((data.summary.total_returned_2025 / data.summary.total_approved_2025 * 100) * 10) / 10;
-                }
-            }
-
-            return data;
-        }
-
         async function loadData() {
             const cacheBuster = '?v=' + Date.now();
 
@@ -1254,9 +1054,8 @@
                 // Load PR data with cache-busting
                 const prResponse = await fetch('data/pr_data.json' + cacheBuster);
                 if (prResponse.ok) {
-                    let rawData = await prResponse.json();
-                    prData = transformPRData(rawData);
-                    console.log('PR Data loaded and transformed:', prData.summary);
+                    prData = await prResponse.json();
+                    console.log('PR Data loaded successfully:', prData.summary);
                     console.log('Total PRs available:', (prData.all_prs || prData.recent_prs || []).length);
                     filteredPRData = prData.all_prs || prData.recent_prs || [];
                     updateFilteredKPIs();
@@ -1348,10 +1147,9 @@
 
         // Populate project filters
         function populateProjectFilters() {
-            const allPRs = prData?.all_prs || prData?.recent_prs || [];
-            if (allPRs.length === 0) return;
+            if (!prData || !prData.recent_prs) return;
 
-            const projects = [...new Set(allPRs.map(pr => pr.project).filter(p => p && !p.includes('ORA-')))];
+            const projects = [...new Set(prData.recent_prs.map(pr => pr.project).filter(p => p && !p.includes('ORA-')))];
             projects.sort();
 
             const filterProject = document.getElementById('filterProject');
@@ -1441,7 +1239,7 @@
             const monthApproved = prData.monthly.approved[currentMonth] || 0;
 
             // Calculate POs issued (PRs with pr_to_po_days value)
-            const allPRs = prData.all_prs || prData.recent_prs || [];
+            const allPRs = prData.recent_prs || [];
             const currentMonthPRs = allPRs.filter(pr => {
                 if (!pr.approved_date) return false;
                 const date = new Date(pr.approved_date);
@@ -2032,20 +1830,12 @@
         function updateFilteredKPIs() {
             const filteredPRs = getFilteredPRs();
             const stats = calculateFilteredStats(filteredPRs);
-            const prev = previousPeriodStats || {};
 
-            // PR Return KPIs (Top Row) - with comparison badges
-            const approvedEl = document.getElementById('kpi-approved');
-            const returnedEl = document.getElementById('kpi-returned');
-            const returnRateEl = document.getElementById('kpi-return-rate');
-
-            if (approvedEl) approvedEl.innerHTML = stats.approved.toLocaleString() + ' ' + getComparisonBadge(stats.approved, prev.approved);
-            if (returnedEl) returnedEl.innerHTML = stats.returned.toLocaleString() + ' ' + getComparisonBadge(stats.returned, prev.returned, true);
-
+            // PR Return KPIs (Top Row)
+            document.getElementById('kpi-approved').textContent = stats.approved.toLocaleString();
+            document.getElementById('kpi-returned').textContent = stats.returned.toLocaleString();
             const returnRate = stats.approved > 0 ? ((stats.returned / stats.approved) * 100).toFixed(1) : 0;
-            const prevReturnRate = prev.approved > 0 ? ((prev.returned / prev.approved) * 100).toFixed(1) : 0;
-            if (returnRateEl) returnRateEl.innerHTML = returnRate + '% ' + getComparisonBadge(parseFloat(returnRate), parseFloat(prevReturnRate), true);
-
+            document.getElementById('kpi-return-rate').textContent = returnRate + '%';
             document.getElementById('kpi-within2').textContent = stats.within2days;
             document.getElementById('kpi-after2').textContent = stats.after2days;
             const within2Pct = stats.returned > 0 ? ((stats.within2days / stats.returned) * 100).toFixed(1) : 0;
@@ -2053,30 +1843,18 @@
             document.getElementById('kpi-within2-pct').textContent = within2Pct + '%';
             document.getElementById('kpi-after2-pct').textContent = after2Pct + '%';
 
-            // Summary KPIs (Second Row - Dynamic) - with comparison badges
-            const totalEl = document.getElementById('kpi-total-filtered');
-            const rejectedEl = document.getElementById('kpi-rejected');
-            const incompleteEl = document.getElementById('kpi-incomplete');
-            const inProcessEl = document.getElementById('kpi-in-process');
-            const avgPrToPoEl = document.getElementById('kpi-avg-pr-to-po');
+            // Summary KPIs (Second Row - Dynamic)
+            document.getElementById('kpi-total-filtered').textContent = stats.total.toLocaleString();
+            document.getElementById('kpi-rejected').textContent = stats.rejected.toLocaleString();
+            document.getElementById('kpi-incomplete').textContent = stats.incomplete.toLocaleString();
+            document.getElementById('kpi-in-process').textContent = stats.inProcess.toLocaleString();
+            document.getElementById('kpi-avg-pr-to-po').textContent = stats.avgPrToPo;
 
-            if (totalEl) totalEl.innerHTML = stats.total.toLocaleString() + ' ' + getComparisonBadge(stats.total, prev.total);
-            if (rejectedEl) rejectedEl.innerHTML = stats.rejected.toLocaleString() + ' ' + getComparisonBadge(stats.rejected, prev.rejected, true);
-            if (incompleteEl) incompleteEl.innerHTML = stats.incomplete.toLocaleString() + ' ' + getComparisonBadge(stats.incomplete, prev.incomplete, true);
-            if (inProcessEl) inProcessEl.innerHTML = stats.inProcess.toLocaleString() + ' ' + getComparisonBadge(stats.inProcess, prev.inProcess);
-            if (avgPrToPoEl) avgPrToPoEl.innerHTML = stats.avgPrToPo + ' ' + getComparisonBadge(parseFloat(stats.avgPrToPo), parseFloat(prev.avgPrToPo), true);
-
-            // PR to PO KPIs (Current Month - based on filtered data) - with comparison badges
-            const poReceivedMonthEl = document.getElementById('po-kpi-received-month');
-            const poIssuedMonthEl = document.getElementById('po-kpi-issued-month');
-            const poWithin30El = document.getElementById('po-kpi-within30');
-            const poAfter30El = document.getElementById('po-kpi-after30');
-
-            if (poReceivedMonthEl) poReceivedMonthEl.innerHTML = stats.approved.toLocaleString() + ' ' + getComparisonBadge(stats.approved, prev.approved);
-            if (poIssuedMonthEl) poIssuedMonthEl.innerHTML = stats.posIssued.toLocaleString() + ' ' + getComparisonBadge(stats.posIssued, prev.posIssued);
-            if (poWithin30El) poWithin30El.innerHTML = stats.within30days.toLocaleString() + ' ' + getComparisonBadge(stats.within30days, prev.within30days);
-            if (poAfter30El) poAfter30El.innerHTML = stats.after30days.toLocaleString() + ' ' + getComparisonBadge(stats.after30days, prev.after30days, true);
-
+            // PR to PO KPIs (Current Month - based on filtered data)
+            document.getElementById('po-kpi-received-month').textContent = stats.approved.toLocaleString();
+            document.getElementById('po-kpi-issued-month').textContent = stats.posIssued.toLocaleString();
+            document.getElementById('po-kpi-within30').textContent = stats.within30days.toLocaleString();
+            document.getElementById('po-kpi-after30').textContent = stats.after30days.toLocaleString();
             const within30Pct = stats.posIssued > 0 ? ((stats.within30days / stats.posIssued) * 100).toFixed(1) : 0;
             const after30Pct = stats.posIssued > 0 ? ((stats.after30days / stats.posIssued) * 100).toFixed(1) : 0;
             document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
@@ -2197,26 +1975,13 @@
 
         // Filter Functions
         function applyFilters() {
-            showLoading(currentLang === 'ar' ? 'جاري تطبيق الفلاتر...' : 'Applying filters...');
-
-            // Use setTimeout to allow UI to update
-            setTimeout(() => {
-                try {
-                    currentFilters.year = document.getElementById('filterYear')?.value || '';
-                    currentFilters.month = document.getElementById('filterMonth')?.value || '';
-                    currentFilters.status = document.getElementById('filterStatus')?.value || '';
-                    currentFilters.vendor = document.getElementById('filterVendor')?.value || '';
-                    currentFilters.project = document.getElementById('filterProject')?.value || '';
-
-                    // Recalculate previous period stats for comparison
-                    previousPeriodStats = calculatePreviousPeriodStats(currentFilters.year || '2025', currentFilters.month);
-
-                    updateFilteredKPIs();
-                    updateChartsWithFilteredData();
-                } finally {
-                    hideLoading();
-                }
-            }, 50);
+            currentFilters.year = document.getElementById('filterYear')?.value || '';
+            currentFilters.month = document.getElementById('filterMonth')?.value || '';
+            currentFilters.status = document.getElementById('filterStatus')?.value || '';
+            currentFilters.vendor = document.getElementById('filterVendor')?.value || '';
+            currentFilters.project = document.getElementById('filterProject')?.value || '';
+            updateFilteredKPIs();
+            updateChartsWithFilteredData();
         }
 
         function resetFilters() {
