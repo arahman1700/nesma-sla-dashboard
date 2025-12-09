@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NESMA | Procurement Dashboard - لوحة قياس المشتريات</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -280,69 +280,9 @@
             body { background: white; }
             .card { box-shadow: none; border: 1px solid #e2e8f0; }
         }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .loading-overlay.show {
-            display: flex;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #e5e7eb;
-            border-top-color: #2e3192;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            margin-top: 16px;
-            color: #2e3192;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        /* Auto-refresh indicator */
-        .refresh-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text" data-ar="جاري التحميل..." data-en="Loading...">جاري التحميل...</div>
-    </div>
-
     <!-- Header -->
     <header class="nesma-header text-white sticky top-0 z-50 no-print">
         <div class="container mx-auto px-4 lg:px-6 py-4">
@@ -374,15 +314,9 @@
                 <!-- Header Actions -->
                 <div class="flex items-center gap-3 lg:gap-6">
                     <div class="text-left hidden sm:block">
-                        <p class="text-xs text-blue-100" data-ar="آخر تحديث" data-en="Last Refresh">آخر تحديث</p>
-                        <p class="text-sm font-semibold" id="lastRefreshTime">--:--</p>
+                        <p class="text-xs text-blue-100" data-ar="آخر تحديث" data-en="Last Update">آخر تحديث</p>
+                        <p class="text-sm font-semibold" id="lastUpdateDate">8 ديسمبر 2025</p>
                     </div>
-                    <button id="refreshBtn" onclick="manualRefresh()" class="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors" title="تحديث البيانات">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        <span class="hidden sm:inline text-sm" data-ar="تحديث" data-en="Refresh">تحديث</span>
-                    </button>
                     <button onclick="toggleLanguage()" class="lang-toggle" id="langBtn">
                         <span id="langText">EN</span>
                     </button>
@@ -608,24 +542,9 @@
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="الطلبات المعلقة حسب الفترة" data-en="Pending PRs by Duration">الطلبات المعلقة حسب الفترة</h3>
-                            <div id="pendingDurationSummary" class="space-y-3">
-                                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                                    <span class="text-green-700 font-medium">0-7 أيام</span>
-                                    <span id="pending-0-7" class="text-2xl font-bold text-green-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                                    <span class="text-yellow-700 font-medium">8-14 يوم</span>
-                                    <span id="pending-8-14" class="text-2xl font-bold text-yellow-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-orange-700 font-medium">15-30 يوم</span>
-                                    <span id="pending-15-30" class="text-2xl font-bold text-orange-600">0</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                                    <span class="text-red-700 font-medium">30+ يوم</span>
-                                    <span id="pending-30-plus" class="text-2xl font-bold text-red-600">0</span>
-                                </div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="نسبة الإرجاع الشهرية" data-en="Monthly Return Rate">نسبة الإرجاع الشهرية</h3>
+                            <div class="chart-container">
+                                <canvas id="returnRateChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -1096,372 +1015,79 @@
     </div>
 
     <script>
-        // ========== GLOBAL APPLICATION STATE ==========
-        // Single source of truth - all functions read/write here
-        const AppState = {
-            currentLang: localStorage.getItem('nesma_lang') || 'ar',
-            prData: null,
-            vendorData: null,
-            charts: {},
-            AppState.filteredPRData: [],
-            previousPeriodStats: null,
-            isLoading: false,
-            lastError: null,
-            currentFilters: {
-                project: '',
-                month: '',
-                year: '2025',
-                status: '',
-                vendor: '',
-                agent: ''
-            }
-        };
+        let currentLang = 'ar';
+        let prData = null;
+        let vendorData = null;
+        let charts = {};
+        let filteredPRData = [];
 
-        // Make accessible globally for debugging
-        window.AppState = AppState;
-
-        // ========== CHART.JS VERIFICATION ==========
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js failed to load!');
-            document.addEventListener('DOMContentLoaded', () => {
-                document.body.innerHTML = `
-                    <div style="padding:50px;text-align:center;direction:rtl;font-family:Cairo,sans-serif;">
-                        <h1 style="color:#ef4444;">خطأ في تحميل المكتبات</h1>
-                        <p>فشل تحميل Chart.js. الرجاء:</p>
-                        <ul style="text-align:right;max-width:400px;margin:20px auto;">
-                            <li>التأكد من اتصال الإنترنت</li>
-                            <li>إعادة تحميل الصفحة</li>
-                            <li>تجربة متصفح آخر</li>
-                        </ul>
-                        <button onclick="location.reload()" style="padding:10px 30px;background:#2e3192;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;">إعادة تحميل</button>
-                    </div>`;
-            });
-            throw new Error('Chart.js is required but not loaded');
-        }
-
-        // Chart.js Config (only if Chart is available)
-        console.log('Chart.js loaded successfully, version:', Chart.version);
-        Chart.defaults.font.family = 'Cairo, Arial, sans-serif';
+        // Chart.js Config
+        Chart.defaults.font.family = 'Cairo';
         Chart.defaults.font.size = 12;
 
-        // Loading Overlay Functions
-        function showLoading(message) {
-            const overlay = document.getElementById('loadingOverlay');
-            const textEl = overlay?.querySelector('.loading-text');
-            if (textEl && message) {
-                textEl.textContent = message;
-            }
-            overlay?.classList.add('show');
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay')?.classList.remove('show');
-        }
-
-        // Period Comparison Functions
-        function calculatePreviousPeriodStats(year, month) {
-            const allPRs = AppState.prData?.all_prs || [];
-            let prevYear = parseInt(year);
-            let prevMonth = month ? parseInt(month) - 1 : null;
-
-            // If month is 1, go to December of previous year
-            if (prevMonth === 0) {
-                prevMonth = 12;
-                prevYear--;
-            } else if (prevMonth === null) {
-                prevYear--;
-            }
-
-            const prevPRs = allPRs.filter(pr => {
-                const dateField = pr.approved_date || pr.submission_date;
-                if (!dateField) return false;
-                const date = new Date(dateField);
-                if (prevMonth) {
-                    return date.getFullYear() === prevYear && (date.getMonth() + 1) === prevMonth;
-                } else {
-                    return date.getFullYear() === prevYear;
-                }
-            });
-
-            return calculateFilteredStats(prevPRs);
-        }
-
-        // Auto-refresh data every 5 minutes
-        let autoRefreshInterval = null;
-        const AUTO_REFRESH_MINUTES = 5;
-
-        function startAutoRefresh() {
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            autoRefreshInterval = setInterval(async () => {
-                console.log('Auto-refreshing data...');
-                await loadData();
-                updateFilteredKPIs();
-                updateChartsWithFilteredData();
-                updateLastRefreshTime();
-            }, AUTO_REFRESH_MINUTES * 60 * 1000);
-        }
-
-        function updateLastRefreshTime() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
-            const refreshEl = document.getElementById('lastRefreshTime');
-            if (refreshEl) {
-                refreshEl.textContent = timeStr;
-            }
-        }
-
-        async function manualRefresh() {
-            const btn = document.getElementById('refreshBtn');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
-            }
-
-            showLoading(AppState.AppState.currentLang === 'ar' ? 'جاري تحديث البيانات...' : 'Refreshing data...');
-
-            try {
-                await loadData();
-                updateFilteredKPIs();
-                updateChartsWithFilteredData();
-                updatePendingDurationSummary();
-                updateLastRefreshTime();
-            } finally {
-                hideLoading();
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>';
-                }
-            }
-        }
-
-        function updatePendingDurationSummary() {
-            const allPRs = AppState.prData?.all_prs || [];
-            const pendingPRs = allPRs.filter(pr => {
-                const status = (pr.status || '').toLowerCase();
-                return status.includes('pending') || status.includes('in process') || status.includes('submitted');
-            });
-
-            const today = new Date();
-            let count07 = 0, count814 = 0, count1530 = 0, count30plus = 0;
-
-            pendingPRs.forEach(pr => {
-                const pendingDate = pr.pending_since || pr.submission_date;
-                if (!pendingDate) return;
-
-                const date = new Date(pendingDate);
-                const daysDiff = Math.floor((today - date) / (1000 * 60 * 60 * 24));
-
-                if (daysDiff <= 7) count07++;
-                else if (daysDiff <= 14) count814++;
-                else if (daysDiff <= 30) count1530++;
-                else count30plus++;
-            });
-
-            const el07 = document.getElementById('pending-0-7');
-            const el814 = document.getElementById('pending-8-14');
-            const el1530 = document.getElementById('pending-15-30');
-            const el30plus = document.getElementById('pending-30-plus');
-
-            if (el07) el07.textContent = count07;
-            if (el814) el814.textContent = count814;
-            if (el1530) el1530.textContent = count1530;
-            if (el30plus) el30plus.textContent = count30plus;
-        }
-
-        // ========== ERROR DISPLAY FUNCTION ==========
-        function showDashboardError(message, details) {
-            console.error('Dashboard Error:', message, details);
-            const errorContainer = document.createElement('div');
-            errorContainer.className = 'fixed top-4 left-4 right-4 z-50 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-lg';
-            errorContainer.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div>
-                        <strong>خطأ:</strong> ${message}
-                        ${details ? `<br><small class="text-red-500">${details}</small>` : ''}
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" class="text-red-700 hover:text-red-900 font-bold text-xl">&times;</button>
-                </div>
-            `;
-            document.body.appendChild(errorContainer);
-            setTimeout(() => errorContainer.remove(), 10000);
-        }
-
-        // ========== INITIALIZE DASHBOARD ==========
+        // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 Dashboard initialization starting...');
-
-            // 1. Load saved language
             const savedLang = localStorage.getItem('nesma_lang');
             if (savedLang) {
                 currentLang = savedLang;
-                window.currentLang = savedLang;
-                if (typeof applyLanguage === 'function') applyLanguage();
+                applyLanguage();
             }
-            console.log('✅ Language set:', currentLang);
 
-            // 2. Show loading overlay
-            showLoading(AppState.AppState.currentLang === 'ar' ? 'جاري تحميل البيانات...' : 'Loading data...');
+            // Load data from JSON files
+            await loadData();
 
-            try {
-                // 3. Load data from JSON files
-                console.log('📥 Loading data...');
-                await loadData();
-                console.log('✅ Data loaded - PRs:', AppState.prData?.all_prs?.length || 0, ', Vendors:', AppState.vendorData?.vendors?.length || 0);
+            // Populate project filters from data
+            populateProjectDropdown();
+            populateVendorCategoryDropdown();
 
-                // 4. Populate dropdowns
-                console.log('📋 Populating dropdowns...');
-                if (typeof populateProjectDropdown === 'function') populateProjectDropdown();
-                if (typeof populateVendorCategoryDropdown === 'function') populateVendorCategoryDropdown();
-                console.log('✅ Dropdowns populated');
-
-                // 5. Create charts
-                console.log('📊 Creating AppState.charts...');
-                if (typeof createCharts === 'function') createCharts();
-                if (typeof createVendorAnalyticsCharts === 'function') createVendorAnalyticsCharts();
-                console.log('✅ Charts created:', Object.keys(AppState.charts).length);
-
-                // 6. Populate tables
-                console.log('📋 Populating tables...');
-                if (typeof populateVendorTable === 'function') populateVendorTable();
-                console.log('✅ Tables populated');
-
-                // 7. Update summaries
-                if (typeof updatePendingDurationSummary === 'function') updatePendingDurationSummary();
-                if (typeof updateLastRefreshTime === 'function') updateLastRefreshTime();
-                console.log('✅ Summaries updated');
-
-                // 8. Start auto-refresh
-                if (typeof startAutoRefresh === 'function') startAutoRefresh();
-                console.log('✅ Auto-refresh started');
-
-                console.log('🎉 Dashboard initialization complete!');
-
-            } catch (error) {
-                console.error('❌ Dashboard initialization error:', error);
-                showDashboardError(
-                    AppState.currentLang === 'ar' ? 'فشل تحميل الداشبورد' : 'Dashboard failed to load',
-                    error.message
-                );
-            } finally {
-                // Hide loading overlay
-                hideLoading();
-            }
+            // Create charts and populate table
+            createCharts();
+            createVendorAnalyticsCharts();
+            populateVendorTable();
         });
 
         // Load data from JSON files with cache-busting
-        // Transform data from Smartsheet export format to dashboard format
-        function transformPRData(data) {
-            // Create status_breakdown from pr_status_breakdown
-            if (data.summary && data.summary.pr_status_breakdown && !data.summary.status_breakdown) {
-                data.summary.status_breakdown = data.summary.pr_status_breakdown;
-            }
-
-            // Transform monthly data from dict format to array format for charts
-            if (data.monthly && typeof data.monthly === 'object' && !Array.isArray(data.monthly.labels)) {
-                const currentYear = new Date().getFullYear();
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const approved = [];
-                const returned = [];
-                const rejected = [];
-                const submitted = [];
-
-                for (let m = 1; m <= 12; m++) {
-                    const key = `${currentYear}-${String(m).padStart(2, '0')}`;
-                    const monthData = data.monthly[key] || {};
-                    approved.push(monthData.approved || 0);
-                    returned.push(monthData.returned || 0);
-                    rejected.push(monthData.rejected || 0);
-                    submitted.push(monthData.submitted || 0);
-                }
-
-                // Calculate return rate
-                const return_rate = approved.map((a, i) => a > 0 ? Math.round((returned[i] / a * 100) * 10) / 10 : 0);
-
-                data.monthly = {
-                    labels: months,
-                    approved: approved,
-                    returned: returned,
-                    rejected: rejected,
-                    submitted: submitted,
-                    return_rate: return_rate
-                };
-            }
-
-            // Calculate 2025 totals from all_prs if not present
-            if (data.all_prs && data.all_prs.length > 0) {
-                const prs2025 = data.all_prs.filter(pr => {
-                    const date = pr.approved_date || pr.submission_date;
-                    return date && date.startsWith('2025');
-                });
-
-                if (!data.summary.total_approved_2025) {
-                    data.summary.total_approved_2025 = prs2025.filter(pr => pr.pr_status === 'APPROVED').length;
-                }
-                if (!data.summary.total_returned_2025) {
-                    data.summary.total_returned_2025 = prs2025.filter(pr => pr.return_date).length;
-                }
-                if (!data.summary.return_rate_2025 && data.summary.total_approved_2025 > 0) {
-                    data.summary.return_rate_2025 = Math.round((data.summary.total_returned_2025 / data.summary.total_approved_2025 * 100) * 10) / 10;
-                }
-            }
-
-            return data;
-        }
-
         async function loadData() {
-            if (AppState.isLoading) {
-                console.log('⏳ Already loading data, skipping...');
-                return false;
-            }
-
-            AppState.isLoading = true;
-            AppState.lastError = null;
             const cacheBuster = '?v=' + Date.now();
 
             try {
                 // Load PR data with cache-busting
-                console.log('📥 Fetching PR data...');
                 const prResponse = await fetch('data/pr_data.json' + cacheBuster);
                 if (prResponse.ok) {
-                    let rawData = await prResponse.json();
-                    AppState.prData = transformPRData(rawData);
-                    console.log('✅ PR Data loaded:', AppState.prData?.summary);
-                    console.log('   Total PRs:', AppState.prData?.all_prs?.length || 0);
-                    AppState.filteredPRData = AppState.prData?.all_prs || [];
+                    prData = await prResponse.json();
+                    console.log('PR Data loaded successfully:', prData.summary);
+                    console.log('Total PRs available:', (prData.all_prs || prData.recent_prs || []).length);
+                    filteredPRData = prData.all_prs || prData.recent_prs || [];
+                    updateFilteredKPIs();
                 } else {
-                    console.warn('⚠️ PR fetch failed, using fallback');
+                    console.log('PR fetch failed, using fallback data');
                     useFallbackPRData();
                 }
             } catch (e) {
-                console.error('❌ PR data error:', e.message);
-                AppState.lastError = e.message;
+                console.log('PR data error:', e.message, '- using fallback');
                 useFallbackPRData();
             }
 
             try {
                 // Load Vendor data with cache-busting
-                console.log('📥 Fetching Vendor data...');
                 const vendorResponse = await fetch('data/vendor_data.json' + cacheBuster);
                 if (vendorResponse.ok) {
-                    AppState.vendorData = await vendorResponse.json();
-                    console.log('✅ Vendor Data loaded:', AppState.vendorData?.summary);
-                    console.log('   Total Vendors:', AppState.vendorData?.vendors?.length || 0);
+                    vendorData = await vendorResponse.json();
+                    console.log('Vendor Data loaded successfully:', vendorData.summary);
+                    updateVendorKPIs();
                 } else {
-                    console.warn('⚠️ Vendor fetch failed, using fallback');
+                    console.log('Vendor fetch failed, using fallback');
                     useFallbackVendorData();
                 }
             } catch (e) {
-                console.error('❌ Vendor data error:', e.message);
+                console.log('Vendor data error:', e.message, '- using fallback');
                 useFallbackVendorData();
             }
-
-            AppState.isLoading = false;
-            return AppState.prData !== null && AppState.vendorData !== null;
         }
 
         // Fallback PR data (updated from Smartsheet export)
         function useFallbackPRData() {
-            AppState.prData = {
+            prData = {
                 summary: {
                     total_prs: 5671,
                     total_approved_2025: 1929,
@@ -1484,10 +1110,10 @@
                 all_prs: [],
                 recent_prs: []
             };
-            AppState.filteredPRData = [];
+            filteredPRData = [];
             // Set default year options when using fallback
             const yearSelects = [document.getElementById('filterYear'), document.getElementById('filterYearPO')];
-            const defaultYears = `<option value="" data-ar="الكل" data-en="All">${AppState.currentLang === 'ar' ? 'الكل' : 'All'}</option>
+            const defaultYears = `<option value="" data-ar="الكل" data-en="All">${currentLang === 'ar' ? 'الكل' : 'All'}</option>
                 <option value="2025" selected>2025</option>
                 <option value="2024">2024</option>
                 <option value="2023">2023</option>`;
@@ -1498,7 +1124,7 @@
 
         // Fallback Vendor data
         function useFallbackVendorData() {
-            AppState.vendorData = {
+            vendorData = {
                 summary: {
                     total_vendors: 95,
                     evaluations_requested: 95,
@@ -1521,10 +1147,9 @@
 
         // Populate project filters
         function populateProjectFilters() {
-            const allPRs = AppState.prData?.all_prs || [];
-            if (allPRs.length === 0) return;
+            if (!prData || !prData.recent_prs) return;
 
-            const projects = [...new Set(allPRs.map(pr => pr.project).filter(p => p && !p.includes('ORA-')))];
+            const projects = [...new Set(prData.recent_prs.map(pr => pr.project).filter(p => p && !p.includes('ORA-')))];
             projects.sort();
 
             const filterProject = document.getElementById('filterProject');
@@ -1541,18 +1166,18 @@
 
         // Update PR Return KPIs
         function updatePRKPIs() {
-            if (!AppState.prData || !AppState.prData.monthly) {
-                console.log('PR data not loaded:', AppState.prData);
+            if (!prData || !prData.monthly) {
+                console.log('PR data not loaded:', prData);
                 return;
             }
 
             // Find the latest month with actual data
             let currentMonth = new Date().getMonth(); // December = 11
             console.log('Current calendar month:', currentMonth);
-            console.log('Monthly approved array:', AppState.prData.monthly.approved);
+            console.log('Monthly approved array:', prData.monthly.approved);
 
             // Check from current month backwards to find month with data
-            while (currentMonth >= 0 && AppState.prData.monthly.approved[currentMonth] === 0) {
+            while (currentMonth >= 0 && prData.monthly.approved[currentMonth] === 0) {
                 currentMonth--;
             }
             // Fallback to November if nothing found
@@ -1560,8 +1185,8 @@
 
             console.log('Using month index:', currentMonth);
 
-            const monthApproved = AppState.prData.monthly.approved[currentMonth] || 0;
-            const monthReturned = AppState.prData.monthly.returned[currentMonth] || 0;
+            const monthApproved = prData.monthly.approved[currentMonth] || 0;
+            const monthReturned = prData.monthly.returned[currentMonth] || 0;
 
             console.log('Month approved:', monthApproved, 'Month returned:', monthReturned);
 
@@ -1583,7 +1208,7 @@
             document.getElementById('kpi-after2-pct').textContent = after2Pct + '%';
 
             // Update summary KPIs (using filtered data for dynamic updates)
-            const allPRs = AppState.prData?.all_prs || [];
+            const allPRs = prData?.all_prs || [];
             const stats = {
                 total: allPRs.length,
                 rejected: allPRs.filter(pr => pr.pr_status === 'REJECTED').length,
@@ -1602,19 +1227,19 @@
 
         // Update PR to PO KPIs
         function updatePOKPIs() {
-            if (!AppState.prData || !AppState.prData.monthly) return;
+            if (!prData || !prData.monthly) return;
 
             // Find the latest month with actual data
             let currentMonth = new Date().getMonth();
-            while (currentMonth >= 0 && AppState.prData.monthly.approved[currentMonth] === 0) {
+            while (currentMonth >= 0 && prData.monthly.approved[currentMonth] === 0) {
                 currentMonth--;
             }
             if (currentMonth < 0) currentMonth = 10;
 
-            const monthApproved = AppState.prData.monthly.approved[currentMonth] || 0;
+            const monthApproved = prData.monthly.approved[currentMonth] || 0;
 
             // Calculate POs issued (PRs with pr_to_po_days value)
-            const allPRs = AppState.prData?.all_prs || [];
+            const allPRs = prData.recent_prs || [];
             const currentMonthPRs = allPRs.filter(pr => {
                 if (!pr.approved_date) return false;
                 const date = new Date(pr.approved_date);
@@ -1636,7 +1261,7 @@
             document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
 
             // YTD calculations
-            const ytdApproved = AppState.prData.summary.total_approved_2025 || 0;
+            const ytdApproved = prData.summary.total_approved_2025 || 0;
             const ytdPOs = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.approved_date && pr.approved_date.startsWith('2025')).length;
             const ytdWithin30 = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30 && pr.approved_date && pr.approved_date.startsWith('2025')).length;
             const ytdAfter30 = ytdPOs - ytdWithin30;
@@ -1649,58 +1274,58 @@
 
         // Update Vendor KPIs
         function updateVendorKPIs() {
-            if (!AppState.vendorData) return;
+            if (!vendorData) return;
 
-            document.getElementById('vendor-kpi-requested').textContent = AppState.vendorData.summary.total_vendors;
-            document.getElementById('vendor-kpi-done').textContent = AppState.vendorData.summary.evaluations_done;
-            document.getElementById('vendor-kpi-pending').textContent = AppState.vendorData.summary.evaluations_pending;
-            document.getElementById('vendor-kpi-avg').textContent = AppState.vendorData.summary.average_score + '%';
-            document.getElementById('vendor-kpi-completion').textContent = AppState.vendorData.summary.completion_rate + '%';
+            document.getElementById('vendor-kpi-requested').textContent = vendorData.summary.total_vendors;
+            document.getElementById('vendor-kpi-done').textContent = vendorData.summary.evaluations_done;
+            document.getElementById('vendor-kpi-pending').textContent = vendorData.summary.evaluations_pending;
+            document.getElementById('vendor-kpi-avg').textContent = vendorData.summary.average_score + '%';
+            document.getElementById('vendor-kpi-completion').textContent = vendorData.summary.completion_rate + '%';
 
             // Score distribution
-            if (AppState.vendorData.score_distribution) {
-                document.getElementById('vendor-dist-below20').textContent = AppState.vendorData.score_distribution.below_20 || 0;
-                document.getElementById('vendor-dist-20-40').textContent = AppState.vendorData.score_distribution['20_40'] || 0;
-                document.getElementById('vendor-dist-40-60').textContent = AppState.vendorData.score_distribution['40_60'] || 0;
-                document.getElementById('vendor-dist-60-70').textContent = AppState.vendorData.score_distribution['60_70'] || 0;
-                document.getElementById('vendor-dist-above70').textContent = AppState.vendorData.score_distribution.above_70 || 0;
+            if (vendorData.score_distribution) {
+                document.getElementById('vendor-dist-below20').textContent = vendorData.score_distribution.below_20 || 0;
+                document.getElementById('vendor-dist-20-40').textContent = vendorData.score_distribution['20_40'] || 0;
+                document.getElementById('vendor-dist-40-60').textContent = vendorData.score_distribution['40_60'] || 0;
+                document.getElementById('vendor-dist-60-70').textContent = vendorData.score_distribution['60_70'] || 0;
+                document.getElementById('vendor-dist-above70').textContent = vendorData.score_distribution.above_70 || 0;
             }
         }
 
         function getMonthLabels() {
-            return AppState.currentLang === 'ar'
+            return currentLang === 'ar'
                 ? ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         }
 
         function createCharts() {
             // Destroy existing charts
-            Object.values(AppState.charts).forEach(chart => {
+            Object.values(charts).forEach(chart => {
                 if (chart && typeof chart.destroy === 'function') {
                     chart.destroy();
                 }
             });
-            AppState.charts = {};
+            charts = {};
 
             const monthLabels = getMonthLabels();
-            const approvedData = AppState.prData?.monthly?.approved || [204, 154, 142, 123, 168, 88, 218, 199, 211, 180, 242, 0];
-            const returnedData = AppState.prData?.monthly?.returned || [32, 23, 20, 14, 25, 11, 34, 37, 73, 46, 35, 0];
-            const returnRateData = AppState.prData?.monthly?.return_rate || [15.7, 14.9, 14.1, 11.4, 14.9, 12.5, 15.6, 18.6, 34.6, 25.6, 14.5, 0];
+            const approvedData = prData?.monthly?.approved || [204, 154, 142, 123, 168, 88, 218, 199, 211, 180, 242, 0];
+            const returnedData = prData?.monthly?.returned || [32, 23, 20, 14, 25, 11, 34, 37, 73, 46, 35, 0];
+            const returnRateData = prData?.monthly?.return_rate || [15.7, 14.9, 14.1, 11.4, 14.9, 12.5, 15.6, 18.6, 34.6, 25.6, 14.5, 0];
 
             // PR Monthly Chart
             const prMonthlyCtx = document.getElementById('prMonthlyChart')?.getContext('2d');
             if (prMonthlyCtx) {
-                AppState.charts.prMonthly = new Chart(prMonthlyCtx, {
+                charts.prMonthly = new Chart(prMonthlyCtx, {
                     type: 'bar',
                     data: {
                         labels: monthLabels.slice(0, 11),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'معتمدة' : 'Approved',
+                            label: currentLang === 'ar' ? 'معتمدة' : 'Approved',
                             data: approvedData.slice(0, 11),
                             backgroundColor: '#2e3192',
                             borderRadius: 4
                         }, {
-                            label: AppState.currentLang === 'ar' ? 'مرتجعة' : 'Returned',
+                            label: currentLang === 'ar' ? 'مرتجعة' : 'Returned',
                             data: returnedData.slice(0, 11),
                             backgroundColor: '#ef4444',
                             borderRadius: 4
@@ -1718,10 +1343,10 @@
             // Return Days Chart
             const returnDaysCtx = document.getElementById('returnDaysChart')?.getContext('2d');
             if (returnDaysCtx) {
-                AppState.charts.returnDays = new Chart(returnDaysCtx, {
+                charts.returnDays = new Chart(returnDaysCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: AppState.currentLang === 'ar'
+                        labels: currentLang === 'ar'
                             ? ['خلال يومين', 'بعد يومين']
                             : ['Within 2 Days', 'After 2 Days'],
                         datasets: [{
@@ -1741,19 +1366,19 @@
             // PR Status Chart
             const prStatusCtx = document.getElementById('prStatusChart')?.getContext('2d');
             if (prStatusCtx) {
-                AppState.charts.prStatus = new Chart(prStatusCtx, {
+                charts.prStatus = new Chart(prStatusCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: AppState.currentLang === 'ar'
+                        labels: currentLang === 'ar'
                             ? ['معتمدة', 'مرتجعة', 'مرفوضة', 'غير مكتملة', 'قيد المعالجة']
                             : ['Approved', 'Returned', 'Rejected', 'Incomplete', 'In Process'],
                         datasets: [{
                             data: [
-                                AppState.prData?.summary?.status_breakdown?.APPROVED || 4257,
-                                AppState.prData?.summary?.status_breakdown?.RETURNED || 630,
-                                AppState.prData?.summary?.status_breakdown?.REJECTED || 498,
-                                AppState.prData?.summary?.status_breakdown?.INCOMPLETE || 118,
-                                AppState.prData?.summary?.status_breakdown?.['IN PROCESS'] || 114
+                                prData?.summary?.status_breakdown?.APPROVED || 4257,
+                                prData?.summary?.status_breakdown?.RETURNED || 630,
+                                prData?.summary?.status_breakdown?.REJECTED || 498,
+                                prData?.summary?.status_breakdown?.INCOMPLETE || 118,
+                                prData?.summary?.status_breakdown?.['IN PROCESS'] || 114
                             ],
                             backgroundColor: ['#2e3192', '#ef4444', '#f97316', '#fbbf24', '#6366f1'],
                             borderWidth: 0
@@ -1770,12 +1395,12 @@
             // Return Rate Chart
             const returnRateCtx = document.getElementById('returnRateChart')?.getContext('2d');
             if (returnRateCtx) {
-                AppState.charts.returnRate = new Chart(returnRateCtx, {
+                charts.returnRate = new Chart(returnRateCtx, {
                     type: 'line',
                     data: {
                         labels: monthLabels.slice(0, 11),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'نسبة الإرجاع %' : 'Return Rate %',
+                            label: currentLang === 'ar' ? 'نسبة الإرجاع %' : 'Return Rate %',
                             data: returnRateData.slice(0, 11),
                             borderColor: '#2e3192',
                             backgroundColor: 'rgba(46, 49, 146, 0.1)',
@@ -1797,10 +1422,10 @@
             const pendingWithCtx = document.getElementById('pendingWithChart')?.getContext('2d');
             if (pendingWithCtx) {
                 // Analyze pending with data from returned PRs
-                const returnedPRs = AppState.prData.all_prs.filter(pr => pr.return_date);
+                const returnedPRs = prData.all_prs.filter(pr => pr.return_date);
                 const pendingWithCounts = {};
                 returnedPRs.forEach(pr => {
-                    const pendingWith = pr.pending_with || (AppState.currentLang === 'ar' ? 'غير محدد' : 'Not Specified');
+                    const pendingWith = pr.pending_with || (currentLang === 'ar' ? 'غير محدد' : 'Not Specified');
                     pendingWithCounts[pendingWith] = (pendingWithCounts[pendingWith] || 0) + 1;
                 });
 
@@ -1812,12 +1437,12 @@
                 const pendingValues = sortedPending.map(([, value]) => value);
                 const pendingColors = ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4'];
 
-                AppState.charts.pendingWith = new Chart(pendingWithCtx, {
+                charts.pendingWith = new Chart(pendingWithCtx, {
                     type: 'bar',
                     data: {
                         labels: pendingLabels,
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'عدد PRs المعلقة' : 'Pending PRs Count',
+                            label: currentLang === 'ar' ? 'عدد PRs المعلقة' : 'Pending PRs Count',
                             data: pendingValues,
                             backgroundColor: pendingColors,
                             borderRadius: 4
@@ -1839,17 +1464,17 @@
             // PR to PO Chart
             const prToPOCtx = document.getElementById('prToPOChart')?.getContext('2d');
             if (prToPOCtx) {
-                AppState.charts.prToPO = new Chart(prToPOCtx, {
+                charts.prToPO = new Chart(prToPOCtx, {
                     type: 'bar',
                     data: {
                         labels: monthLabels.slice(0, 11),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'PRs مستلمة' : 'PRs Received',
+                            label: currentLang === 'ar' ? 'PRs مستلمة' : 'PRs Received',
                             data: approvedData.slice(0, 11),
                             backgroundColor: '#8b5cf6',
                             borderRadius: 4
                         }, {
-                            label: AppState.currentLang === 'ar' ? 'POs صادرة' : 'POs Issued',
+                            label: currentLang === 'ar' ? 'POs صادرة' : 'POs Issued',
                             data: approvedData.slice(0, 11).map(v => Math.round(v * 0.85)),
                             backgroundColor: '#2e3192',
                             borderRadius: 4
@@ -1867,10 +1492,10 @@
             // PO Time Chart
             const poTimeCtx = document.getElementById('poTimeChart')?.getContext('2d');
             if (poTimeCtx) {
-                AppState.charts.poTime = new Chart(poTimeCtx, {
+                charts.poTime = new Chart(poTimeCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: AppState.currentLang === 'ar'
+                        labels: currentLang === 'ar'
                             ? ['خلال 30 يوم', 'بعد 30 يوم']
                             : ['Within 30 Days', 'After 30 Days'],
                         datasets: [{
@@ -1890,12 +1515,12 @@
             // Avg PR to PO Chart
             const avgPRtoPOCtx = document.getElementById('avgPRtoPOChart')?.getContext('2d');
             if (avgPRtoPOCtx) {
-                AppState.charts.avgPRtoPO = new Chart(avgPRtoPOCtx, {
+                charts.avgPRtoPO = new Chart(avgPRtoPOCtx, {
                     type: 'line',
                     data: {
                         labels: monthLabels.slice(0, 11),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'متوسط الأيام' : 'Average Days',
+                            label: currentLang === 'ar' ? 'متوسط الأيام' : 'Average Days',
                             data: [12, 15, 10, 18, 14, 11, 16, 13, 19, 15, 12],
                             borderColor: '#8b5cf6',
                             backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -1903,7 +1528,7 @@
                             borderWidth: 3,
                             fill: true
                         }, {
-                            label: AppState.currentLang === 'ar' ? 'الهدف (30 يوم)' : 'Target (30 Days)',
+                            label: currentLang === 'ar' ? 'الهدف (30 يوم)' : 'Target (30 Days)',
                             data: [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
                             borderColor: '#ef4444',
                             borderDash: [5, 5],
@@ -1924,12 +1549,12 @@
             // Compliance Chart
             const complianceCtx = document.getElementById('complianceChart')?.getContext('2d');
             if (complianceCtx) {
-                AppState.charts.compliance = new Chart(complianceCtx, {
+                charts.compliance = new Chart(complianceCtx, {
                     type: 'bar',
                     data: {
                         labels: monthLabels.slice(0, 11),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'نسبة الالتزام %' : 'Compliance Rate %',
+                            label: currentLang === 'ar' ? 'نسبة الالتزام %' : 'Compliance Rate %',
                             data: [85, 82, 88, 79, 84, 90, 81, 86, 78, 83, 85],
                             backgroundColor: '#2e3192',
                             borderRadius: 4
@@ -1947,20 +1572,20 @@
             // Vendor Score Chart
             const vendorScoreCtx = document.getElementById('vendorScoreChart')?.getContext('2d');
             if (vendorScoreCtx) {
-                AppState.charts.vendorScore = new Chart(vendorScoreCtx, {
+                charts.vendorScore = new Chart(vendorScoreCtx, {
                     type: 'bar',
                     data: {
-                        labels: AppState.currentLang === 'ar'
+                        labels: currentLang === 'ar'
                             ? ['أقل من 20%', '20-40%', '40-60%', '60-70%', 'أعلى من 70%']
                             : ['Below 20%', '20-40%', '40-60%', '60-70%', 'Above 70%'],
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'عدد الموردين' : 'Number of Vendors',
+                            label: currentLang === 'ar' ? 'عدد الموردين' : 'Number of Vendors',
                             data: [
-                                AppState.vendorData?.score_distribution?.below_20 || 0,
-                                AppState.vendorData?.score_distribution?.['20_40'] || 4,
-                                AppState.vendorData?.score_distribution?.['40_60'] || 10,
-                                AppState.vendorData?.score_distribution?.['60_70'] || 14,
-                                AppState.vendorData?.score_distribution?.above_70 || 12
+                                vendorData?.score_distribution?.below_20 || 0,
+                                vendorData?.score_distribution?.['20_40'] || 4,
+                                vendorData?.score_distribution?.['40_60'] || 10,
+                                vendorData?.score_distribution?.['60_70'] || 14,
+                                vendorData?.score_distribution?.above_70 || 12
                             ],
                             backgroundColor: ['#ef4444', '#f97316', '#fbbf24', '#3b82f6', '#2e3192'],
                             borderRadius: 6
@@ -1978,16 +1603,16 @@
             // Evaluation Status Chart
             const evalStatusCtx = document.getElementById('evalStatusChart')?.getContext('2d');
             if (evalStatusCtx) {
-                AppState.charts.evalStatus = new Chart(evalStatusCtx, {
+                charts.evalStatus = new Chart(evalStatusCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: AppState.currentLang === 'ar'
+                        labels: currentLang === 'ar'
                             ? ['مكتملة', 'معلقة']
                             : ['Completed', 'Pending'],
                         datasets: [{
                             data: [
-                                AppState.vendorData?.summary?.evaluations_done || 40,
-                                AppState.vendorData?.summary?.evaluations_pending || 5
+                                vendorData?.summary?.evaluations_done || 40,
+                                vendorData?.summary?.evaluations_pending || 5
                             ],
                             backgroundColor: ['#2e3192', '#ef4444'],
                             borderWidth: 0
@@ -2014,7 +1639,7 @@
             const tbody = document.getElementById('vendorTable');
             if (!tbody) return;
 
-            const vendors = AppState.vendorData?.vendors || [];
+            const vendors = vendorData?.vendors || [];
             renderVendorTableRows(tbody, vendors);
         }
 
@@ -2029,19 +1654,19 @@
                 let statusClass, statusText;
                 if (v.score === 0) {
                     statusClass = 'score-critical';
-                    statusText = AppState.currentLang === 'ar' ? 'لم يُقيّم' : 'Not Evaluated';
+                    statusText = currentLang === 'ar' ? 'لم يُقيّم' : 'Not Evaluated';
                 } else if (v.score < 40) {
                     statusClass = 'score-poor';
-                    statusText = AppState.currentLang === 'ar' ? 'ضعيف' : 'Poor';
+                    statusText = currentLang === 'ar' ? 'ضعيف' : 'Poor';
                 } else if (v.score < 60) {
                     statusClass = 'score-fair';
-                    statusText = AppState.currentLang === 'ar' ? 'مقبول' : 'Fair';
+                    statusText = currentLang === 'ar' ? 'مقبول' : 'Fair';
                 } else if (v.score < 70) {
                     statusClass = 'score-good';
-                    statusText = AppState.currentLang === 'ar' ? 'جيد' : 'Good';
+                    statusText = currentLang === 'ar' ? 'جيد' : 'Good';
                 } else {
                     statusClass = 'score-excellent';
-                    statusText = AppState.currentLang === 'ar' ? 'ممتاز' : 'Excellent';
+                    statusText = currentLang === 'ar' ? 'ممتاز' : 'Excellent';
                 }
 
                 // Generate attachments HTML - prioritize local PDF files
@@ -2052,7 +1677,7 @@
                         <a href="${v.local_pdf}"
                            target="_blank"
                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-xs cursor-pointer"
-                           title="${AppState.currentLang === 'ar' ? 'عرض التقييم' : 'View Evaluation'}">
+                           title="${currentLang === 'ar' ? 'عرض التقييم' : 'View Evaluation'}">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
                             </svg>
@@ -2067,7 +1692,7 @@
                         <a href="${smartsheetUrl}"
                            target="_blank"
                            class="inline-flex items-center gap-1 text-amber-600 hover:text-amber-800 text-xs cursor-pointer"
-                           title="${AppState.currentLang === 'ar' ? 'عرض في Smartsheet' : 'View in Smartsheet'}">
+                           title="${currentLang === 'ar' ? 'عرض في Smartsheet' : 'View in Smartsheet'}">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
                             </svg>
@@ -2080,7 +1705,7 @@
                     <tr>
                         <td>${i + 1}</td>
                         <td class="font-medium">${v.name}</td>
-                        <td>${v.category || (AppState.currentLang === 'ar' ? 'غير مصنف' : 'Unclassified')}</td>
+                        <td>${v.category || (currentLang === 'ar' ? 'غير مصنف' : 'Unclassified')}</td>
                         <td class="font-bold ${v.score >= 70 ? 'text-blue-600' : v.score >= 60 ? 'text-blue-600' : v.score >= 40 ? 'text-amber-600' : v.score > 0 ? 'text-red-600' : 'text-gray-400'}">${v.score > 0 ? v.score.toFixed(1) + '%' : '-'}</td>
                         <td><span class="${statusClass} px-2 py-1 rounded text-xs font-semibold">${statusText}</span></td>
                         <td class="text-center">${attachmentsHtml}</td>
@@ -2099,17 +1724,17 @@
 
         // Language Toggle
         function toggleLanguage() {
-            currentLang = AppState.currentLang === 'ar' ? 'en' : 'ar';
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
             localStorage.setItem('nesma_lang', currentLang);
             applyLanguage();
         }
 
         function applyLanguage() {
             document.documentElement.lang = currentLang;
-            document.documentElement.dir = AppState.currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('langText').textContent = AppState.currentLang === 'ar' ? 'EN' : 'عربي';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('langText').textContent = currentLang === 'ar' ? 'EN' : 'عربي';
 
-            Chart.defaults.font.family = AppState.currentLang === 'ar' ? 'Cairo' : 'Inter';
+            Chart.defaults.font.family = currentLang === 'ar' ? 'Cairo' : 'Inter';
 
             document.querySelectorAll('[data-ar][data-en]').forEach(el => {
                 el.textContent = el.getAttribute(`data-${currentLang}`);
@@ -2125,7 +1750,7 @@
 
         // Get filtered PRs based on current filters - uses NEW data structure
         function getFilteredPRs() {
-            const allPRs = AppState.prData?.all_prs || AppState.filteredPRData || [];
+            const allPRs = prData?.all_prs || prData?.recent_prs || filteredPRData || [];
             return allPRs.filter(pr => {
                 // Year filter - check all date fields
                 if (currentFilters.year) {
@@ -2206,62 +1831,37 @@
             const filteredPRs = getFilteredPRs();
             const stats = calculateFilteredStats(filteredPRs);
 
-            // PR Return KPIs (Top Row) - Simple textContent
-            const approvedEl = document.getElementById('kpi-approved');
-            const returnedEl = document.getElementById('kpi-returned');
-            const returnRateEl = document.getElementById('kpi-return-rate');
-
-            if (approvedEl) approvedEl.textContent = stats.approved.toLocaleString();
-            if (returnedEl) returnedEl.textContent = stats.returned.toLocaleString();
-
+            // PR Return KPIs (Top Row)
+            document.getElementById('kpi-approved').textContent = stats.approved.toLocaleString();
+            document.getElementById('kpi-returned').textContent = stats.returned.toLocaleString();
             const returnRate = stats.approved > 0 ? ((stats.returned / stats.approved) * 100).toFixed(1) : 0;
-            if (returnRateEl) returnRateEl.textContent = returnRate + '%';
-
-            const kpiWithin2 = document.getElementById('kpi-within2');
-            const kpiAfter2 = document.getElementById('kpi-after2');
-            if (kpiWithin2) kpiWithin2.textContent = stats.within2days;
-            if (kpiAfter2) kpiAfter2.textContent = stats.after2days;
-
+            document.getElementById('kpi-return-rate').textContent = returnRate + '%';
+            document.getElementById('kpi-within2').textContent = stats.within2days;
+            document.getElementById('kpi-after2').textContent = stats.after2days;
             const within2Pct = stats.returned > 0 ? ((stats.within2days / stats.returned) * 100).toFixed(1) : 0;
             const after2Pct = stats.returned > 0 ? ((stats.after2days / stats.returned) * 100).toFixed(1) : 0;
-            const kpiWithin2Pct = document.getElementById('kpi-within2-pct');
-            const kpiAfter2Pct = document.getElementById('kpi-after2-pct');
-            if (kpiWithin2Pct) kpiWithin2Pct.textContent = within2Pct + '%';
-            if (kpiAfter2Pct) kpiAfter2Pct.textContent = after2Pct + '%';
+            document.getElementById('kpi-within2-pct').textContent = within2Pct + '%';
+            document.getElementById('kpi-after2-pct').textContent = after2Pct + '%';
 
-            // Summary KPIs (Second Row - Dynamic) - Simple textContent
-            const totalEl = document.getElementById('kpi-total-filtered');
-            const rejectedEl = document.getElementById('kpi-rejected');
-            const incompleteEl = document.getElementById('kpi-incomplete');
-            const inProcessEl = document.getElementById('kpi-in-process');
-            const avgPrToPoEl = document.getElementById('kpi-avg-pr-to-po');
+            // Summary KPIs (Second Row - Dynamic)
+            document.getElementById('kpi-total-filtered').textContent = stats.total.toLocaleString();
+            document.getElementById('kpi-rejected').textContent = stats.rejected.toLocaleString();
+            document.getElementById('kpi-incomplete').textContent = stats.incomplete.toLocaleString();
+            document.getElementById('kpi-in-process').textContent = stats.inProcess.toLocaleString();
+            document.getElementById('kpi-avg-pr-to-po').textContent = stats.avgPrToPo;
 
-            if (totalEl) totalEl.textContent = stats.total.toLocaleString();
-            if (rejectedEl) rejectedEl.textContent = stats.rejected.toLocaleString();
-            if (incompleteEl) incompleteEl.textContent = stats.incomplete.toLocaleString();
-            if (inProcessEl) inProcessEl.textContent = stats.inProcess.toLocaleString();
-            if (avgPrToPoEl) avgPrToPoEl.textContent = stats.avgPrToPo;
-
-            // PR to PO KPIs (Current Month - based on filtered data) - Simple textContent
-            const poReceivedMonthEl = document.getElementById('po-kpi-received-month');
-            const poIssuedMonthEl = document.getElementById('po-kpi-issued-month');
-            const poWithin30El = document.getElementById('po-kpi-within30');
-            const poAfter30El = document.getElementById('po-kpi-after30');
-
-            if (poReceivedMonthEl) poReceivedMonthEl.textContent = stats.approved.toLocaleString();
-            if (poIssuedMonthEl) poIssuedMonthEl.textContent = stats.posIssued.toLocaleString();
-            if (poWithin30El) poWithin30El.textContent = stats.within30days.toLocaleString();
-            if (poAfter30El) poAfter30El.textContent = stats.after30days.toLocaleString();
-
+            // PR to PO KPIs (Current Month - based on filtered data)
+            document.getElementById('po-kpi-received-month').textContent = stats.approved.toLocaleString();
+            document.getElementById('po-kpi-issued-month').textContent = stats.posIssued.toLocaleString();
+            document.getElementById('po-kpi-within30').textContent = stats.within30days.toLocaleString();
+            document.getElementById('po-kpi-after30').textContent = stats.after30days.toLocaleString();
             const within30Pct = stats.posIssued > 0 ? ((stats.within30days / stats.posIssued) * 100).toFixed(1) : 0;
             const after30Pct = stats.posIssued > 0 ? ((stats.after30days / stats.posIssued) * 100).toFixed(1) : 0;
-            const poWithin30PctEl = document.getElementById('po-kpi-within30-pct');
-            const poAfter30PctEl = document.getElementById('po-kpi-after30-pct');
-            if (poWithin30PctEl) poWithin30PctEl.textContent = within30Pct + '%';
-            if (poAfter30PctEl) poAfter30PctEl.textContent = after30Pct + '%';
+            document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
+            document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
 
             // PR to PO YTD KPIs (based on filtered year and project, not month)
-            const allPRs = AppState.prData?.all_prs || AppState.filteredPRData || [];
+            const allPRs = prData?.all_prs || filteredPRData || [];
 
             // Detect active tab and read from correct filters
             const activeTab = document.querySelector('.tab-content.active')?.id;
@@ -2315,7 +1915,7 @@
         }
 
         function updateFilterLabel() {
-            const monthNames = AppState.currentLang === 'ar'
+            const monthNames = currentLang === 'ar'
                 ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -2327,8 +1927,8 @@
         // Populate project dropdown from data
         // Populate all filter dropdowns dynamically from data
         function populateFilterDropdowns() {
-            const allPRs = AppState.prData?.all_prs || [];
-            const allLabel = AppState.currentLang === 'ar' ? 'الكل' : 'All';
+            const allPRs = prData?.all_prs || prData?.recent_prs || [];
+            const allLabel = currentLang === 'ar' ? 'الكل' : 'All';
 
             // Extract unique years from data or use defaults
             let years = [...new Set(allPRs.map(pr => {
@@ -2375,26 +1975,13 @@
 
         // Filter Functions
         function applyFilters() {
-            showLoading(AppState.AppState.currentLang === 'ar' ? 'جاري تطبيق الفلاتر...' : 'Applying filters...');
-
-            // Use setTimeout to allow UI to update
-            setTimeout(() => {
-                try {
-                    currentFilters.year = document.getElementById('filterYear')?.value || '';
-                    currentFilters.month = document.getElementById('filterMonth')?.value || '';
-                    currentFilters.status = document.getElementById('filterStatus')?.value || '';
-                    currentFilters.vendor = document.getElementById('filterVendor')?.value || '';
-                    currentFilters.project = document.getElementById('filterProject')?.value || '';
-
-                    // Recalculate previous period stats for comparison
-                    previousPeriodStats = calculatePreviousPeriodStats(currentFilters.year || '2025', currentFilters.month);
-
-                    updateFilteredKPIs();
-                    updateChartsWithFilteredData();
-                } finally {
-                    hideLoading();
-                }
-            }, 50);
+            currentFilters.year = document.getElementById('filterYear')?.value || '';
+            currentFilters.month = document.getElementById('filterMonth')?.value || '';
+            currentFilters.status = document.getElementById('filterStatus')?.value || '';
+            currentFilters.vendor = document.getElementById('filterVendor')?.value || '';
+            currentFilters.project = document.getElementById('filterProject')?.value || '';
+            updateFilteredKPIs();
+            updateChartsWithFilteredData();
         }
 
         function resetFilters() {
@@ -2500,38 +2087,38 @@
             }
 
             // Update PR Monthly Bar Chart
-            if (AppState.charts.prMonthly) {
-                AppState.charts.prMonthly.data.datasets[0].data = approvedData.slice(0, 11);
-                AppState.charts.prMonthly.data.datasets[1].data = returnedData.slice(0, 11);
-                AppState.charts.prMonthly.update();
+            if (charts.prMonthly) {
+                charts.prMonthly.data.datasets[0].data = approvedData.slice(0, 11);
+                charts.prMonthly.data.datasets[1].data = returnedData.slice(0, 11);
+                charts.prMonthly.update();
             }
 
             // Update Return Rate Line Chart
-            if (AppState.charts.returnRate) {
-                AppState.charts.returnRate.data.datasets[0].data = returnRateData.slice(0, 11);
-                AppState.charts.returnRate.update();
+            if (charts.returnRate) {
+                charts.returnRate.data.datasets[0].data = returnRateData.slice(0, 11);
+                charts.returnRate.update();
             }
 
             // Update PR Status Doughnut Chart
-            if (AppState.charts.prStatus) {
-                AppState.charts.prStatus.data.datasets[0].data = [
+            if (charts.prStatus) {
+                charts.prStatus.data.datasets[0].data = [
                     statusCounts['APPROVED'],
                     statusCounts['RETURNED'],
                     statusCounts['REJECTED'],
                     statusCounts['INCOMPLETE'],
                     statusCounts['IN PROCESS']
                 ];
-                AppState.charts.prStatus.update();
+                charts.prStatus.update();
             }
 
             // Update Return Days Doughnut Chart
-            if (AppState.charts.returnDays) {
-                AppState.charts.returnDays.data.datasets[0].data = [within2Days, after2Days];
-                AppState.charts.returnDays.update();
+            if (charts.returnDays) {
+                charts.returnDays.data.datasets[0].data = [within2Days, after2Days];
+                charts.returnDays.update();
             }
 
             // Update PR to PO Bar Chart
-            if (AppState.charts.prToPO) {
+            if (charts.prToPO) {
                 // Calculate POs issued (PRs with pr_to_po_days)
                 const posIssuedData = [];
                 const monthlyPOs = {};
@@ -2553,9 +2140,9 @@
                     posIssuedData.push(monthlyPOs[i]);
                 }
 
-                AppState.charts.prToPO.data.datasets[0].data = approvedData.slice(0, 11);
-                AppState.charts.prToPO.data.datasets[1].data = posIssuedData.slice(0, 11);
-                AppState.charts.prToPO.update();
+                charts.prToPO.data.datasets[0].data = approvedData.slice(0, 11);
+                charts.prToPO.data.datasets[1].data = posIssuedData.slice(0, 11);
+                charts.prToPO.update();
             }
 
             // Update summary stats in filter info area if exists
@@ -2632,21 +2219,21 @@
             }
 
             // Update PO Time Doughnut Chart
-            if (AppState.charts.poTime) {
-                AppState.charts.poTime.data.datasets[0].data = [totalWithin30, totalAfter30];
-                AppState.charts.poTime.update();
+            if (charts.poTime) {
+                charts.poTime.data.datasets[0].data = [totalWithin30, totalAfter30];
+                charts.poTime.update();
             }
 
             // Update Average PR to PO Line Chart
-            if (AppState.charts.avgPRtoPO) {
-                AppState.charts.avgPRtoPO.data.datasets[0].data = avgDaysData.slice(0, 11);
-                AppState.charts.avgPRtoPO.update();
+            if (charts.avgPRtoPO) {
+                charts.avgPRtoPO.data.datasets[0].data = avgDaysData.slice(0, 11);
+                charts.avgPRtoPO.update();
             }
 
             // Update Compliance Bar Chart
-            if (AppState.charts.compliance) {
-                AppState.charts.compliance.data.datasets[0].data = complianceData.slice(0, 11);
-                AppState.charts.compliance.update();
+            if (charts.compliance) {
+                charts.compliance.data.datasets[0].data = complianceData.slice(0, 11);
+                charts.compliance.update();
             }
 
             console.log(`📊 PO Charts updated: Within30=${totalWithin30}, After30=${totalAfter30}`);
@@ -2658,11 +2245,11 @@
         let vendorFilters = { category: '', evalStatus: '', scoreLevel: '' };
 
         function populateVendorCategoryDropdown() {
-            const allLabel = AppState.currentLang === 'ar' ? 'الكل' : 'All';
+            const allLabel = currentLang === 'ar' ? 'الكل' : 'All';
 
             // Get categories from vendor data (exclude null, empty, and 'null' string)
-            const categories = AppState.vendorData?.vendors
-                ? [...new Set(AppState.vendorData.vendors.map(v => v.category).filter(c => c && c !== 'null' && c.trim() !== ''))].sort()
+            const categories = vendorData?.vendors
+                ? [...new Set(vendorData.vendors.map(v => v.category).filter(c => c && c !== 'null' && c.trim() !== ''))].sort()
                 : [];
 
             const categorySelect = document.getElementById('filterVendorCategory');
@@ -2673,9 +2260,9 @@
         }
 
         function getFilteredVendors() {
-            if (!AppState.vendorData?.vendors) return [];
+            if (!vendorData?.vendors) return [];
 
-            return AppState.vendorData.vendors.filter(vendor => {
+            return vendorData.vendors.filter(vendor => {
                 // Category filter
                 if (vendorFilters.category && vendor.category !== vendorFilters.category) {
                     return false;
@@ -2765,7 +2352,7 @@
 
         function updateVendorChartsWithFilteredData() {
             const filteredVendors = getFilteredVendors();
-            const allPRs = AppState.prData?.all_prs || [];
+            const allPRs = prData?.all_prs || [];
 
             // Update vendor score distribution chart
             const evaluated = filteredVendors.filter(v => v.score > 0);
@@ -2778,23 +2365,23 @@
                 else scoreDist[4]++;
             });
 
-            if (AppState.charts.vendorScore) {
-                AppState.charts.vendorScore.data.datasets[0].data = scoreDist;
-                AppState.charts.vendorScore.update();
+            if (charts.vendorScore) {
+                charts.vendorScore.data.datasets[0].data = scoreDist;
+                charts.vendorScore.update();
             }
 
             // Update evaluation status chart
             const evaluatedCount = evaluated.length;
             const pendingCount = filteredVendors.length - evaluatedCount;
 
-            if (AppState.charts.evalStatus) {
-                AppState.charts.evalStatus.data.datasets[0].data = [evaluatedCount, pendingCount];
-                AppState.charts.evalStatus.update();
+            if (charts.evalStatus) {
+                charts.evalStatus.data.datasets[0].data = [evaluatedCount, pendingCount];
+                charts.evalStatus.update();
             }
         }
 
         function createVendorAnalyticsCharts() {
-            const allPRs = AppState.prData?.all_prs || [];
+            const allPRs = prData?.all_prs || [];
 
             // 1. Top 10 Vendors by PR Count
             const vendorPRCounts = {};
@@ -2811,12 +2398,12 @@
 
             const topVendorsPRCtx = document.getElementById('topVendorsPRChart')?.getContext('2d');
             if (topVendorsPRCtx) {
-                AppState.charts.topVendorsPR = new Chart(topVendorsPRCtx, {
+                charts.topVendorsPR = new Chart(topVendorsPRCtx, {
                     type: 'bar',
                     data: {
                         labels: topVendors.map(v => v[0].length > 20 ? v[0].substring(0, 20) + '...' : v[0]),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'عدد PRs' : 'PR Count',
+                            label: currentLang === 'ar' ? 'عدد PRs' : 'PR Count',
                             data: topVendors.map(v => v[1]),
                             backgroundColor: '#8b5cf6',
                             borderRadius: 4
@@ -2833,8 +2420,8 @@
 
             // 2. Vendor Category Distribution (from vendor evaluation data)
             const categoryCounts = {};
-            if (AppState.vendorData?.vendors) {
-                AppState.vendorData.vendors.forEach(v => {
+            if (vendorData?.vendors) {
+                vendorData.vendors.forEach(v => {
                     if (v.category) {
                         categoryCounts[v.category] = (categoryCounts[v.category] || 0) + 1;
                     }
@@ -2844,7 +2431,7 @@
             const categoryEntries = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
             const vendorCategoryCtx = document.getElementById('vendorCategoryChart')?.getContext('2d');
             if (vendorCategoryCtx && categoryEntries.length > 0) {
-                AppState.charts.vendorCategory = new Chart(vendorCategoryCtx, {
+                charts.vendorCategory = new Chart(vendorCategoryCtx, {
                     type: 'doughnut',
                     data: {
                         labels: categoryEntries.map(c => c[0]),
@@ -2877,12 +2464,12 @@
 
             const vendorValueCtx = document.getElementById('vendorValueChart')?.getContext('2d');
             if (vendorValueCtx) {
-                AppState.charts.vendorValue = new Chart(vendorValueCtx, {
+                charts.vendorValue = new Chart(vendorValueCtx, {
                     type: 'bar',
                     data: {
                         labels: topValueVendors.map(v => v[0].length > 18 ? v[0].substring(0, 18) + '...' : v[0]),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'قيمة PRs (SAR)' : 'PR Value (SAR)',
+                            label: currentLang === 'ar' ? 'قيمة PRs (SAR)' : 'PR Value (SAR)',
                             data: topValueVendors.map(v => v[1]),
                             backgroundColor: '#2e3192',
                             borderRadius: 4
@@ -2921,12 +2508,12 @@
 
             const vendorAvgDaysCtx = document.getElementById('vendorAvgDaysChart')?.getContext('2d');
             if (vendorAvgDaysCtx && vendorAvgDays.length > 0) {
-                AppState.charts.vendorAvgDays = new Chart(vendorAvgDaysCtx, {
+                charts.vendorAvgDays = new Chart(vendorAvgDaysCtx, {
                     type: 'bar',
                     data: {
                         labels: vendorAvgDays.map(v => v[0].length > 18 ? v[0].substring(0, 18) + '...' : v[0]),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'متوسط الأيام' : 'Avg Days',
+                            label: currentLang === 'ar' ? 'متوسط الأيام' : 'Avg Days',
                             data: vendorAvgDays.map(v => v[1].toFixed(1)),
                             backgroundColor: '#f59e0b',
                             borderRadius: 4
@@ -2959,12 +2546,12 @@
 
             const projectVendorCtx = document.getElementById('projectVendorChart')?.getContext('2d');
             if (projectVendorCtx && topProjects.length > 0) {
-                AppState.charts.projectVendor = new Chart(projectVendorCtx, {
+                charts.projectVendor = new Chart(projectVendorCtx, {
                     type: 'bar',
                     data: {
                         labels: topProjects.map(p => p[0].length > 25 ? p[0].substring(0, 25) + '...' : p[0]),
                         datasets: [{
-                            label: AppState.currentLang === 'ar' ? 'عدد الموردين' : 'Vendor Count',
+                            label: currentLang === 'ar' ? 'عدد الموردين' : 'Vendor Count',
                             data: topProjects.map(p => p[1]),
                             backgroundColor: '#3b82f6',
                             borderRadius: 4
@@ -2984,8 +2571,8 @@
 
         function getCurrentDisplayMonth() {
             let month = new Date().getMonth();
-            if (AppState.prData?.monthly?.approved) {
-                while (month >= 0 && AppState.prData.monthly.approved[month] === 0) month--;
+            if (prData?.monthly?.approved) {
+                while (month >= 0 && prData.monthly.approved[month] === 0) month--;
                 if (month < 0) month = 10;
             }
             return month;
@@ -3006,7 +2593,7 @@
 
             // Use currently filtered PRs
             const basePRs = getFilteredPRs();
-            const monthNames = AppState.currentLang === 'ar'
+            const monthNames = currentLang === 'ar'
                 ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -3020,15 +2607,15 @@
 
             switch(kpiType) {
                 case 'approved':
-                    titleText = AppState.currentLang === 'ar' ? `PRs المعتمدة - ${filterDesc}` : `Approved PRs - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `PRs المعتمدة - ${filterDesc}` : `Approved PRs - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => pr.pr_status === 'APPROVED' || pr.status === 'APPROVED');
                     break;
                 case 'returned':
-                    titleText = AppState.currentLang === 'ar' ? `PRs المرتجعة - ${filterDesc}` : `Returned PRs - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `PRs المرتجعة - ${filterDesc}` : `Returned PRs - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => pr.return_date);
                     break;
                 case 'within2days':
-                    titleText = AppState.currentLang === 'ar' ? `PRs مرتجعة خلال يومين - ${filterDesc}` : `PRs Returned ≤2 Days - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `PRs مرتجعة خلال يومين - ${filterDesc}` : `PRs Returned ≤2 Days - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => {
                         if (!pr.return_date || !pr.approved_date) return false;
                         const days = Math.floor((new Date(pr.return_date) - new Date(pr.approved_date)) / 86400000);
@@ -3036,7 +2623,7 @@
                     });
                     break;
                 case 'after2days':
-                    titleText = AppState.currentLang === 'ar' ? `PRs مرتجعة بعد يومين - ${filterDesc}` : `PRs Returned >2 Days - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `PRs مرتجعة بعد يومين - ${filterDesc}` : `PRs Returned >2 Days - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => {
                         if (!pr.return_date || !pr.approved_date) return false;
                         const days = Math.floor((new Date(pr.return_date) - new Date(pr.approved_date)) / 86400000);
@@ -3056,10 +2643,10 @@
 
         function generateDetailedPRTable(prs, type) {
             const count = prs.length;
-            const countLabel = AppState.currentLang === 'ar' ? `إجمالي: ${count} طلب` : `Total: ${count} PRs`;
+            const countLabel = currentLang === 'ar' ? `إجمالي: ${count} طلب` : `Total: ${count} PRs`;
 
             if (count === 0) {
-                return `<p class="text-gray-500 text-center py-8">${AppState.currentLang === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}</p>`;
+                return `<p class="text-gray-500 text-center py-8">${currentLang === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}</p>`;
             }
 
             const showReturnCols = type === 'returned' || type === 'within2days' || type === 'after2days';
@@ -3069,7 +2656,7 @@
             if (showReturnCols) {
                 const pendingWithCounts = {};
                 prs.forEach(pr => {
-                    const reason = pr.pending_with || (AppState.currentLang === 'ar' ? 'غير محدد' : 'Not Specified');
+                    const reason = pr.pending_with || (currentLang === 'ar' ? 'غير محدد' : 'Not Specified');
                     pendingWithCounts[reason] = (pendingWithCounts[reason] || 0) + 1;
                 });
 
@@ -3077,7 +2664,7 @@
                 if (sortedReasons.length > 0) {
                     delayAnalysis = `
                     <div class="mb-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                        <h4 class="font-medium text-amber-800 mb-2">${AppState.currentLang === 'ar' ? '📊 تحليل أسباب التأخير (معلق لدى):' : '📊 Delay Analysis (Pending With):'}</h4>
+                        <h4 class="font-medium text-amber-800 mb-2">${currentLang === 'ar' ? '📊 تحليل أسباب التأخير (معلق لدى):' : '📊 Delay Analysis (Pending With):'}</h4>
                         <div class="flex flex-wrap gap-2">
                             ${sortedReasons.slice(0, 5).map(([reason, cnt]) =>
                                 `<span class="px-2 py-1 bg-white rounded text-sm border border-amber-300">${reason}: <strong>${cnt}</strong></span>`
@@ -3091,11 +2678,11 @@
                 <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
                     <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">${countLabel}</span>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="modalSearch" placeholder="${AppState.currentLang === 'ar' ? 'بحث...' : 'Search...'}"
+                        <input type="text" id="modalSearch" placeholder="${currentLang === 'ar' ? 'بحث...' : 'Search...'}"
                             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
                         <button onclick="exportToCSV()" class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            ${AppState.currentLang === 'ar' ? 'تصدير' : 'Export'}
+                            ${currentLang === 'ar' ? 'تصدير' : 'Export'}
                         </button>
                     </div>
                 </div>
@@ -3106,19 +2693,19 @@
                             <tr>
                                 <th class="text-center">#</th>
                                 <th>PR #</th>
-                                <th>${AppState.currentLang === 'ar' ? 'المشروع' : 'Project'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'القيمة' : 'Value'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'تاريخ الاعتماد' : 'Approved'}</th>
+                                <th>${currentLang === 'ar' ? 'المشروع' : 'Project'}</th>
+                                <th>${currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
+                                <th>${currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
+                                <th>${currentLang === 'ar' ? 'القيمة' : 'Value'}</th>
+                                <th>${currentLang === 'ar' ? 'تاريخ الاعتماد' : 'Approved'}</th>
                                 ${showReturnCols ? `
-                                    <th>${AppState.currentLang === 'ar' ? 'تاريخ الإرجاع' : 'Returned'}</th>
-                                    <th>${AppState.currentLang === 'ar' ? 'أيام' : 'Days'}</th>
-                                    <th>${AppState.currentLang === 'ar' ? 'معلق لدى' : 'Pending With'}</th>
-                                    <th>${AppState.currentLang === 'ar' ? 'معلق منذ' : 'Since'}</th>
-                                    <th>${AppState.currentLang === 'ar' ? 'ملاحظة' : 'Note'}</th>
+                                    <th>${currentLang === 'ar' ? 'تاريخ الإرجاع' : 'Returned'}</th>
+                                    <th>${currentLang === 'ar' ? 'أيام' : 'Days'}</th>
+                                    <th>${currentLang === 'ar' ? 'معلق لدى' : 'Pending With'}</th>
+                                    <th>${currentLang === 'ar' ? 'معلق منذ' : 'Since'}</th>
+                                    <th>${currentLang === 'ar' ? 'ملاحظة' : 'Note'}</th>
                                 ` : ''}
-                                <th>${AppState.currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
+                                <th>${currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3167,10 +2754,10 @@
             // Group by pending duration
             const today = new Date();
             const durations = {
-                'critical': { label: AppState.currentLang === 'ar' ? 'معلق أكثر من 30 يوم' : 'Pending >30 days', prs: [], color: 'red' },
-                'high': { label: AppState.currentLang === 'ar' ? 'معلق 15-30 يوم' : 'Pending 15-30 days', prs: [], color: 'orange' },
-                'medium': { label: AppState.currentLang === 'ar' ? 'معلق 7-14 يوم' : 'Pending 7-14 days', prs: [], color: 'yellow' },
-                'low': { label: AppState.currentLang === 'ar' ? 'معلق أقل من 7 أيام' : 'Pending <7 days', prs: [], color: 'green' }
+                'critical': { label: currentLang === 'ar' ? 'معلق أكثر من 30 يوم' : 'Pending >30 days', prs: [], color: 'red' },
+                'high': { label: currentLang === 'ar' ? 'معلق 15-30 يوم' : 'Pending 15-30 days', prs: [], color: 'orange' },
+                'medium': { label: currentLang === 'ar' ? 'معلق 7-14 يوم' : 'Pending 7-14 days', prs: [], color: 'yellow' },
+                'low': { label: currentLang === 'ar' ? 'معلق أقل من 7 أيام' : 'Pending <7 days', prs: [], color: 'green' }
             };
 
             returnedPRs.forEach(pr => {
@@ -3203,17 +2790,17 @@
                             ${group.prs.slice(0, 5).map(pr => `
                                 <div class="flex justify-between items-center py-1 border-t border-current border-opacity-20">
                                     <span class="truncate max-w-[150px]" title="${pr.pr_num}: ${pr.project || ''}">${pr.pr_num}</span>
-                                    <span class="font-medium">${pr.daysPending} ${AppState.currentLang === 'ar' ? 'يوم' : 'days'}</span>
+                                    <span class="font-medium">${pr.daysPending} ${currentLang === 'ar' ? 'يوم' : 'days'}</span>
                                 </div>
                             `).join('')}
-                            ${group.prs.length > 5 ? `<div class="text-center opacity-75">+${group.prs.length - 5} ${AppState.currentLang === 'ar' ? 'آخرين' : 'more'}</div>` : ''}
+                            ${group.prs.length > 5 ? `<div class="text-center opacity-75">+${group.prs.length - 5} ${currentLang === 'ar' ? 'آخرين' : 'more'}</div>` : ''}
                         </div>
                     </div>
                 `;
             });
 
             if (!html) {
-                html = `<p class="text-gray-500 text-center py-4">${AppState.currentLang === 'ar' ? 'لا توجد بيانات معلقة' : 'No pending data available'}</p>`;
+                html = `<p class="text-gray-500 text-center py-4">${currentLang === 'ar' ? 'لا توجد بيانات معلقة' : 'No pending data available'}</p>`;
             }
 
             listContainer.innerHTML = html;
@@ -3256,7 +2843,7 @@
             const basePRs = getFilteredPRs();
 
             // Build filter description
-            const monthNames = AppState.currentLang === 'ar'
+            const monthNames = currentLang === 'ar'
                 ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -3266,23 +2853,23 @@
 
             switch(kpiType) {
                 case 'prs-received-month':
-                    titleText = AppState.currentLang === 'ar' ? `PRs المستلمة - ${filterDesc}` : `PRs Received - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `PRs المستلمة - ${filterDesc}` : `PRs Received - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => pr.status === 'APPROVED');
                     break;
                 case 'pos-issued-month':
-                    titleText = AppState.currentLang === 'ar' ? `POs الصادرة - ${filterDesc}` : `POs Issued - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `POs الصادرة - ${filterDesc}` : `POs Issued - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null);
                     break;
                 case 'within30days':
-                    titleText = AppState.currentLang === 'ar' ? `POs صادرة خلال 30 يوم - ${filterDesc}` : `POs Within 30 Days - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `POs صادرة خلال 30 يوم - ${filterDesc}` : `POs Within 30 Days - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30);
                     break;
                 case 'after30days':
-                    titleText = AppState.currentLang === 'ar' ? `POs صادرة بعد 30 يوم - ${filterDesc}` : `POs After 30 Days - ${filterDesc}`;
+                    titleText = currentLang === 'ar' ? `POs صادرة بعد 30 يوم - ${filterDesc}` : `POs After 30 Days - ${filterDesc}`;
                     filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days > 30);
                     break;
                 default:
-                    titleText = AppState.currentLang === 'ar' ? 'التفاصيل' : 'Details';
+                    titleText = currentLang === 'ar' ? 'التفاصيل' : 'Details';
                     filteredPRs = [];
             }
 
@@ -3297,10 +2884,10 @@
 
         function generateDetailedPOTable(prs, type) {
             const count = prs.length;
-            const countLabel = AppState.currentLang === 'ar' ? `إجمالي: ${count} طلب` : `Total: ${count} records`;
+            const countLabel = currentLang === 'ar' ? `إجمالي: ${count} طلب` : `Total: ${count} records`;
 
             if (count === 0) {
-                return `<p class="text-gray-500 text-center py-8">${AppState.currentLang === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}</p>`;
+                return `<p class="text-gray-500 text-center py-8">${currentLang === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}</p>`;
             }
 
             const isPOType = type === 'pos-issued-month' || type === 'within30days' || type === 'after30days';
@@ -3309,11 +2896,11 @@
                 <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
                     <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">${countLabel}</span>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="modalSearch" placeholder="${AppState.currentLang === 'ar' ? 'بحث...' : 'Search...'}"
+                        <input type="text" id="modalSearch" placeholder="${currentLang === 'ar' ? 'بحث...' : 'Search...'}"
                             class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
                         <button onclick="exportPOToCSV('${type}')" class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            ${AppState.currentLang === 'ar' ? 'تصدير' : 'Export'}
+                            ${currentLang === 'ar' ? 'تصدير' : 'Export'}
                         </button>
                     </div>
                 </div>
@@ -3323,15 +2910,15 @@
                             <tr>
                                 <th class="text-center">#</th>
                                 <th>PR #</th>
-                                <th>${AppState.currentLang === 'ar' ? 'المشروع' : 'Project'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'قيمة PR' : 'PR Value'}</th>
-                                ${isPOType ? `<th>${AppState.currentLang === 'ar' ? 'قيمة PO' : 'PO Value'}</th>` : ''}
-                                <th>${AppState.currentLang === 'ar' ? 'تاريخ الإرسال' : 'Submitted'}</th>
-                                <th>${AppState.currentLang === 'ar' ? 'تاريخ الاعتماد' : 'Approved'}</th>
-                                ${isPOType ? `<th>${AppState.currentLang === 'ar' ? 'أيام PR→PO' : 'PR→PO Days'}</th>` : ''}
-                                <th>${AppState.currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
+                                <th>${currentLang === 'ar' ? 'المشروع' : 'Project'}</th>
+                                <th>${currentLang === 'ar' ? 'الوصف' : 'Description'}</th>
+                                <th>${currentLang === 'ar' ? 'المورد' : 'Vendor'}</th>
+                                <th>${currentLang === 'ar' ? 'قيمة PR' : 'PR Value'}</th>
+                                ${isPOType ? `<th>${currentLang === 'ar' ? 'قيمة PO' : 'PO Value'}</th>` : ''}
+                                <th>${currentLang === 'ar' ? 'تاريخ الإرسال' : 'Submitted'}</th>
+                                <th>${currentLang === 'ar' ? 'تاريخ الاعتماد' : 'Approved'}</th>
+                                ${isPOType ? `<th>${currentLang === 'ar' ? 'أيام PR→PO' : 'PR→PO Days'}</th>` : ''}
+                                <th>${currentLang === 'ar' ? 'الحالة' : 'Status'}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3347,7 +2934,7 @@
                                     ${isPOType ? `<td>${pr.po_value ? Number(pr.po_value).toLocaleString() + ' SAR' : '-'}</td>` : ''}
                                     <td>${pr.submission_date || '-'}</td>
                                     <td>${pr.approved_date || '-'}</td>
-                                    ${isPOType ? `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${prToPoDays !== null && prToPoDays <= 30 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${prToPoDays !== null ? prToPoDays + (AppState.currentLang === 'ar' ? ' يوم' : ' days') : '-'}</span></td>` : ''}
+                                    ${isPOType ? `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${prToPoDays !== null && prToPoDays <= 30 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${prToPoDays !== null ? prToPoDays + (currentLang === 'ar' ? ' يوم' : ' days') : '-'}</span></td>` : ''}
                                     <td><span class="px-2 py-1 rounded text-xs ${pr.status === 'APPROVED' ? 'bg-green-100 text-green-800' : pr.status === 'RETURNED' ? 'bg-red-100 text-red-800' : pr.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">${pr.status || '-'}</span></td>
                                 </tr>`;
                             }).join('')}
@@ -3402,9 +2989,9 @@
             if (!sectionEl) return;
 
             const sectionNames = {
-                'pr-return': AppState.currentLang === 'ar' ? 'تقرير إرجاع PR' : 'PR Return Report',
-                'pr-to-po': AppState.currentLang === 'ar' ? 'تقرير PR to PO' : 'PR to PO Report',
-                'vendor-evaluation': AppState.currentLang === 'ar' ? 'تقرير تقييم الموردين' : 'Vendor Evaluation Report'
+                'pr-return': currentLang === 'ar' ? 'تقرير إرجاع PR' : 'PR Return Report',
+                'pr-to-po': currentLang === 'ar' ? 'تقرير PR to PO' : 'PR to PO Report',
+                'vendor-evaluation': currentLang === 'ar' ? 'تقرير تقييم الموردين' : 'Vendor Evaluation Report'
             };
 
             const printContent = sectionEl.cloneNode(true);
@@ -3416,7 +3003,7 @@
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
                 <!DOCTYPE html>
-                <html dir="${AppState.currentLang === 'ar' ? 'rtl' : 'ltr'}">
+                <html dir="${currentLang === 'ar' ? 'rtl' : 'ltr'}">
                 <head>
                     <title>${sectionNames[section] || 'NESMA Report'}</title>
                     <script src="https://cdn.tailwindcss.com"><\/script>
@@ -3433,7 +3020,7 @@
                 <body class="bg-white">
                     <div class="text-center mb-6">
                         <h1 class="text-2xl font-bold text-gray-800">${sectionNames[section] || 'NESMA Report'}</h1>
-                        <p class="text-gray-500">${AppState.currentLang === 'ar' ? 'تاريخ التصدير:' : 'Export Date:'} ${new Date().toLocaleDateString()}</p>
+                        <p class="text-gray-500">${currentLang === 'ar' ? 'تاريخ التصدير:' : 'Export Date:'} ${new Date().toLocaleDateString()}</p>
                     </div>
                     ${printContent.innerHTML}
                 </body>
@@ -3468,7 +3055,7 @@
                 }));
             } else if (section === 'pr-to-po') {
                 filename = `PR_to_PO_Report_${now}`;
-                const allPRs = AppState.prData?.all_prs || [];
+                const allPRs = prData?.all_prs || [];
                 const yearFilter = document.getElementById('filterYearPO')?.value || '2025';
                 const monthFilter = document.getElementById('filterMonthPO')?.value || '';
                 const projectFilter = document.getElementById('filterProjectPO')?.value || '';
@@ -3499,14 +3086,14 @@
                 const filteredVendors = getFilteredVendors();
                 data = filteredVendors.map(v => ({
                     'Vendor Name': v.name || '',
-                    'Category': v.category || (AppState.currentLang === 'ar' ? 'غير مصنف' : 'Unclassified'),
+                    'Category': v.category || (currentLang === 'ar' ? 'غير مصنف' : 'Unclassified'),
                     'Score (%)': v.score || 0,
-                    'Status': v.score > 0 ? (AppState.currentLang === 'ar' ? 'تم التقييم' : 'Evaluated') : (AppState.currentLang === 'ar' ? 'معلق' : 'Pending')
+                    'Status': v.score > 0 ? (currentLang === 'ar' ? 'تم التقييم' : 'Evaluated') : (currentLang === 'ar' ? 'معلق' : 'Pending')
                 }));
             }
 
             if (data.length === 0) {
-                alert(AppState.currentLang === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export');
+                alert(currentLang === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export');
                 return;
             }
 
