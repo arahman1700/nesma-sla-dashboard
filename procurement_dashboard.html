@@ -347,7 +347,12 @@
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1" data-ar="السنة" data-en="Year">السنة</label>
                                 <select id="filterYear" class="filter-select" onchange="applyFilters()">
-                                    <!-- Years populated dynamically -->
+                                    <option value="" data-ar="الكل" data-en="All">All</option>
+                                    <option value="2025" selected>2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2021">2021</option>
                                 </select>
                             </div>
                             <div>
@@ -1053,6 +1058,8 @@
                     console.log('Total PRs available:', (prData.all_prs || prData.recent_prs || []).length);
                     filteredPRData = prData.all_prs || prData.recent_prs || [];
                     populateFilterDropdowns();
+                    // Initialize filters with current dropdown values
+                    currentFilters.year = document.getElementById('filterYear')?.value || '2025';
                     updateFilteredKPIs();
 
                     // Update last update date from data
@@ -1756,7 +1763,6 @@
         // Get filtered PRs based on current filters - uses NEW data structure
         function getFilteredPRs() {
             const allPRs = prData?.all_prs || prData?.recent_prs || filteredPRData || [];
-            console.log('getFilteredPRs - allPRs count:', allPRs.length, 'currentFilters:', currentFilters);
             return allPRs.filter(pr => {
                 // Year filter - check all date fields
                 if (currentFilters.year) {
@@ -2593,16 +2599,12 @@
         }
 
         function showKPIDetails(kpiType) {
-            console.log('showKPIDetails called with:', kpiType);
-            console.log('currentFilters:', currentFilters);
-
             const modal = document.getElementById('kpiModal');
             const title = document.getElementById('modalTitle');
             const content = document.getElementById('modalContent');
 
             // Use currently filtered PRs
             const basePRs = getFilteredPRs();
-            console.log('basePRs count:', basePRs.length);
             const monthNames = currentLang === 'ar'
                 ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
