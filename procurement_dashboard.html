@@ -1014,11 +1014,18 @@
     </div>
 
     <script>
+        // Global error handler
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Global error:', msg, 'at line', lineNo);
+            return false;
+        };
+
         let currentLang = 'en';
         let prData = null;
         let vendorData = null;
         let charts = {};
         let filteredPRData = [];
+        let currentModalData = [];
 
         // Chart.js Config
         Chart.defaults.font.family = 'Cairo';
@@ -2579,7 +2586,6 @@
         }
 
         // Modal Functions
-        let currentModalData = [];
 
         function getCurrentDisplayMonth() {
             let month = new Date().getMonth();
