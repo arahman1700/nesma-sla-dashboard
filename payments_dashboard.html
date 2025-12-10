@@ -148,12 +148,12 @@
         }
     </style>
 </head>
-<body class="rtl">
+<body class="ltr">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="text-center">
             <div class="spinner mx-auto mb-4"></div>
-            <p class="text-gray-600" id="loadingText">جاري تحميل البيانات...</p>
+            <p class="text-gray-600" id="loadingText">Loading data...</p>
         </div>
     </div>
 
@@ -161,15 +161,15 @@
     <header class="gradient-primary text-white py-4 px-6 shadow-lg">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <a href="portal.html" class="text-white/80 hover:text-white transition">
+                <a href="logistics_portal.html" class="text-white/80 hover:text-white transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
                 </a>
                 <img src="assets/logo-white.svg" alt="NESMA" class="h-8 lg:h-10">
                 <div>
-                    <h1 class="text-2xl font-bold" id="pageTitle">داشبورد الدفعات والفواتير</h1>
-                    <p class="text-white/70 text-sm" id="pageSubtitle">تحليل شامل لأوامر العمل والمدفوعات</p>
+                    <h1 class="text-2xl font-bold" id="pageTitle">Payments & Invoices Dashboard</h1>
+                    <p class="text-white/70 text-sm" id="pageSubtitle">Comprehensive Analysis of Job Orders and Payments</p>
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -177,7 +177,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
-                    <span id="exportText">تصدير</span>
+                    <span id="exportText">Export</span>
                 </button>
             </div>
         </div>
@@ -187,46 +187,46 @@
     <section class="max-w-7xl mx-auto px-6 py-6">
         <div class="glass-card rounded-2xl p-6">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-800" id="filtersTitle">الفلاتر التفاعلية</h2>
-                <button onclick="resetFilters()" class="text-sm text-[#2e3192] hover:underline" id="resetBtn">إعادة تعيين</button>
+                <h2 class="text-lg font-bold text-gray-800" id="filtersTitle">Interactive Filters</h2>
+                <button onclick="resetFilters()" class="text-sm text-[#2e3192] hover:underline" id="resetBtn">Reset</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                 <!-- Project Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1" id="projectLabel">المشروع</label>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="projectLabel">Project</label>
                     <select id="filterProject" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
-                        <option value="">الكل</option>
+                        <option value="">All</option>
                     </select>
                 </div>
                 <!-- Supplier Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1" id="supplierLabel">المورد</label>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="supplierLabel">Supplier</label>
                     <select id="filterSupplier" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
-                        <option value="">الكل</option>
+                        <option value="">All</option>
                     </select>
                 </div>
                 <!-- Equipment Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1" id="equipmentLabel">المعدات</label>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="equipmentLabel">Equipment</label>
                     <select id="filterEquipment" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
-                        <option value="">الكل</option>
+                        <option value="">All</option>
                     </select>
                 </div>
                 <!-- Status Filter -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1" id="statusLabel">حالة الدفع</label>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="statusLabel">Payment Status</label>
                     <select id="filterStatus" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
-                        <option value="">الكل</option>
+                        <option value="">All</option>
                     </select>
                 </div>
                 <!-- Date From -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1" id="dateFromLabel">من تاريخ</label>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="dateFromLabel">From Date</label>
                     <input type="date" id="filterDateFrom" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
                 </div>
                 <!-- Date To -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1" id="dateToLabel">إلى تاريخ</label>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" id="dateToLabel">To Date</label>
                     <input type="date" id="filterDateTo" onchange="applyFilters()" class="filter-select w-full px-3 py-2 rounded-lg outline-none">
                 </div>
             </div>
@@ -243,32 +243,32 @@
             <div class="stat-card glass-card rounded-xl p-4">
                 <div class="text-3xl mb-2">📋</div>
                 <div class="text-2xl font-bold text-[#2e3192]" id="kpiTotalInvoices">0</div>
-                <div class="text-sm text-gray-500" id="kpiTotalInvoicesLabel">إجمالي الفواتير</div>
+                <div class="text-sm text-gray-500" id="kpiTotalInvoicesLabel">Total Invoices</div>
             </div>
             <div class="stat-card glass-card rounded-xl p-4">
                 <div class="text-3xl mb-2">💰</div>
                 <div class="text-2xl font-bold text-[#2e3192]" id="kpiTotalAmount">0</div>
-                <div class="text-sm text-gray-500" id="kpiTotalAmountLabel">إجمالي المبلغ (ريال)</div>
+                <div class="text-sm text-gray-500" id="kpiTotalAmountLabel">Total Amount (SAR)</div>
             </div>
             <div class="stat-card glass-card rounded-xl p-4">
                 <div class="text-3xl mb-2">✅</div>
                 <div class="text-2xl font-bold text-green-600" id="kpiPaidCount">0</div>
-                <div class="text-sm text-gray-500" id="kpiPaidLabel">مدفوعة</div>
+                <div class="text-sm text-gray-500" id="kpiPaidLabel">Paid</div>
             </div>
             <div class="stat-card glass-card rounded-xl p-4">
                 <div class="text-3xl mb-2">⏳</div>
                 <div class="text-2xl font-bold text-yellow-600" id="kpiPendingCount">0</div>
-                <div class="text-sm text-gray-500" id="kpiPendingLabel">قيد الموافقة</div>
+                <div class="text-sm text-gray-500" id="kpiPendingLabel">Under Approval</div>
             </div>
             <div class="stat-card glass-card rounded-xl p-4">
                 <div class="text-3xl mb-2">⚡</div>
                 <div class="text-2xl font-bold text-[#80d1e9]" id="kpiAvgDays">0</div>
-                <div class="text-sm text-gray-500" id="kpiAvgDaysLabel">متوسط أيام الإنجاز</div>
+                <div class="text-sm text-gray-500" id="kpiAvgDaysLabel">Avg. Completion Days</div>
             </div>
             <div class="stat-card glass-card rounded-xl p-4">
                 <div class="text-3xl mb-2">🔄</div>
                 <div class="text-2xl font-bold text-purple-600" id="kpiPaymentCycle">0</div>
-                <div class="text-sm text-gray-500" id="kpiPaymentCycleLabel">دورة الدفع (يوم)</div>
+                <div class="text-sm text-gray-500" id="kpiPaymentCycleLabel">Payment Cycle (Days)</div>
             </div>
         </div>
     </section>
@@ -277,11 +277,11 @@
     <section class="max-w-7xl mx-auto px-6 pb-6">
         <div class="glass-card rounded-2xl overflow-hidden">
             <div class="flex border-b overflow-x-auto">
-                <button onclick="switchTab('overview')" class="tab-btn active flex-1 px-6 py-3 text-center font-medium" id="tabOverview">نظرة عامة</button>
-                <button onclick="switchTab('suppliers')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabSuppliers">الموردين</button>
-                <button onclick="switchTab('projects')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabProjects">المشاريع</button>
-                <button onclick="switchTab('equipment')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabEquipment">المعدات</button>
-                <button onclick="switchTab('details')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabDetails">التفاصيل</button>
+                <button onclick="switchTab('overview')" class="tab-btn active flex-1 px-6 py-3 text-center font-medium" id="tabOverview">Overview</button>
+                <button onclick="switchTab('suppliers')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabSuppliers">Suppliers</button>
+                <button onclick="switchTab('projects')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabProjects">Projects</button>
+                <button onclick="switchTab('equipment')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabEquipment">Equipment</button>
+                <button onclick="switchTab('details')" class="tab-btn flex-1 px-6 py-3 text-center font-medium" id="tabDetails">Details</button>
             </div>
 
             <!-- Tab Contents -->
@@ -309,11 +309,11 @@
                         <table class="data-table w-full">
                             <thead>
                                 <tr>
-                                    <th class="px-4 py-3 text-right" id="thSupplier">المورد</th>
-                                    <th class="px-4 py-3 text-right" id="thInvoiceCount">عدد الفواتير</th>
-                                    <th class="px-4 py-3 text-right" id="thTotalAmount">إجمالي المبلغ</th>
-                                    <th class="px-4 py-3 text-right" id="thAvgAmount">متوسط المبلغ</th>
-                                    <th class="px-4 py-3 text-right" id="thPercentage">النسبة</th>
+                                    <th class="px-4 py-3 text-left" id="thSupplier">Supplier</th>
+                                    <th class="px-4 py-3 text-left" id="thInvoiceCount">Invoice Count</th>
+                                    <th class="px-4 py-3 text-left" id="thTotalAmount">Total Amount</th>
+                                    <th class="px-4 py-3 text-left" id="thAvgAmount">Avg. Amount</th>
+                                    <th class="px-4 py-3 text-left" id="thPercentage">Percentage</th>
                                 </tr>
                             </thead>
                             <tbody id="suppliersTableBody"></tbody>
@@ -330,10 +330,10 @@
                         <table class="data-table w-full">
                             <thead>
                                 <tr>
-                                    <th class="px-4 py-3 text-right" id="thProject">المشروع</th>
-                                    <th class="px-4 py-3 text-right" id="thProjectInvoices">عدد الفواتير</th>
-                                    <th class="px-4 py-3 text-right" id="thProjectTotal">إجمالي المبلغ</th>
-                                    <th class="px-4 py-3 text-right" id="thProjectAvg">متوسط الإنجاز</th>
+                                    <th class="px-4 py-3 text-left" id="thProject">Project</th>
+                                    <th class="px-4 py-3 text-left" id="thProjectInvoices">Invoice Count</th>
+                                    <th class="px-4 py-3 text-left" id="thProjectTotal">Total Amount</th>
+                                    <th class="px-4 py-3 text-left" id="thProjectAvg">Avg. Completion</th>
                                 </tr>
                             </thead>
                             <tbody id="projectsTableBody"></tbody>
@@ -350,10 +350,10 @@
                         <table class="data-table w-full">
                             <thead>
                                 <tr>
-                                    <th class="px-4 py-3 text-right" id="thEquipmentName">المعدة</th>
-                                    <th class="px-4 py-3 text-right" id="thEquipmentCount">العدد</th>
-                                    <th class="px-4 py-3 text-right" id="thEquipmentTotal">إجمالي المبلغ</th>
-                                    <th class="px-4 py-3 text-right" id="thEquipmentAvg">متوسط السعر</th>
+                                    <th class="px-4 py-3 text-left" id="thEquipmentName">Equipment</th>
+                                    <th class="px-4 py-3 text-left" id="thEquipmentCount">Count</th>
+                                    <th class="px-4 py-3 text-left" id="thEquipmentTotal">Total Amount</th>
+                                    <th class="px-4 py-3 text-left" id="thEquipmentAvg">Avg. Price</th>
                                 </tr>
                             </thead>
                             <tbody id="equipmentTableBody"></tbody>
@@ -368,27 +368,27 @@
                 <div id="detailsContent" class="tab-content hidden">
                     <div class="mb-4 flex items-center gap-4">
                         <div class="relative flex-1">
-                            <input type="text" id="searchInput" onkeyup="searchRecords()" placeholder="بحث..." class="search-input filter-select w-full px-4 py-2 rounded-lg outline-none">
-                            <svg class="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <input type="text" id="searchInput" onkeyup="searchRecords()" placeholder="Search..." class="search-input filter-select w-full px-4 py-2 pl-10 rounded-lg outline-none">
+                            <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
                         <div class="text-sm text-gray-500">
-                            <span id="recordsShowing">0</span> <span id="recordsOfLabel">من</span> <span id="recordsTotal">0</span>
+                            <span id="recordsShowing">0</span> <span id="recordsOfLabel">of</span> <span id="recordsTotal">0</span>
                         </div>
                     </div>
                     <div class="overflow-x-auto max-h-[500px]">
                         <table class="data-table w-full text-sm">
                             <thead>
                                 <tr>
-                                    <th class="px-3 py-2 text-right">#</th>
-                                    <th class="px-3 py-2 text-right" id="thDetailJobOrder">رقم الأمر</th>
-                                    <th class="px-3 py-2 text-right" id="thDetailDate">التاريخ</th>
-                                    <th class="px-3 py-2 text-right" id="thDetailProject">المشروع</th>
-                                    <th class="px-3 py-2 text-right" id="thDetailSupplier">المورد</th>
-                                    <th class="px-3 py-2 text-right" id="thDetailEquipment">المعدة</th>
-                                    <th class="px-3 py-2 text-right" id="thDetailAmount">المبلغ</th>
-                                    <th class="px-3 py-2 text-right" id="thDetailStatus">الحالة</th>
+                                    <th class="px-3 py-2 text-left">#</th>
+                                    <th class="px-3 py-2 text-left" id="thDetailJobOrder">Job Order</th>
+                                    <th class="px-3 py-2 text-left" id="thDetailDate">Date</th>
+                                    <th class="px-3 py-2 text-left" id="thDetailProject">Project</th>
+                                    <th class="px-3 py-2 text-left" id="thDetailSupplier">Supplier</th>
+                                    <th class="px-3 py-2 text-left" id="thDetailEquipment">Equipment</th>
+                                    <th class="px-3 py-2 text-left" id="thDetailAmount">Amount</th>
+                                    <th class="px-3 py-2 text-left" id="thDetailStatus">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="detailsTableBody"></tbody>
@@ -403,8 +403,8 @@
 
     <!-- Footer -->
     <footer class="text-center py-6 text-gray-500 text-sm">
-        <p id="footerText">نظام إدارة اتفاقيات مستوى الخدمة - نسما للتكنولوجيا والصناعة</p>
-        <p class="mt-1" id="lastUpdateText">آخر تحديث: <span id="lastUpdate">-</span></p>
+        <p id="footerText">SLA Management System - Nesma Technology & Industry</p>
+        <p class="mt-1" id="lastUpdateText">Last Update: <span id="lastUpdate">-</span></p>
     </footer>
 
     <script>
