@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -293,7 +293,7 @@
     </div>
 
     <script>
-        let currentLang = 'ar';
+        let currentLang = 'en';
 
         function createParticles() {
             const container = document.getElementById('particles');
@@ -329,12 +329,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Load saved language
+            // Load saved language or default to English
             const savedLang = localStorage.getItem('nesma_lang');
-            if (savedLang) {
-                currentLang = savedLang;
-                applyLanguage();
-            }
+            currentLang = savedLang || 'en';
+            applyLanguage();
             createParticles();
             updateTime();
             setInterval(updateTime, 1000);
