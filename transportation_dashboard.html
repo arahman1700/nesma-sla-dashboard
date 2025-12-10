@@ -394,42 +394,10 @@
         const currentLang = 'en'; // Fixed to English
 
         const translations = {
-            ar: {
-                pageTitle: 'داشبورد النقل والمعدات',
-                pageSubtitle: 'تحليل شامل لأوامر النقل والمعدات',
-                langText: 'English',
-                exportText: 'تصدير',
-                filtersTitle: 'الفلاتر التفاعلية',
-                resetBtn: 'إعادة تعيين',
-                projectLabel: 'المشروع',
-                supplierLabel: 'المورد',
-                equipmentLabel: 'المعدات',
-                statusLabel: 'الحالة',
-                rentTypeLabel: 'نوع الإيجار',
-                dateFromLabel: 'من تاريخ',
-                kpiTotalOrdersLabel: 'إجمالي الطلبات',
-                kpiTotalAmountLabel: 'إجمالي المبلغ (ريال)',
-                kpiDoneLabel: 'مكتملة',
-                kpiInProgressLabel: 'قيد التنفيذ',
-                kpiAvgDurationLabel: 'متوسط المدة (يوم)',
-                kpiOnTimeRateLabel: 'معدل الإنجاز',
-                tabOverview: 'نظرة عامة',
-                tabSuppliers: 'الموردين',
-                tabProjects: 'المشاريع',
-                tabEquipment: 'المعدات',
-                tabDetails: 'التفاصيل',
-                recordsOfLabel: 'من',
-                footerText: 'نظام إدارة اتفاقيات مستوى الخدمة - نسما للتكنولوجيا والصناعة',
-                all: 'الكل',
-                chartStatusDistribution: 'توزيع الحالات',
-                chartMonthlyTrend: 'الاتجاه الشهري',
-                chartSupplierDistribution: 'توزيع الموردين',
-                chartProjectDistribution: 'توزيع المشاريع'
-            },
             en: {
                 pageTitle: 'Transportation & Equipment Dashboard',
                 pageSubtitle: 'Comprehensive Analysis of Transportation Orders',
-                langText: 'العربية',
+                langText: 'EN',
                 exportText: 'Export',
                 filtersTitle: 'Interactive Filters',
                 resetBtn: 'Reset',
@@ -492,7 +460,7 @@
                 document.getElementById('loadingOverlay').style.display = 'none';
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('loadingText').textContent = 'خطأ في تحميل البيانات';
+                document.getElementById('loadingText').textContent = 'Error loading data';
             }
         }
 
@@ -668,7 +636,7 @@
                 type: 'line',
                 data: {
                     labels: sortedMonths,
-                    datasets: [{ label: currentLang === 'ar' ? 'عدد الطلبات' : 'Order Count', data: counts, borderColor: '#2e3192', backgroundColor: 'rgba(46, 49, 146, 0.1)', fill: true, tension: 0.4 }]
+                    datasets: [{ label: 'Order Count', data: counts, borderColor: '#2e3192', backgroundColor: 'rgba(46, 49, 146, 0.1)', fill: true, tension: 0.4 }]
                 },
                 options: {
                     responsive: true,
@@ -696,7 +664,7 @@
             if (charts.supplierBarChart) charts.supplierBarChart.destroy();
             charts.supplierBarChart = new Chart(ctx, {
                 type: 'bar',
-                data: { labels, datasets: [{ label: currentLang === 'ar' ? 'إجمالي المبلغ' : 'Total Amount', data: amounts, backgroundColor: '#2e3192', borderRadius: 8 }] },
+                data: { labels, datasets: [{ label: 'Total Amount', data: amounts, backgroundColor: '#2e3192', borderRadius: 8 }] },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -740,7 +708,7 @@
             if (charts.projectBarChart) charts.projectBarChart.destroy();
             charts.projectBarChart = new Chart(ctx, {
                 type: 'bar',
-                data: { labels: sorted.map(s => s[0]), datasets: [{ label: currentLang === 'ar' ? 'إجمالي المبلغ' : 'Total Amount', data: sorted.map(s => s[1].amount), backgroundColor: '#80d1e9', borderRadius: 8 }] },
+                data: { labels: sorted.map(s => s[0]), datasets: [{ label: 'Total Amount', data: sorted.map(s => s[1].amount), backgroundColor: '#80d1e9', borderRadius: 8 }] },
                 options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: translations[currentLang].chartProjectDistribution, font: { size: 16, weight: 'bold' } } } }
             });
         }
@@ -760,7 +728,7 @@
             if (charts.equipmentChart) charts.equipmentChart.destroy();
             charts.equipmentChart = new Chart(ctx, {
                 type: 'bar',
-                data: { labels: sorted.map(s => s[0]), datasets: [{ label: currentLang === 'ar' ? 'العدد' : 'Count', data: sorted.map(s => s[1].count), backgroundColor: '#10b981', borderRadius: 8 }] },
+                data: { labels: sorted.map(s => s[0]), datasets: [{ label: 'Count', data: sorted.map(s => s[1].count), backgroundColor: '#10b981', borderRadius: 8 }] },
                 options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
             });
         }
@@ -878,7 +846,7 @@
 
             if (totalPages <= 1) { container.innerHTML = ''; return; }
 
-            let html = `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1 rounded border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">${currentLang === 'ar' ? 'السابق' : 'Prev'}</button>`;
+            let html = `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1 rounded border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">${'Prev'}</button>`;
 
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
@@ -888,7 +856,7 @@
                 }
             }
 
-            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1 rounded border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">${currentLang === 'ar' ? 'التالي' : 'Next'}</button>`;
+            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1 rounded border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">${'Next'}</button>`;
 
             container.innerHTML = html;
         }

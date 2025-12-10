@@ -418,68 +418,10 @@
 
         // Language translations
         const translations = {
-            ar: {
-                pageTitle: 'داشبورد الدفعات والفواتير',
-                pageSubtitle: 'تحليل شامل لأوامر العمل والمدفوعات',
-                langText: 'English',
-                exportText: 'تصدير',
-                filtersTitle: 'الفلاتر التفاعلية',
-                resetBtn: 'إعادة تعيين',
-                projectLabel: 'المشروع',
-                supplierLabel: 'المورد',
-                equipmentLabel: 'المعدات',
-                statusLabel: 'حالة الدفع',
-                dateFromLabel: 'من تاريخ',
-                dateToLabel: 'إلى تاريخ',
-                kpiTotalInvoicesLabel: 'إجمالي الفواتير',
-                kpiTotalAmountLabel: 'إجمالي المبلغ (ريال)',
-                kpiPaidLabel: 'مدفوعة',
-                kpiPendingLabel: 'قيد الموافقة',
-                kpiAvgDaysLabel: 'متوسط أيام الإنجاز',
-                kpiPaymentCycleLabel: 'دورة الدفع (يوم)',
-                tabOverview: 'نظرة عامة',
-                tabSuppliers: 'الموردين',
-                tabProjects: 'المشاريع',
-                tabEquipment: 'المعدات',
-                tabDetails: 'التفاصيل',
-                thSupplier: 'المورد',
-                thInvoiceCount: 'عدد الفواتير',
-                thTotalAmount: 'إجمالي المبلغ',
-                thAvgAmount: 'متوسط المبلغ',
-                thPercentage: 'النسبة',
-                thProject: 'المشروع',
-                thProjectInvoices: 'عدد الفواتير',
-                thProjectTotal: 'إجمالي المبلغ',
-                thProjectAvg: 'متوسط الإنجاز',
-                thEquipmentName: 'المعدة',
-                thEquipmentCount: 'العدد',
-                thEquipmentTotal: 'إجمالي المبلغ',
-                thEquipmentAvg: 'متوسط السعر',
-                thDetailJobOrder: 'رقم الأمر',
-                thDetailDate: 'التاريخ',
-                thDetailProject: 'المشروع',
-                thDetailSupplier: 'المورد',
-                thDetailEquipment: 'المعدة',
-                thDetailAmount: 'المبلغ',
-                thDetailStatus: 'الحالة',
-                recordsOfLabel: 'من',
-                footerText: 'نظام إدارة اتفاقيات مستوى الخدمة - نسما للتكنولوجيا والصناعة',
-                lastUpdateText: 'آخر تحديث:',
-                loadingText: 'جاري تحميل البيانات...',
-                all: 'الكل',
-                paid: 'مدفوعة',
-                pending: 'قيد الموافقة',
-                statusPaid: 'مدفوع',
-                statusPending: 'قيد الموافقة',
-                chartPaymentStatus: 'حالة الدفعات',
-                chartMonthlyTrend: 'الاتجاه الشهري',
-                chartSupplierDistribution: 'توزيع الموردين',
-                chartProjectDistribution: 'توزيع المشاريع'
-            },
             en: {
                 pageTitle: 'Payments & Invoices Dashboard',
                 pageSubtitle: 'Comprehensive Analysis of Job Orders and Payments',
-                langText: 'العربية',
+                langText: 'EN',
                 exportText: 'Export',
                 filtersTitle: 'Interactive Filters',
                 resetBtn: 'Reset',
@@ -574,7 +516,7 @@
                 document.getElementById('loadingOverlay').style.display = 'none';
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('loadingText').textContent = 'خطأ في تحميل البيانات';
+                document.getElementById('loadingText').textContent = 'Error loading data';
             }
         }
 
@@ -797,7 +739,7 @@
                 data: {
                     labels: sortedMonths,
                     datasets: [{
-                        label: currentLang === 'ar' ? 'عدد الفواتير' : 'Invoice Count',
+                        label: 'Invoice Count',
                         data: counts,
                         borderColor: '#2e3192',
                         backgroundColor: 'rgba(46, 49, 146, 0.1)',
@@ -853,7 +795,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: currentLang === 'ar' ? 'إجمالي المبلغ' : 'Total Amount',
+                        label: 'Total Amount',
                         data: amounts,
                         backgroundColor: '#2e3192',
                         borderRadius: 8
@@ -943,7 +885,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: currentLang === 'ar' ? 'إجمالي المبلغ' : 'Total Amount',
+                        label: 'Total Amount',
                         data: amounts,
                         backgroundColor: '#80d1e9',
                         borderRadius: 8
@@ -993,7 +935,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: currentLang === 'ar' ? 'العدد' : 'Count',
+                        label: 'Count',
                         data: counts,
                         backgroundColor: '#10b981',
                         borderRadius: 8
@@ -1150,7 +1092,7 @@
             // Previous button
             html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}
                      class="px-3 py-1 rounded border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">
-                     ${currentLang === 'ar' ? 'السابق' : 'Prev'}
+                     ${'Prev'}
                      </button>`;
 
             // Page numbers
@@ -1168,7 +1110,7 @@
             // Next button
             html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}
                      class="px-3 py-1 rounded border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}">
-                     ${currentLang === 'ar' ? 'التالي' : 'Next'}
+                     ${'Next'}
                      </button>`;
 
             container.innerHTML = html;
