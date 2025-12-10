@@ -3206,7 +3206,6 @@
 
             // Get selected columns from settings
             const selectedColumns = dashboardSettings.columns['pr-table'] || ['pr_num', 'project', 'description', 'vendor', 'pr_value', 'approved_date', 'status'];
-            const showReturnCols = type === 'returned' || type === 'within2days' || type === 'after2days';
 
             // All available columns with their definitions
             const allColumns = {
@@ -3224,41 +3223,21 @@
                 'pr_note': { ar: 'ملاحظة', en: 'Note', getValue: (pr) => pr.pr_note || '-', class: 'max-w-[150px] truncate text-gray-600' }
             };
 
-            // If showing return type, ensure return columns are included
             let columnsToShow = [...selectedColumns];
-            if (showReturnCols) {
-                ['return_date', 'pending_with', 'pending_since', 'pr_note'].forEach(col => {
-                    if (!columnsToShow.includes(col)) columnsToShow.push(col);
-                });
-            }
 
-            // Analyze delay reasons for summary
-            let delayAnalysis = '';
-            if (showReturnCols) {
-                const pendingWithCounts = {};
-                prs.forEach(pr => {
-                    const reason = pr.pending_with || (currentLang === 'ar' ? 'غير محدد' : 'Not Specified');
-                    pendingWithCounts[reason] = (pendingWithCounts[reason] || 0) + 1;
-                });
+            // Get unique values for filters
+            const uniqueProjects = [...new Set(prs.map(p => p.project).filter(Boolean))];
+            const uniqueVendors = [...new Set(prs.map(p => p.vendor).filter(Boolean))];
+            const uniqueStatuses = [...new Set(prs.map(p => p.status).filter(Boolean))];
 
-                const sortedReasons = Object.entries(pendingWithCounts).sort((a, b) => b[1] - a[1]);
-                if (sortedReasons.length > 0) {
-                    delayAnalysis = `
-                    <div class="mb-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                        <h4 class="font-medium text-amber-800 mb-2">${currentLang === 'ar' ? '📊 تحليل أسباب التأخير (معلق لدى):' : '📊 Delay Analysis (Pending With):'}</h4>
-                        <div class="flex flex-wrap gap-2">
-                            ${sortedReasons.slice(0, 5).map(([reason, cnt]) =>
-                                `<span class="px-2 py-1 bg-white rounded text-sm border border-amber-300">${reason}: <strong>${cnt}</strong></span>`
-                            ).join('')}
-                        </div>
-                    </div>`;
-                }
-            }
-
-            // Generate table headers
-            const headers = columnsToShow.map(colId => {
+            // Generate table headers with drag handles
+            const headers = columnsToShow.map((colId, idx) => {
                 const col = allColumns[colId];
-                return col ? `<th>${col[currentLang]}</th>` : '';
+                if (!col) return '';
+                return `<th draggable="true" data-col-id="${colId}" data-col-idx="${idx}" class="cursor-move hover:bg-blue-100 select-none">
+                    <span class="editable-header" data-col="${colId}" ondblclick="editColumnHeader(this)">${col[currentLang]}</span>
+                    <span class="text-gray-400 ml-1">⋮⋮</span>
+                </th>`;
             }).join('');
 
             // Generate table rows
@@ -3277,30 +3256,39 @@
                     return `<td class="${className}" title="${value}">${value}</td>`;
                 }).join('');
 
-                return `<tr class="modal-row"><td class="text-center text-gray-500">${i + 1}</td>${cells}</tr>`;
+                return `<tr class="modal-row" data-project="${pr.project || ''}" data-vendor="${pr.vendor || ''}" data-status="${pr.status || ''}"><td class="text-center text-gray-500">${i + 1}</td>${cells}</tr>`;
             }).join('');
 
             return `
-                <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
-                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">${countLabel}</span>
-                    <div class="flex items-center gap-2">
+                <div class="mb-3 flex flex-wrap gap-3 items-center justify-between">
+                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full" id="modalCountLabel">${countLabel}</span>
+                    <div class="flex items-center gap-2 flex-wrap">
                         <input type="text" id="modalSearch" placeholder="${currentLang === 'ar' ? 'بحث...' : 'Search...'}"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
-                        <button onclick="openColumnSelector('pr-table')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 flex items-center gap-1" title="${currentLang === 'ar' ? 'اختيار الأعمدة' : 'Select Columns'}">
+                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-40">
+                        <button onclick="openColumnSelector('pr-table')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300" title="${currentLang === 'ar' ? 'اختيار الأعمدة' : 'Select Columns'}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                         </button>
-                        <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 flex items-center gap-1">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm8-16l4 4h-4V2z"/></svg>
-                            PDF
-                        </button>
-                        <button onclick="exportToCSV()" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 flex items-center gap-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            CSV
-                        </button>
+                        <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">PDF</button>
+                        <button onclick="exportToCSV()" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">CSV</button>
                     </div>
                 </div>
-                ${delayAnalysis}
-                <div class="scroll-container" style="max-height: 400px;">
+                <!-- Inline Filters -->
+                <div class="mb-3 flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg border" id="modalFilters">
+                    <select id="modalFilterProject" class="px-2 py-1 border rounded text-sm" onchange="applyModalFilters()">
+                        <option value="">${currentLang === 'ar' ? 'كل المشاريع' : 'All Projects'}</option>
+                        ${uniqueProjects.slice(0, 50).map(p => `<option value="${p}">${p.substring(0, 30)}${p.length > 30 ? '...' : ''}</option>`).join('')}
+                    </select>
+                    <select id="modalFilterVendor" class="px-2 py-1 border rounded text-sm" onchange="applyModalFilters()">
+                        <option value="">${currentLang === 'ar' ? 'كل الموردين' : 'All Vendors'}</option>
+                        ${uniqueVendors.slice(0, 50).map(v => `<option value="${v}">${v.substring(0, 25)}${v.length > 25 ? '...' : ''}</option>`).join('')}
+                    </select>
+                    <select id="modalFilterStatus" class="px-2 py-1 border rounded text-sm" onchange="applyModalFilters()">
+                        <option value="">${currentLang === 'ar' ? 'كل الحالات' : 'All Statuses'}</option>
+                        ${uniqueStatuses.map(s => `<option value="${s}">${s}</option>`).join('')}
+                    </select>
+                    <button onclick="resetModalFilters()" class="px-2 py-1 text-sm text-gray-600 hover:text-gray-800">${currentLang === 'ar' ? 'إعادة' : 'Reset'}</button>
+                </div>
+                <div class="scroll-container" style="max-height: 350px;">
                     <table class="data-table text-sm w-full" id="modalTable">
                         <thead>
                             <tr>
@@ -3312,7 +3300,8 @@
                             ${rows}
                         </tbody>
                     </table>
-                </div>`;
+                </div>
+                <p class="text-xs text-gray-400 mt-2">${currentLang === 'ar' ? '💡 اسحب رؤوس الأعمدة لإعادة ترتيبها • انقر مرتين لتعديل العنوان' : '💡 Drag column headers to reorder • Double-click to edit header'}</p>`;
         }
 
         function setupModalSearch() {
@@ -3323,8 +3312,146 @@
                     document.querySelectorAll('#modalTable tbody tr').forEach(row => {
                         row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
                     });
+                    updateModalCount();
                 });
             }
+            // Setup drag and drop for column reordering
+            setupColumnDragDrop();
+        }
+
+        // Modal Filters
+        function applyModalFilters() {
+            const projectFilter = document.getElementById('modalFilterProject')?.value || '';
+            const vendorFilter = document.getElementById('modalFilterVendor')?.value || '';
+            const statusFilter = document.getElementById('modalFilterStatus')?.value || '';
+
+            document.querySelectorAll('#modalTable tbody tr').forEach(row => {
+                const project = row.dataset.project || '';
+                const vendor = row.dataset.vendor || '';
+                const status = row.dataset.status || '';
+
+                const matchProject = !projectFilter || project === projectFilter;
+                const matchVendor = !vendorFilter || vendor === vendorFilter;
+                const matchStatus = !statusFilter || status === statusFilter;
+
+                row.style.display = (matchProject && matchVendor && matchStatus) ? '' : 'none';
+            });
+            updateModalCount();
+        }
+
+        function resetModalFilters() {
+            const selects = ['modalFilterProject', 'modalFilterVendor', 'modalFilterStatus'];
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.querySelectorAll('#modalTable tbody tr').forEach(row => row.style.display = '');
+            updateModalCount();
+        }
+
+        function updateModalCount() {
+            const visible = document.querySelectorAll('#modalTable tbody tr:not([style*="display: none"])').length;
+            const label = document.getElementById('modalCountLabel');
+            if (label) {
+                label.textContent = currentLang === 'ar' ? `إجمالي: ${visible} طلب` : `Total: ${visible} PRs`;
+            }
+        }
+
+        // Column Drag & Drop
+        let draggedColumn = null;
+
+        function setupColumnDragDrop() {
+            const headers = document.querySelectorAll('#modalTable thead th[draggable="true"]');
+            headers.forEach(th => {
+                th.addEventListener('dragstart', handleDragStart);
+                th.addEventListener('dragover', handleDragOver);
+                th.addEventListener('drop', handleDrop);
+                th.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedColumn = this;
+            this.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.style.background = '#e0f2fe';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedColumn !== this) {
+                const fromIdx = parseInt(draggedColumn.dataset.colIdx);
+                const toIdx = parseInt(this.dataset.colIdx);
+                const tableType = 'pr-table';
+
+                // Reorder columns in settings
+                const cols = [...dashboardSettings.columns[tableType]];
+                const [moved] = cols.splice(fromIdx, 1);
+                cols.splice(toIdx, 0, moved);
+                dashboardSettings.columns[tableType] = cols;
+                saveSettings();
+
+                // Refresh the table
+                if (currentModalData.length > 0) {
+                    const content = document.getElementById('modalContent');
+                    content.innerHTML = generateDetailedPRTable(currentModalData, 'approved');
+                    setupModalSearch();
+                }
+            }
+            this.style.background = '';
+        }
+
+        function handleDragEnd() {
+            this.style.opacity = '1';
+            document.querySelectorAll('#modalTable thead th').forEach(th => th.style.background = '');
+        }
+
+        // Edit Column Header
+        function editColumnHeader(span) {
+            const colId = span.dataset.col;
+            const currentText = span.textContent;
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'border rounded px-1 py-0.5 text-sm w-20';
+
+            const saveHeader = () => {
+                const newText = input.value.trim();
+                if (newText && newText !== currentText) {
+                    // Save custom header
+                    if (!dashboardSettings.customLabels['col-' + colId]) {
+                        dashboardSettings.customLabels['col-' + colId] = {};
+                    }
+                    dashboardSettings.customLabels['col-' + colId][currentLang] = newText;
+                    saveSettings();
+                    span.textContent = newText;
+                } else {
+                    span.textContent = currentText;
+                }
+                span.style.display = '';
+                input.remove();
+            };
+
+            input.addEventListener('blur', saveHeader);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') saveHeader();
+                if (e.key === 'Escape') {
+                    span.textContent = currentText;
+                    span.style.display = '';
+                    input.remove();
+                }
+            });
+
+            span.style.display = 'none';
+            span.parentNode.insertBefore(input, span);
+            input.focus();
+            input.select();
         }
 
         // Update pending duration list
@@ -3415,6 +3542,9 @@
         // ==========================================
         // PDF Export with Nesma Logo
         // ==========================================
+        // Nesma Logo Base64
+        const NESMA_LOGO_BASE64 = 'data:image/png;base64,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';
+
         function exportModalToPDF() {
             const modalTitle = document.getElementById('modalTitle')?.textContent || 'Report';
             const table = document.getElementById('modalTable');
@@ -3427,6 +3557,13 @@
             const printWindow = window.open('', '_blank');
             const today = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US');
 
+            // Clean table HTML - remove drag handles and editable attributes
+            let tableHTML = table.outerHTML;
+            tableHTML = tableHTML.replace(/draggable="true"/g, '');
+            tableHTML = tableHTML.replace(/ondblclick="[^"]*"/g, '');
+            tableHTML = tableHTML.replace(/<span class="text-gray-400 ml-1">⋮⋮<\/span>/g, '');
+            tableHTML = tableHTML.replace(/class="[^"]*cursor-move[^"]*"/g, '');
+
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html dir="${currentLang === 'ar' ? 'rtl' : 'ltr'}">
@@ -3436,38 +3573,33 @@
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
                         * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body { font-family: 'Cairo', Arial, sans-serif; padding: 20px; direction: ${currentLang === 'ar' ? 'rtl' : 'ltr'}; }
-                        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 3px solid #2e3192; margin-bottom: 20px; }
-                        .logo { height: 50px; }
+                        body { font-family: 'Cairo', Arial, sans-serif; padding: 30px; direction: ${currentLang === 'ar' ? 'rtl' : 'ltr'}; }
+                        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 3px solid #2e3192; margin-bottom: 25px; }
+                        .logo { height: 55px; }
                         .title-section { text-align: ${currentLang === 'ar' ? 'left' : 'right'}; }
-                        .title { font-size: 24px; color: #2e3192; font-weight: bold; margin-bottom: 5px; }
+                        .title { font-size: 26px; color: #2e3192; font-weight: bold; margin-bottom: 5px; }
                         .subtitle { color: #666; font-size: 14px; }
-                        .date { color: #888; font-size: 12px; margin-top: 5px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
-                        th { background: #2e3192; color: white; padding: 10px 8px; text-align: ${currentLang === 'ar' ? 'right' : 'left'}; font-weight: 600; }
-                        td { padding: 8px; border-bottom: 1px solid #ddd; }
+                        .date { color: #888; font-size: 12px; margin-top: 8px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 10px; }
+                        th { background: #2e3192; color: white; padding: 10px 6px; text-align: ${currentLang === 'ar' ? 'right' : 'left'}; font-weight: 600; }
+                        td { padding: 8px 6px; border-bottom: 1px solid #ddd; }
                         tr:nth-child(even) { background: #f8f9fa; }
-                        tr:hover { background: #e3f2fd; }
-                        .footer { margin-top: 30px; padding-top: 15px; border-top: 2px solid #2e3192; text-align: center; color: #666; font-size: 11px; }
-                        .status-approved { background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 4px; }
-                        .status-returned { background: #f8d7da; color: #721c24; padding: 3px 8px; border-radius: 4px; }
-                        .status-other { background: #e9ecef; color: #495057; padding: 3px 8px; border-radius: 4px; }
+                        .footer { margin-top: 35px; padding-top: 15px; border-top: 2px solid #2e3192; text-align: center; color: #666; font-size: 11px; }
                         @media print {
                             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                            .no-print { display: none; }
                         }
                     </style>
                 </head>
                 <body>
                     <div class="header">
-                        <img src="assets/logo.svg" class="logo" alt="NESMA" onerror="this.style.display='none'">
+                        <img src="${NESMA_LOGO_BASE64}" class="logo" alt="NESMA">
                         <div class="title-section">
                             <div class="title">${modalTitle}</div>
                             <div class="subtitle">${currentLang === 'ar' ? 'لوحة قياس المشتريات - نسما' : 'NESMA Procurement Dashboard'}</div>
                             <div class="date">${currentLang === 'ar' ? 'تاريخ التقرير:' : 'Report Date:'} ${today}</div>
                         </div>
                     </div>
-                    ${table.outerHTML.replace(/class="[^"]*"/g, '').replace(/<span[^>]*>([^<]*)<\/span>/g, '<span class="status-other">$1</span>')}
+                    ${tableHTML}
                     <div class="footer">
                         <p>${currentLang === 'ar' ? 'هذا التقرير تم إنشاؤه تلقائياً من لوحة قياس المشتريات' : 'This report was auto-generated from the Procurement Dashboard'}</p>
                         <p style="margin-top: 5px;">© ${new Date().getFullYear()} NESMA Holding - All Rights Reserved</p>
