@@ -1053,6 +1053,16 @@
                     console.log('Total PRs available:', (prData.all_prs || prData.recent_prs || []).length);
                     filteredPRData = prData.all_prs || prData.recent_prs || [];
                     updateFilteredKPIs();
+
+                    // Update last update date from data
+                    if (prData.last_updated) {
+                        const updateDate = new Date(prData.last_updated);
+                        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                        const formattedDate = currentLang === 'ar'
+                            ? updateDate.toLocaleDateString('ar-SA', options)
+                            : updateDate.toLocaleDateString('en-US', options);
+                        document.getElementById('lastUpdateDate').textContent = formattedDate;
+                    }
                 } else {
                     console.log('PR fetch failed, using fallback data');
                     useFallbackPRData();
