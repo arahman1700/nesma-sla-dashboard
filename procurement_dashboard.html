@@ -2599,12 +2599,21 @@
         }
 
         function showKPIDetails(kpiType) {
+            console.log('showKPIDetails called:', kpiType, 'prData:', prData ? 'loaded' : 'null');
+
             const modal = document.getElementById('kpiModal');
             const title = document.getElementById('modalTitle');
             const content = document.getElementById('modalContent');
 
+            if (!modal || !prData) {
+                console.error('Modal or prData not available');
+                alert('Data not loaded yet. Please wait.');
+                return;
+            }
+
             // Use currently filtered PRs
             const basePRs = getFilteredPRs();
+            console.log('Filtered PRs:', basePRs.length);
             const monthNames = currentLang === 'ar'
                 ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
