@@ -2599,21 +2599,25 @@
         }
 
         function showKPIDetails(kpiType) {
-            console.log('showKPIDetails called:', kpiType, 'prData:', prData ? 'loaded' : 'null');
+            try {
+                const modal = document.getElementById('kpiModal');
+                const title = document.getElementById('modalTitle');
+                const content = document.getElementById('modalContent');
 
-            const modal = document.getElementById('kpiModal');
-            const title = document.getElementById('modalTitle');
-            const content = document.getElementById('modalContent');
+                if (!modal) {
+                    console.error('Modal element not found');
+                    return;
+                }
 
-            if (!modal || !prData) {
-                console.error('Modal or prData not available');
-                alert('Data not loaded yet. Please wait.');
-                return;
-            }
+                if (!prData || !prData.all_prs) {
+                    content.innerHTML = '<p class="text-center py-8 text-gray-500">Loading data... Please wait and try again.</p>';
+                    title.textContent = 'Loading...';
+                    modal.classList.add('show');
+                    return;
+                }
 
-            // Use currently filtered PRs
-            const basePRs = getFilteredPRs();
-            console.log('Filtered PRs:', basePRs.length);
+                // Use currently filtered PRs
+                const basePRs = getFilteredPRs();
             const monthNames = currentLang === 'ar'
                 ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -2660,6 +2664,10 @@
             content.innerHTML = contentHTML;
             modal.classList.add('show');
             setupModalSearch();
+            } catch (error) {
+                console.error('Error in showKPIDetails:', error);
+                alert('Error: ' + error.message);
+            }
         }
 
         function generateDetailedPRTable(prs, type) {
