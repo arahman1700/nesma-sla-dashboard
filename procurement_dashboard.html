@@ -239,6 +239,59 @@
             overflow-y: auto;
         }
 
+        /* Settings Modal Styles */
+        .settings-tab {
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .settings-tab:hover {
+            color: #2e3192;
+            background: rgba(46, 49, 146, 0.05);
+        }
+
+        .settings-tab.active {
+            color: #2e3192;
+            border-bottom-color: #2e3192;
+            background: white;
+        }
+
+        .settings-tab-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Section Toggle Button */
+        .section-toggle {
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #6b7280;
+            transition: all 0.2s ease;
+        }
+
+        .section-toggle:hover {
+            background: rgba(46, 49, 146, 0.1);
+            color: #2e3192;
+        }
+
+        /* Collapsible Section Animation */
+        .section-collapsible {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .section-collapsible.collapsed {
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            opacity: 0;
+        }
+
         .close-btn {
             background: none;
             border: none;
@@ -311,6 +364,13 @@
                         <p class="text-xs text-blue-100" data-ar="آخر تحديث" data-en="Last Update">آخر تحديث</p>
                         <p class="text-sm font-semibold" id="lastUpdateDate">8 ديسمبر 2025</p>
                     </div>
+                    <!-- Settings Button -->
+                    <button onclick="openSettingsModal()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors" title="Settings">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
                     <button onclick="toggleLanguage()" class="lang-toggle" id="langBtn">
                         <span id="langText">EN</span>
                     </button>
@@ -342,7 +402,7 @@
                 <!-- PR Return Report Tab -->
                 <div id="tab-pr-return" class="tab-content active">
                     <!-- Filters Section -->
-                    <div class="filter-section mb-6">
+                    <div id="pr-filters" class="filter-section mb-6">
                         <div class="flex flex-wrap gap-3 items-center">
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1" data-ar="السنة" data-en="Year">السنة</label>
@@ -417,7 +477,7 @@
                     </div>
 
                     <!-- PR Return KPIs -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+                    <div id="pr-kpi-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
                         <!-- Total PRs Approved -->
                         <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white" onclick="showKPIDetails('approved')">
                             <div class="flex justify-between items-start mb-3">
@@ -492,7 +552,7 @@
                     </div>
 
                     <!-- Summary KPIs (Dynamic based on filters) -->
-                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 mb-6">
+                    <div id="pr-kpi-summary" class="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 mb-6">
                         <div class="card p-3 lg:p-4 text-center">
                             <p class="text-gray-500 text-xs mb-1" id="kpi-total-label" data-ar="إجمالي PRs" data-en="Total PRs">إجمالي PRs</p>
                             <p class="text-xl lg:text-2xl font-bold text-gray-800" id="kpi-total-filtered">1,929</p>
@@ -517,7 +577,7 @@
                     </div>
 
                     <!-- Charts -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div id="pr-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="PRs معتمدة vs مرتجعة (2025)" data-en="PRs Approved vs Returned (2025)">PRs معتمدة vs مرتجعة (2025)</h3>
                             <div class="chart-container" style="height: 350px;">
@@ -568,7 +628,7 @@
                 <!-- PR to PO Report Tab -->
                 <div id="tab-pr-to-po" class="tab-content">
                     <!-- Filters Section -->
-                    <div class="filter-section mb-6">
+                    <div id="po-filters" class="filter-section mb-6">
                         <div class="flex flex-wrap gap-4 items-center">
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1" data-ar="المشروع" data-en="Project">المشروع</label>
@@ -626,7 +686,7 @@
 
                     <!-- PR to PO KPIs - Current Month -->
                     <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="الشهر الحالي" data-en="Current Month">الشهر الحالي</h3>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+                    <div id="po-kpi-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
                         <!-- PRs Received (Month) -->
                         <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white" onclick="showPOKPIDetails('prs-received-month')">
                             <div class="flex justify-between items-start mb-3">
@@ -703,7 +763,7 @@
 
                     <!-- YTD Summary KPIs -->
                     <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="منذ بداية العام (YTD)" data-en="Year to Date (YTD)">منذ بداية العام (YTD)</h3>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
+                    <div id="po-kpi-ytd" class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
                         <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('prs-received-ytd')">
                             <p class="text-gray-500 text-xs mb-1" data-ar="PRs مستلمة YTD" data-en="PRs Received YTD">PRs مستلمة YTD</p>
                             <p class="text-xl lg:text-2xl font-bold text-purple-600" id="po-kpi-received-ytd">1,929</p>
@@ -723,7 +783,7 @@
                     </div>
 
                     <!-- Charts -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div id="po-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="PRs مستلمة vs POs صادرة (2025)" data-en="PRs Received vs POs Issued (2025)">PRs مستلمة vs POs صادرة (2025)</h3>
                             <div class="chart-container" style="height: 350px;">
@@ -758,7 +818,7 @@
                 <!-- Vendor Evaluation Tab -->
                 <div id="tab-vendor-eval" class="tab-content">
                     <!-- Vendor Filters -->
-                    <div class="filter-section mb-6">
+                    <div id="vendor-filters" class="filter-section mb-6">
                         <div class="flex flex-wrap gap-3 items-center">
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1" data-ar="تصنيف المورد" data-en="Vendor Category">تصنيف المورد</label>
@@ -809,7 +869,7 @@
                     </div>
 
                     <!-- Vendor KPIs -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+                    <div id="vendor-kpi-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
                         <!-- Total Evaluations Requested -->
                         <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
                             <div class="flex justify-between items-start mb-3">
@@ -885,7 +945,7 @@
                     </div>
 
                     <!-- Score Distribution KPIs -->
-                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 mb-6">
+                    <div id="vendor-distribution" class="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 mb-6">
                         <div class="card p-3 lg:p-4 text-center border-r-4 border-red-500">
                             <p class="text-gray-500 text-xs mb-1" data-ar="أقل من 20%" data-en="Below 20%">أقل من 20%</p>
                             <p class="text-xl lg:text-2xl font-bold text-red-600" id="vendor-dist-below20">0</p>
@@ -909,7 +969,7 @@
                     </div>
 
                     <!-- Charts -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div id="vendor-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="توزيع تقييمات الموردين" data-en="Vendor Score Distribution">توزيع تقييمات الموردين</h3>
                             <div class="chart-container">
@@ -965,7 +1025,7 @@
                     </div>
 
                     <!-- Vendor Table -->
-                    <div>
+                    <div id="vendor-table">
                         <h3 class="text-lg font-bold text-gray-800 mb-4" data-ar="تفاصيل تقييم الموردين" data-en="Vendor Evaluation Details">تفاصيل تقييم الموردين</h3>
                         <div class="scroll-container" style="max-height: 500px;">
                             <table class="data-table">
@@ -1013,6 +1073,134 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-2xl">
+                <h3 class="text-lg font-bold" data-ar="إعدادات لوحة التحكم" data-en="Dashboard Settings">Dashboard Settings</h3>
+                <button class="close-btn text-white hover:bg-white/20" onclick="closeSettingsModal()">&times;</button>
+            </div>
+            <div class="modal-body p-0">
+                <!-- Settings Tabs -->
+                <div class="flex border-b bg-gray-50">
+                    <button onclick="switchSettingsTab('sections')" class="settings-tab active flex-1 py-3 text-sm font-medium" data-tab="sections">
+                        <span data-ar="الأقسام" data-en="Sections">Sections</span>
+                    </button>
+                    <button onclick="switchSettingsTab('columns')" class="settings-tab flex-1 py-3 text-sm font-medium" data-tab="columns">
+                        <span data-ar="الأعمدة" data-en="Columns">Columns</span>
+                    </button>
+                    <button onclick="switchSettingsTab('export')" class="settings-tab flex-1 py-3 text-sm font-medium" data-tab="export">
+                        <span data-ar="تصدير/استيراد" data-en="Export/Import">Export/Import</span>
+                    </button>
+                </div>
+
+                <!-- Sections Tab -->
+                <div id="settings-sections" class="settings-tab-content p-4">
+                    <p class="text-sm text-gray-500 mb-4" data-ar="اختر الأقسام التي تريد إظهارها" data-en="Choose which sections to display">Choose which sections to display</p>
+
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-700 mt-4 mb-2" data-ar="تقرير إرجاع PR" data-en="PR Return Report">PR Return Report</h4>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="pr-filters" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="الفلاتر" data-en="Filters">Filters</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="pr-kpi-cards" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="بطاقات KPI الرئيسية" data-en="Main KPI Cards">Main KPI Cards</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="pr-kpi-summary" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="ملخص الإحصائيات" data-en="Summary Stats">Summary Stats</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="pr-charts" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="الرسوم البيانية" data-en="Charts">Charts</span>
+                        </label>
+
+                        <h4 class="font-semibold text-gray-700 mt-4 mb-2" data-ar="تقرير PR إلى PO" data-en="PR to PO Report">PR to PO Report</h4>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="po-filters" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="الفلاتر" data-en="Filters">Filters</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="po-kpi-cards" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="بطاقات KPI" data-en="KPI Cards">KPI Cards</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="po-kpi-ytd" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="إحصائيات YTD" data-en="YTD Stats">YTD Stats</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="po-charts" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="الرسوم البيانية" data-en="Charts">Charts</span>
+                        </label>
+
+                        <h4 class="font-semibold text-gray-700 mt-4 mb-2" data-ar="تقييم الموردين" data-en="Vendor Evaluation">Vendor Evaluation</h4>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="vendor-kpi-cards" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="بطاقات KPI" data-en="KPI Cards">KPI Cards</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="vendor-table" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="جدول الموردين" data-en="Vendor Table">Vendor Table</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="vendor-charts" checked onchange="toggleSectionSetting(this)">
+                            <span data-ar="الرسوم البيانية" data-en="Charts">Charts</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Columns Tab -->
+                <div id="settings-columns" class="settings-tab-content p-4 hidden">
+                    <p class="text-sm text-gray-500 mb-4" data-ar="اختر الأعمدة التي تظهر في الجداول" data-en="Choose which columns appear in tables">Choose which columns appear in tables</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2" data-ar="جدول PR Return" data-en="PR Return Table">PR Return Table</h4>
+                            <div id="pr-table-columns" class="grid grid-cols-2 gap-2">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2" data-ar="جدول PR to PO" data-en="PR to PO Table">PR to PO Table</h4>
+                            <div id="po-table-columns" class="grid grid-cols-2 gap-2">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export/Import Tab -->
+                <div id="settings-export" class="settings-tab-content p-4 hidden">
+                    <p class="text-sm text-gray-500 mb-4" data-ar="تصدير أو استيراد إعدادات لوحة التحكم" data-en="Export or import dashboard settings">Export or import dashboard settings</p>
+
+                    <div class="space-y-4">
+                        <button onclick="exportSettings()" class="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <span data-ar="تصدير الإعدادات" data-en="Export Settings">Export Settings</span>
+                        </button>
+
+                        <div class="relative">
+                            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importSettings(this.files[0])">
+                            <button onclick="document.getElementById('importFile').click()" class="w-full py-3 px-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                <span data-ar="استيراد الإعدادات" data-en="Import Settings">Import Settings</span>
+                            </button>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <button onclick="resetSettings()" class="w-full py-3 px-4 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-50 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span data-ar="إعادة تعيين الإعدادات" data-en="Reset to Defaults">Reset to Defaults</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global error handler
         window.onerror = function(msg, url, lineNo, columnNo, error) {
@@ -1027,12 +1215,322 @@
         let filteredPRData = [];
         let currentModalData = [];
 
+        // ==========================================
+        // Dashboard Settings System
+        // ==========================================
+        const defaultSettings = {
+            version: '1.0',
+            language: 'en',
+            customLabels: {},
+            sections: {
+                'pr-filters': true,
+                'pr-kpi-cards': true,
+                'pr-kpi-summary': true,
+                'pr-charts': true,
+                'po-filters': true,
+                'po-kpi-cards': true,
+                'po-kpi-ytd': true,
+                'po-charts': true,
+                'vendor-filters': true,
+                'vendor-kpi-cards': true,
+                'vendor-distribution': true,
+                'vendor-table': true,
+                'vendor-charts': true
+            },
+            columns: {
+                'pr-table': ['pr_num', 'project', 'description', 'vendor', 'pr_value', 'approved_date', 'status'],
+                'po-table': ['pr_num', 'project', 'vendor', 'pr_value', 'po_value', 'pr_to_po_days', 'status'],
+                'vendor-table': ['name', 'category', 'score', 'status']
+            },
+            theme: {
+                compactMode: false,
+                showAnimations: true
+            }
+        };
+
+        let dashboardSettings = JSON.parse(JSON.stringify(defaultSettings));
+
+        // Load settings from localStorage
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem('nesma_dashboard_settings');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    dashboardSettings = { ...defaultSettings, ...parsed };
+                    // Ensure nested objects are merged properly
+                    dashboardSettings.sections = { ...defaultSettings.sections, ...parsed.sections };
+                    dashboardSettings.columns = { ...defaultSettings.columns, ...parsed.columns };
+                    dashboardSettings.customLabels = { ...defaultSettings.customLabels, ...parsed.customLabels };
+                }
+                console.log('Settings loaded:', dashboardSettings);
+            } catch (e) {
+                console.error('Error loading settings:', e);
+                dashboardSettings = JSON.parse(JSON.stringify(defaultSettings));
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            try {
+                localStorage.setItem('nesma_dashboard_settings', JSON.stringify(dashboardSettings));
+                console.log('Settings saved');
+            } catch (e) {
+                console.error('Error saving settings:', e);
+            }
+        }
+
+        // Apply saved settings to UI
+        function applySettings() {
+            // Apply section visibility
+            Object.keys(dashboardSettings.sections).forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const isVisible = dashboardSettings.sections[sectionId];
+                    section.style.display = isVisible ? '' : 'none';
+                    // Update toggle icon
+                    const toggle = document.querySelector(`[data-toggle-section="${sectionId}"]`);
+                    if (toggle) {
+                        toggle.innerHTML = isVisible ? '▼' : '▶';
+                    }
+                }
+            });
+
+            // Apply custom labels
+            Object.keys(dashboardSettings.customLabels).forEach(labelId => {
+                const el = document.getElementById(labelId);
+                if (el && dashboardSettings.customLabels[labelId]) {
+                    const label = dashboardSettings.customLabels[labelId];
+                    if (label[currentLang]) {
+                        el.textContent = label[currentLang];
+                    }
+                }
+            });
+        }
+
+        // Toggle section visibility
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+
+            const isVisible = section.style.display !== 'none';
+            section.style.display = isVisible ? 'none' : '';
+            dashboardSettings.sections[sectionId] = !isVisible;
+
+            // Update toggle icon
+            const toggle = document.querySelector(`[data-toggle-section="${sectionId}"]`);
+            if (toggle) {
+                toggle.innerHTML = isVisible ? '▶' : '▼';
+            }
+
+            // Add animation
+            if (!isVisible) {
+                section.style.animation = 'fadeIn 0.3s ease';
+            }
+
+            saveSettings();
+        }
+
+        // Export settings to JSON file
+        function exportSettings() {
+            const dataStr = JSON.stringify(dashboardSettings, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'dashboard_settings_' + new Date().toISOString().slice(0,10) + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Import settings from JSON file
+        function importSettings(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    dashboardSettings = { ...defaultSettings, ...imported };
+                    saveSettings();
+                    applySettings();
+                    alert(currentLang === 'ar' ? 'تم استيراد الإعدادات بنجاح!' : 'Settings imported successfully!');
+                    location.reload();
+                } catch (err) {
+                    alert(currentLang === 'ar' ? 'خطأ في ملف الإعدادات' : 'Invalid settings file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Reset settings to defaults
+        function resetSettings() {
+            if (confirm(currentLang === 'ar' ? 'هل تريد إعادة الإعدادات للوضع الافتراضي؟' : 'Reset all settings to defaults?')) {
+                dashboardSettings = JSON.parse(JSON.stringify(defaultSettings));
+                saveSettings();
+                applySettings();
+                location.reload();
+            }
+        }
+
+        // ==========================================
+        // Settings Modal Functions
+        // ==========================================
+
+        // Open settings modal
+        function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.classList.add('show');
+                populateSettingsUI();
+                applyLanguage(); // Apply language to modal content
+            }
+        }
+
+        // Close settings modal
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Switch settings tabs
+        function switchSettingsTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.settings-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            const content = document.getElementById('settings-' + tabName);
+            if (content) {
+                content.classList.remove('hidden');
+            }
+
+            // Activate selected tab button
+            const tab = document.querySelector(`.settings-tab[data-tab="${tabName}"]`);
+            if (tab) {
+                tab.classList.add('active');
+            }
+        }
+
+        // Populate settings UI with current values
+        function populateSettingsUI() {
+            // Populate section checkboxes
+            document.querySelectorAll('[data-section]').forEach(checkbox => {
+                const sectionId = checkbox.dataset.section;
+                checkbox.checked = dashboardSettings.sections[sectionId] !== false;
+            });
+
+            // Populate column checkboxes
+            populateColumnCheckboxes('pr-table', 'pr-table-columns');
+            populateColumnCheckboxes('po-table', 'po-table-columns');
+        }
+
+        // Populate column checkboxes for a table
+        function populateColumnCheckboxes(tableType, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container || !columnDefinitions[tableType]) return;
+
+            const selectedColumns = dashboardSettings.columns[tableType] || [];
+
+            container.innerHTML = columnDefinitions[tableType].map(col => {
+                const isChecked = selectedColumns.includes(col.id);
+                return `
+                    <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer text-sm">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded"
+                            data-table="${tableType}" data-column="${col.id}"
+                            ${isChecked ? 'checked' : ''}
+                            onchange="toggleColumnSetting(this)">
+                        <span>${col[currentLang]}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        // Toggle section setting
+        function toggleSectionSetting(checkbox) {
+            const sectionId = checkbox.dataset.section;
+            dashboardSettings.sections[sectionId] = checkbox.checked;
+            saveSettings();
+            applySettings();
+        }
+
+        // Toggle column setting
+        function toggleColumnSetting(checkbox) {
+            const tableType = checkbox.dataset.table;
+            const columnId = checkbox.dataset.column;
+
+            if (!dashboardSettings.columns[tableType]) {
+                dashboardSettings.columns[tableType] = [];
+            }
+
+            if (checkbox.checked) {
+                if (!dashboardSettings.columns[tableType].includes(columnId)) {
+                    dashboardSettings.columns[tableType].push(columnId);
+                }
+            } else {
+                dashboardSettings.columns[tableType] = dashboardSettings.columns[tableType].filter(c => c !== columnId);
+            }
+
+            saveSettings();
+        }
+
+        // Close settings modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('settingsModal');
+            if (e.target === modal) {
+                closeSettingsModal();
+            }
+        });
+
+        // Column definitions for tables
+        const columnDefinitions = {
+            'pr-table': [
+                { id: 'pr_num', ar: 'رقم PR', en: 'PR #' },
+                { id: 'project', ar: 'المشروع', en: 'Project' },
+                { id: 'description', ar: 'الوصف', en: 'Description' },
+                { id: 'vendor', ar: 'المورد', en: 'Vendor' },
+                { id: 'pr_value', ar: 'القيمة', en: 'Value' },
+                { id: 'status', ar: 'الحالة', en: 'Status' },
+                { id: 'submission_date', ar: 'تاريخ التقديم', en: 'Submitted' },
+                { id: 'approved_date', ar: 'تاريخ الاعتماد', en: 'Approved' },
+                { id: 'return_date', ar: 'تاريخ الإرجاع', en: 'Returned' },
+                { id: 'pending_with', ar: 'معلق لدى', en: 'Pending With' },
+                { id: 'pending_since', ar: 'معلق منذ', en: 'Since' },
+                { id: 'pr_note', ar: 'ملاحظة', en: 'Note' }
+            ],
+            'po-table': [
+                { id: 'pr_num', ar: 'رقم PR', en: 'PR #' },
+                { id: 'project', ar: 'المشروع', en: 'Project' },
+                { id: 'po_num', ar: 'رقم PO', en: 'PO #' },
+                { id: 'vendor', ar: 'المورد', en: 'Vendor' },
+                { id: 'pr_value', ar: 'قيمة PR', en: 'PR Value' },
+                { id: 'po_value', ar: 'قيمة PO', en: 'PO Value' },
+                { id: 'pr_to_po_days', ar: 'أيام PR→PO', en: 'PR→PO Days' },
+                { id: 'status', ar: 'الحالة', en: 'Status' },
+                { id: 'po_approved_date', ar: 'تاريخ PO', en: 'PO Date' }
+            ],
+            'vendor-table': [
+                { id: 'name', ar: 'اسم المورد', en: 'Vendor Name' },
+                { id: 'category', ar: 'التصنيف', en: 'Category' },
+                { id: 'score', ar: 'النتيجة', en: 'Score' },
+                { id: 'status', ar: 'الحالة', en: 'Status' }
+            ]
+        };
+
         // Chart.js Config
         Chart.defaults.font.family = 'Cairo';
         Chart.defaults.font.size = 12;
 
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', async () => {
+            // Load dashboard settings first
+            loadSettings();
+
             const savedLang = localStorage.getItem('nesma_lang');
             if (savedLang) {
                 currentLang = savedLang;
@@ -1050,6 +1548,9 @@
             createCharts();
             createVendorAnalyticsCharts();
             populateVendorTable();
+
+            // Apply saved settings (section visibility, custom labels)
+            applySettings();
         });
 
         // Load data from JSON files with cache-busting
@@ -1906,8 +2407,8 @@
                 return true;
             });
 
-            // Count PRs with APPROVED status
-            const ytdApproved = ytdPRs.filter(pr => pr.pr_status === 'APPROVED').length;
+            // Count PRs with APPROVED status (check both field names)
+            const ytdApproved = ytdPRs.filter(pr => (pr.pr_status === 'APPROVED' || pr.status === 'APPROVED')).length;
 
             // Count PRs that have pr_to_po_days (meaning PO was issued)
             const ytdPosIssued = ytdPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && !isNaN(pr.pr_to_po_days)).length;
@@ -2867,54 +3368,67 @@
         }
 
         function showPOKPIDetails(kpiType) {
-            const modal = document.getElementById('kpiModal');
-            const title = document.getElementById('modalTitle');
-            const content = document.getElementById('modalContent');
+            try {
+                const modal = document.getElementById('kpiModal');
+                const title = document.getElementById('modalTitle');
+                const content = document.getElementById('modalContent');
 
-            let titleText = '';
-            let filteredPRs = [];
+                if (!modal || !prData) {
+                    console.error('Modal or prData not available');
+                    return;
+                }
 
-            // Use filtered PRs based on current filters
-            const basePRs = getFilteredPRs();
+                let titleText = '';
+                let filteredPRs = [];
 
-            // Build filter description
-            const monthNames = currentLang === 'ar'
-                ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
-                : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                // Use filtered PRs based on current filters
+                const basePRs = getFilteredPRs();
 
-            let filterDesc = currentFilters.year;
-            if (currentFilters.month) filterDesc = monthNames[parseInt(currentFilters.month)] + ' ' + filterDesc;
-            if (currentFilters.project) filterDesc += ' - ' + currentFilters.project.substring(0, 25) + '...';
+                // Build filter description
+                const monthNames = currentLang === 'ar'
+                    ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+                    : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-            switch(kpiType) {
-                case 'prs-received-month':
-                    titleText = currentLang === 'ar' ? `PRs المستلمة - ${filterDesc}` : `PRs Received - ${filterDesc}`;
-                    filteredPRs = basePRs.filter(pr => pr.status === 'APPROVED');
-                    break;
-                case 'pos-issued-month':
-                    titleText = currentLang === 'ar' ? `POs الصادرة - ${filterDesc}` : `POs Issued - ${filterDesc}`;
-                    filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null);
-                    break;
-                case 'within30days':
-                    titleText = currentLang === 'ar' ? `POs صادرة خلال 30 يوم - ${filterDesc}` : `POs Within 30 Days - ${filterDesc}`;
-                    filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30);
-                    break;
-                case 'after30days':
-                    titleText = currentLang === 'ar' ? `POs صادرة بعد 30 يوم - ${filterDesc}` : `POs After 30 Days - ${filterDesc}`;
-                    filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days > 30);
-                    break;
-                default:
-                    titleText = currentLang === 'ar' ? 'التفاصيل' : 'Details';
-                    filteredPRs = [];
+                let filterDesc = currentFilters.year || '2025';
+                if (currentFilters.month) filterDesc = monthNames[parseInt(currentFilters.month)] + ' ' + filterDesc;
+                if (currentFilters.project) filterDesc += ' - ' + currentFilters.project.substring(0, 25) + '...';
+
+                switch(kpiType) {
+                    case 'prs-received-month':
+                    case 'prs-received-ytd':
+                        titleText = currentLang === 'ar' ? `PRs المستلمة - ${filterDesc}` : `PRs Received - ${filterDesc}`;
+                        filteredPRs = basePRs.filter(pr => (pr.status === 'APPROVED' || pr.pr_status === 'APPROVED'));
+                        break;
+                    case 'pos-issued-month':
+                    case 'pos-issued-ytd':
+                        titleText = currentLang === 'ar' ? `POs الصادرة - ${filterDesc}` : `POs Issued - ${filterDesc}`;
+                        filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined);
+                        break;
+                    case 'within30days':
+                    case 'within30-ytd':
+                        titleText = currentLang === 'ar' ? `POs صادرة خلال 30 يوم - ${filterDesc}` : `POs Within 30 Days - ${filterDesc}`;
+                        filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 30);
+                        break;
+                    case 'after30days':
+                    case 'after30-ytd':
+                        titleText = currentLang === 'ar' ? `POs صادرة بعد 30 يوم - ${filterDesc}` : `POs After 30 Days - ${filterDesc}`;
+                        filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days > 30);
+                        break;
+                    default:
+                        titleText = currentLang === 'ar' ? 'التفاصيل' : 'Details';
+                        filteredPRs = basePRs;
+                }
+
+                currentModalData = filteredPRs;
+                const contentHTML = generateDetailedPOTable(filteredPRs, kpiType);
+
+                title.textContent = titleText;
+                content.innerHTML = contentHTML;
+                modal.classList.add('show');
+                setupModalSearch();
+            } catch (error) {
+                console.error('Error in showPOKPIDetails:', error);
             }
-
-            currentModalData = filteredPRs;
-            const contentHTML = generateDetailedPOTable(filteredPRs, kpiType);
-
-            title.textContent = titleText;
-            content.innerHTML = contentHTML;
-            modal.classList.add('show');
-            setupModalSearch();
         }
 
         function generateDetailedPOTable(prs, type) {
