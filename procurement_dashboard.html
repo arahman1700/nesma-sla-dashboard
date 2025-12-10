@@ -1052,6 +1052,7 @@
                     console.log('PR Data loaded successfully:', prData.summary);
                     console.log('Total PRs available:', (prData.all_prs || prData.recent_prs || []).length);
                     filteredPRData = prData.all_prs || prData.recent_prs || [];
+                    populateFilterDropdowns();
                     updateFilteredKPIs();
 
                     // Update last update date from data
@@ -1755,6 +1756,7 @@
         // Get filtered PRs based on current filters - uses NEW data structure
         function getFilteredPRs() {
             const allPRs = prData?.all_prs || prData?.recent_prs || filteredPRData || [];
+            console.log('getFilteredPRs - allPRs count:', allPRs.length, 'currentFilters:', currentFilters);
             return allPRs.filter(pr => {
                 // Year filter - check all date fields
                 if (currentFilters.year) {
@@ -2591,12 +2593,16 @@
         }
 
         function showKPIDetails(kpiType) {
+            console.log('showKPIDetails called with:', kpiType);
+            console.log('currentFilters:', currentFilters);
+
             const modal = document.getElementById('kpiModal');
             const title = document.getElementById('modalTitle');
             const content = document.getElementById('modalContent');
 
             // Use currently filtered PRs
             const basePRs = getFilteredPRs();
+            console.log('basePRs count:', basePRs.length);
             const monthNames = currentLang === 'ar'
                 ? ['', 'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
                 : ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
