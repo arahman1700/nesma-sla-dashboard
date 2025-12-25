@@ -1,6 +1,6 @@
 // NESMA Supply Chain Management - Dashboard Data
 // Auto-synced from Smartsheet
-// Last updated: 2025-12-24 23:13:41 UTC
+// Last updated: 2025-12-25 01:07:21 UTC
 
 // SLA Dashboard Data
 const SLA_DATA = {
@@ -15,7 +15,7 @@ const SLA_DATA = {
     "median_duration": 1.0,
     "p90_duration": 5.0,
     "open_orders": 5,
-    "last_update": "2025-12-24"
+    "last_update": "2025-12-25"
   },
   "status": {
     "Done": 1177,
@@ -355,7 +355,7 @@ const TRANSPORTATION_DATA = {
     "median_duration": 1.0,
     "p90_duration": 5.0,
     "open_orders": 5,
-    "last_update": "2025-12-24"
+    "last_update": "2025-12-25"
   },
   "status": {
     "Done": 1177,
@@ -694,7 +694,7 @@ const PAYMENTS_DATA = {
     "avg_payment_cycle": 0,
     "avg_invoice_receive": 0,
     "payment_rate": 95.0,
-    "last_update": "2025-12-24"
+    "last_update": "2025-12-25"
   },
   "payment_status": {
     "Paid": 1118,
