@@ -758,27 +758,6 @@
                         </div>
                     </div>
 
-                    <!-- YTD Summary KPIs -->
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Year to Date (YTD)</h3>
-                    <div id="po-kpi-ytd" class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
-                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('prs-received-ytd')">
-                            <p class="text-gray-500 text-xs mb-1">PRs Received YTD</p>
-                            <p class="text-xl lg:text-2xl font-bold text-[#2E3192]" id="po-kpi-received-ytd">1,929</p>
-                        </div>
-                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('pos-issued-ytd')">
-                            <p class="text-gray-500 text-xs mb-1">POs Issued YTD</p>
-                            <p class="text-xl lg:text-2xl font-bold text-blue-600" id="po-kpi-issued-ytd">1,650</p>
-                        </div>
-                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('within30-ytd')">
-                            <p class="text-gray-500 text-xs mb-1">≤30 Days YTD</p>
-                            <p class="text-xl lg:text-2xl font-bold text-blue-600" id="po-kpi-within30-ytd">1,320</p>
-                        </div>
-                        <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showPOKPIDetails('after30-ytd')">
-                            <p class="text-gray-500 text-xs mb-1">>30 Days YTD</p>
-                            <p class="text-xl lg:text-2xl font-bold text-amber-600" id="po-kpi-after30-ytd">330</p>
-                        </div>
-                    </div>
-
                     <!-- Charts -->
                     <div id="po-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -1123,10 +1102,7 @@
                             <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="po-kpi-cards" checked onchange="toggleSectionSetting(this)">
                             <span>KPI Cards</span>
                         </label>
-                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="po-kpi-ytd" checked onchange="toggleSectionSetting(this)">
-                            <span>YTD Stats</span>
-                        </label>
+
                         <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
                             <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="po-charts" checked onchange="toggleSectionSetting(this)">
                             <span>Charts</span>
@@ -1789,16 +1765,6 @@
             document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
             document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
 
-            // YTD calculations
-            const ytdApproved = prData.summary.total_approved_2025 || 0;
-            const ytdPOs = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.approved_date && pr.approved_date.startsWith('2025')).length;
-            const ytdWithin30 = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30 && pr.approved_date && pr.approved_date.startsWith('2025')).length;
-            const ytdAfter30 = ytdPOs - ytdWithin30;
-
-            document.getElementById('po-kpi-received-ytd').textContent = ytdApproved.toLocaleString();
-            document.getElementById('po-kpi-issued-ytd').textContent = ytdPOs.toLocaleString();
-            document.getElementById('po-kpi-within30-ytd').textContent = ytdWithin30.toLocaleString();
-            document.getElementById('po-kpi-after30-ytd').textContent = ytdAfter30.toLocaleString();
         }
 
         // Update Vendor KPIs
@@ -2356,56 +2322,6 @@
             const after30Pct = stats.posIssued > 0 ? ((stats.after30days / stats.posIssued) * 100).toFixed(1) : 0;
             document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
             document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
-
-            // PR to PO YTD KPIs (based on filtered year and project, not month)
-            const allPRs = prData?.all_prs || filteredPRData || [];
-
-            // Detect active tab and read from correct filters
-            const activeTab = document.querySelector('.tab-content.active')?.id;
-            let ytdYear, ytdProject;
-
-            if (activeTab === 'tab-pr-to-po') {
-                ytdYear = document.getElementById('filterYearPO')?.value || '2025';
-                ytdProject = document.getElementById('filterProjectPO')?.value || '';
-            } else {
-                ytdYear = currentFilters.year || '2025';
-                ytdProject = currentFilters.project || '';
-            }
-
-            const ytdPRs = allPRs.filter(pr => {
-                // Year filter - check all date fields
-                const dateField = pr.approved_date || pr.submission_date || pr.po_approved_date;
-                if (dateField && !dateField.startsWith(ytdYear)) return false;
-
-                // Project filter
-                if (ytdProject && pr.project) {
-                    if (!pr.project.toLowerCase().includes(ytdProject.toLowerCase())) return false;
-                }
-                return true;
-            });
-
-            // Count PRs with APPROVED status (check both field names)
-            const ytdApproved = ytdPRs.filter(pr => (pr.pr_status === 'APPROVED' || pr.status === 'APPROVED')).length;
-
-            // Count PRs that have pr_to_po_days (meaning PO was issued)
-            const ytdPosIssued = ytdPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && !isNaN(pr.pr_to_po_days)).length;
-
-            // Count within 30 days
-            const ytdWithin30 = ytdPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 30).length;
-            const ytdAfter30 = ytdPosIssued - ytdWithin30;
-
-            // Update YTD KPI elements
-            const ytdReceivedEl = document.getElementById('po-kpi-received-ytd');
-            const ytdIssuedEl = document.getElementById('po-kpi-issued-ytd');
-            const ytdWithin30El = document.getElementById('po-kpi-within30-ytd');
-            const ytdAfter30El = document.getElementById('po-kpi-after30-ytd');
-
-            if (ytdReceivedEl) ytdReceivedEl.textContent = ytdApproved.toLocaleString();
-            if (ytdIssuedEl) ytdIssuedEl.textContent = ytdPosIssued.toLocaleString();
-            if (ytdWithin30El) ytdWithin30El.textContent = ytdWithin30.toLocaleString();
-            if (ytdAfter30El) ytdAfter30El.textContent = ytdAfter30.toLocaleString();
-
-            console.log(`📊 YTD Stats (${ytdYear}): Approved=${ytdApproved}, POs Issued=${ytdPosIssued}, Within30=${ytdWithin30}, After30=${ytdAfter30}`);
 
             // Update filter label to show what's filtered
             updateFilterLabel();
