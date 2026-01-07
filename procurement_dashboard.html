@@ -1815,11 +1815,15 @@
 
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Dashboard initialization started...');
+            
             // Load dashboard settings first
             loadSettings();
 
             // Load data from JSON files
             await loadData();
+            
+            console.log('Data loaded. Total PRs:', (prData?.all_prs || []).length);
 
             // Populate project filters from data
             populateProjectDropdown();
@@ -1833,10 +1837,15 @@
             // Apply saved settings (section visibility, custom labels)
             applySettings();
             
-            // Initialize SLA display after data loads
-            if (typeof updateSLADisplay === 'function') {
-                updateSLADisplay();
-            }
+            // Initialize all displays after data loads - with a small delay to ensure DOM is ready
+            setTimeout(() => {
+                console.log('Calling refreshAll() for initial load...');
+                if (typeof refreshAll === 'function') {
+                    refreshAll();
+                }
+            }, 100);
+            
+            console.log('Dashboard initialization complete.');
         });
 
         // Load data from JSON files with cache-busting
@@ -2045,26 +2054,34 @@
             const monthApproved = prData.monthly.approved[currentMonth] || 0;
 
             // Calculate POs issued (PRs with pr_to_po_days value)
-            const allPRs = prData.recent_prs || [];
+            const allPRs = prData.all_prs || prData.recent_prs || [];
             const currentMonthPRs = allPRs.filter(pr => {
                 if (!pr.approved_date) return false;
                 const date = new Date(pr.approved_date);
                 return date.getMonth() === currentMonth && date.getFullYear() === 2025;
             });
 
-            const posIssued = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null).length;
-            const within30 = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30).length;
-            const after30 = posIssued - within30;
+            const posIssued = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined).length;
+            // Use 20 days for SLA compliance (not 30)
+            const within20 = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 20).length;
+            const after20 = posIssued - within20;
 
             document.getElementById('po-kpi-received-month').textContent = monthApproved.toLocaleString();
             document.getElementById('po-kpi-issued-month').textContent = posIssued.toLocaleString();
-            document.getElementById('po-kpi-within30').textContent = within30.toLocaleString();
-            document.getElementById('po-kpi-after30').textContent = after30.toLocaleString();
+            
+            // Update the correct element IDs (within20/after20)
+            const within20El = document.getElementById('po-kpi-within20');
+            const after20El = document.getElementById('po-kpi-after20');
+            const within20PctEl = document.getElementById('po-kpi-within20-pct');
+            const after20PctEl = document.getElementById('po-kpi-after20-pct');
+            
+            if (within20El) within20El.textContent = within20.toLocaleString();
+            if (after20El) after20El.textContent = after20.toLocaleString();
 
-            const within30Pct = posIssued > 0 ? ((within30 / posIssued) * 100).toFixed(1) : 0;
-            const after30Pct = posIssued > 0 ? ((after30 / posIssued) * 100).toFixed(1) : 0;
-            document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
-            document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
+            const within20Pct = posIssued > 0 ? ((within20 / posIssued) * 100).toFixed(1) : 0;
+            const after20Pct = posIssued > 0 ? ((after20 / posIssued) * 100).toFixed(1) : 0;
+            if (within20PctEl) within20PctEl.textContent = within20Pct + '%';
+            if (after20PctEl) after20PctEl.textContent = after20Pct + '%';
 
         }
 
@@ -2614,15 +2631,26 @@
             document.getElementById('kpi-in-process').textContent = stats.inProcess.toLocaleString();
             document.getElementById('kpi-avg-pr-to-po').textContent = stats.avgPrToPo;
 
-            // PR to PO KPIs (Current Month - based on filtered data)
+            // PR to PO KPIs (use 20-day SLA, not 30)
+            // Calculate within/after 20 days for SLA compliance
+            const within20days = filteredPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 20).length;
+            const after20days = stats.posIssued - within20days;
+            
             document.getElementById('po-kpi-received-month').textContent = stats.approved.toLocaleString();
             document.getElementById('po-kpi-issued-month').textContent = stats.posIssued.toLocaleString();
-            document.getElementById('po-kpi-within30').textContent = stats.within30days.toLocaleString();
-            document.getElementById('po-kpi-after30').textContent = stats.after30days.toLocaleString();
-            const within30Pct = stats.posIssued > 0 ? ((stats.within30days / stats.posIssued) * 100).toFixed(1) : 0;
-            const after30Pct = stats.posIssued > 0 ? ((stats.after30days / stats.posIssued) * 100).toFixed(1) : 0;
-            document.getElementById('po-kpi-within30-pct').textContent = within30Pct + '%';
-            document.getElementById('po-kpi-after30-pct').textContent = after30Pct + '%';
+            
+            // Update correct element IDs (within20/after20)
+            const within20El = document.getElementById('po-kpi-within20');
+            const after20El = document.getElementById('po-kpi-after20');
+            if (within20El) within20El.textContent = within20days.toLocaleString();
+            if (after20El) after20El.textContent = after20days.toLocaleString();
+            
+            const within20Pct = stats.posIssued > 0 ? ((within20days / stats.posIssued) * 100).toFixed(1) : 0;
+            const after20Pct = stats.posIssued > 0 ? ((after20days / stats.posIssued) * 100).toFixed(1) : 0;
+            const within20PctEl = document.getElementById('po-kpi-within20-pct');
+            const after20PctEl = document.getElementById('po-kpi-after20-pct');
+            if (within20PctEl) within20PctEl.textContent = within20Pct + '%';
+            if (after20PctEl) after20PctEl.textContent = after20Pct + '%';
 
             // Update filter label to show what's filtered
             updateFilterLabel();
@@ -2685,15 +2713,15 @@
             populateFilterDropdowns();
         }
 
-        // Filter Functions
+        // Filter Functions - all use refreshAll() for consistent updates
         function applyFilters() {
             currentFilters.year = document.getElementById('filterYear')?.value || '';
             currentFilters.month = document.getElementById('filterMonth')?.value || '';
             currentFilters.status = document.getElementById('filterStatus')?.value || '';
             currentFilters.vendor = document.getElementById('filterVendor')?.value || '';
             currentFilters.project = document.getElementById('filterProject')?.value || '';
-            updateFilteredKPIs();
-            updateChartsWithFilteredData();
+            console.log('applyFilters:', currentFilters);
+            refreshAll();
         }
 
         function resetFilters() {
@@ -2703,17 +2731,16 @@
             document.getElementById('filterVendor').value = '';
             document.getElementById('filterProject').value = '';
             currentFilters = { project: '', month: '', year: '2025', status: '', vendor: '', agent: '' };
-            updateFilteredKPIs();
-            updateChartsWithFilteredData();
+            console.log('resetFilters:', currentFilters);
+            refreshAll();
         }
 
         function applyPOFilters() {
-            currentFilters.project = document.getElementById('filterProjectPO').value;
-            currentFilters.month = document.getElementById('filterMonthPO').value;
-            currentFilters.year = document.getElementById('filterYearPO').value;
-            updateFilteredKPIs();
-            updateChartsWithFilteredData();
-            updatePOChartsWithFilteredData();
+            currentFilters.project = document.getElementById('filterProjectPO')?.value || '';
+            currentFilters.month = document.getElementById('filterMonthPO')?.value || '';
+            currentFilters.year = document.getElementById('filterYearPO')?.value || '';
+            console.log('applyPOFilters:', currentFilters);
+            refreshAll();
         }
 
         function resetPOFilters() {
@@ -2721,9 +2748,8 @@
             document.getElementById('filterMonthPO').value = '';
             document.getElementById('filterYearPO').value = '2025';
             currentFilters = { project: '', month: '', year: '2025', status: '', vendor: '', agent: '' };
-            updateFilteredKPIs();
-            updateChartsWithFilteredData();
-            updatePOChartsWithFilteredData();
+            console.log('resetPOFilters:', currentFilters);
+            refreshAll();
         }
 
         // Update all charts based on current filters
@@ -5011,57 +5037,41 @@
         }
         
         // ==========================================
-        // INTEGRATE SLA WITH EXISTING FILTERS
+        // CENTRAL REFRESH FUNCTION
         // ==========================================
         
-        // Store reference to original filter functions and extend them
-        (function() {
-            // Wait for applyFilters to be defined
-            const checkAndExtend = setInterval(() => {
-                if (typeof window.applyFilters === 'function' && !window._slaExtended) {
-                    window._slaExtended = true;
-                    clearInterval(checkAndExtend);
-                    
-                    const originalApplyFilters = window.applyFilters;
-                    window.applyFilters = function() {
-                        originalApplyFilters();
-                        if (typeof updateSLADisplay === 'function') {
-                            updateSLADisplay();
-                        }
-                    };
-                    
-                    const originalResetFilters = window.resetFilters;
-                    window.resetFilters = function() {
-                        originalResetFilters();
-                        if (typeof updateSLADisplay === 'function') {
-                            updateSLADisplay();
-                        }
-                    };
-                    
-                    const originalApplyPOFilters = window.applyPOFilters;
-                    if (originalApplyPOFilters) {
-                        window.applyPOFilters = function() {
-                            originalApplyPOFilters();
-                            if (typeof updateSLADisplay === 'function') {
-                                updateSLADisplay();
-                            }
-                        };
-                    }
-                    
-                    const originalResetPOFilters = window.resetPOFilters;
-                    if (originalResetPOFilters) {
-                        window.resetPOFilters = function() {
-                            originalResetPOFilters();
-                            if (typeof updateSLADisplay === 'function') {
-                                updateSLADisplay();
-                            }
-                        };
-                    }
-                    
-                    console.log('SLA functions integrated with filters');
-                }
-            }, 100);
-        })();
+        function refreshAll() {
+            console.log('=== refreshAll() called ===');
+            const allPRs = prData?.all_prs || [];
+            console.log('Total PRs in data:', allPRs.length);
+            
+            if (allPRs.length === 0) {
+                console.warn('No PR data available for refresh');
+                return;
+            }
+            
+            // 1. Update filtered KPIs
+            updateFilteredKPIs();
+            
+            // 2. Update SLA display
+            if (typeof updateSLADisplay === 'function') {
+                updateSLADisplay();
+            }
+            
+            // 3. Update PO KPIs
+            if (typeof updatePOKPIs === 'function') {
+                updatePOKPIs();
+            }
+            
+            // 4. Update charts with filtered data
+            updateChartsWithFilteredData();
+            updatePOChartsWithFilteredData();
+            
+            console.log('=== refreshAll() complete ===');
+        }
+        
+        // SLA functions are now directly integrated with filter functions above
+        console.log('Procurement Dashboard v2.2 - SLA Compliance Ready');
     </script>
 </body>
 </html>
