@@ -20,18 +20,23 @@
         :root {
             --nesma-primary: #2E3192;
             --nesma-secondary: #80D1E9;
+            --nesma-dark: #0E2841;
+            --nesma-accent: #203366;
+            --nesma-gray: #6B7280;
             --nesma-gradient: linear-gradient(135deg, #2E3192 0%, #0E2841 100%);
+            --sla-gradient: linear-gradient(135deg, #2E3192 0%, #203366 50%, #0E2841 100%);
         }
 
+        * { font-family: 'Inter', sans-serif; }
+
         body {
-            background: linear-gradient(180deg, #E8E8E8 0%, #F5F5F5 100%);
+            background: linear-gradient(180deg, #F9FAFB 0%, #F3F4F6 100%);
             min-height: 100vh;
-            font-family: 'Inter', sans-serif;
         }
 
         .nesma-header {
-            background: linear-gradient(135deg, #2E3192 0%, #0E2841 100%);
-            box-shadow: 0 4px 20px rgba(14, 40, 65, 0.3);
+            background: var(--sla-gradient);
+            box-shadow: 0 4px 20px rgba(46, 49, 146, 0.25);
             position: relative;
         }
         .nesma-header::after {
@@ -41,7 +46,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #80D1E9 0%, transparent 100%);
+            background: linear-gradient(90deg, var(--nesma-secondary) 0%, transparent 100%);
         }
 
         .card {
@@ -60,6 +65,7 @@
         .kpi-card {
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .kpi-card::after {
@@ -72,6 +78,87 @@
             background: rgba(255, 255, 255, 0.1);
             transform: rotate(-30deg);
             pointer-events: none;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        /* Filter Styles */
+        .filter-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 150px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #2e3192;
+            box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.1);
+        }
+
+        /* Settings Modal Styles */
+        .settings-tab {
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .settings-tab:hover {
+            color: #2e3192;
+            background: rgba(46, 49, 146, 0.05);
+        }
+
+        .settings-tab.active {
+            color: #2e3192;
+            border-bottom-color: #2e3192;
+            background: white;
+        }
+
+        .settings-tab-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Section Toggle Button */
+        .section-toggle {
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #6b7280;
+            transition: all 0.2s ease;
+        }
+
+        .section-toggle:hover {
+            background: rgba(46, 49, 146, 0.1);
+            color: #2e3192;
+        }
+
+        /* Collapsible Section Animation */
+        .section-collapsible {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .section-collapsible.collapsed {
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            opacity: 0;
         }
 
         .tab-btn {
@@ -446,25 +533,17 @@
 
                 <!-- Header Actions -->
                 <div class="flex items-center gap-3 lg:gap-6">
-                    <!-- Export Buttons -->
-                    <div class="flex items-center gap-2">
-                        <button onclick="exportToExcel()" class="export-btn export-excel">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="hidden sm:inline">Excel</span>
-                        </button>
-                        <button onclick="exportToPDF()" class="export-btn export-pdf">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="hidden sm:inline">PDF</span>
-                        </button>
-                    </div>
                     <div class="text-left hidden sm:block">
-                        <p class="text-xs text-cyan-200">Last Update</p>
+                        <p class="text-xs text-blue-100">Last Update</p>
                         <p class="text-sm font-semibold" id="lastUpdate">January 2026</p>
                     </div>
+                    <!-- Settings Button -->
+                    <button onclick="openSettingsModal()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors" title="Settings">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -474,50 +553,84 @@
     <main class="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
 
         <!-- Filters Section -->
-        <div class="card p-4 mb-6 no-print" id="filters-section">
+        <div id="sla-filters" class="filter-section mb-6 no-print">
             <div class="flex flex-wrap gap-3 items-center">
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">Project</label>
-                    <select id="filterProject" class="filter-input text-sm min-w-[150px]" onchange="applyFilters()">
-                        <option value="">All Projects</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Supplier</label>
-                    <select id="filterSupplier" class="filter-input text-sm min-w-[150px]" onchange="applyFilters()">
-                        <option value="">All Suppliers</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Company</label>
-                    <select id="filterCompany" class="filter-input text-sm min-w-[120px]" onchange="applyFilters()">
+                    <label class="block text-xs text-gray-500 mb-1">Year</label>
+                    <select id="filterYear" class="filter-select" onchange="applyFilters()">
                         <option value="">All</option>
+                        <option value="2026">2026</option>
+                        <option value="2025" selected>2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Month</label>
+                    <select id="filterMonth" class="filter-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 mb-1">Status</label>
-                    <select id="filterStatus" class="filter-input text-sm min-w-[120px]" onchange="applyFilters()">
+                    <select id="filterStatus" class="filter-select" onchange="applyFilters()">
                         <option value="">All</option>
                         <option value="Done">Done</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Not Done">Not Done</option>
                     </select>
                 </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Supplier</label>
+                    <select id="filterSupplier" class="filter-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <!-- Suppliers populated dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Project</label>
+                    <select id="filterProject" class="filter-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Company</label>
+                    <select id="filterCompany" class="filter-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
                 <div class="flex-grow"></div>
-                <button onclick="resetFilters()" class="btn-secondary text-sm px-4 py-2">Reset</button>
-                <button onclick="exportToExcel()" class="export-btn export-excel">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"/></svg>
-                    Excel
-                </button>
-                <button onclick="exportToPDF()" class="export-btn export-pdf">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm8-16l4 4h-4V2z"/></svg>
-                    PDF
+                <button onclick="resetFilters()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors">
+                    Reset
                 </button>
             </div>
         </div>
 
+        <!-- Export Buttons -->
+        <div class="flex justify-end gap-2 mb-4 no-print">
+            <button onclick="exportToPDF()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm flex items-center gap-2 transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm8-16l4 4h-4V2z"/></svg>
+                <span>Export PDF</span>
+            </button>
+            <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm flex items-center gap-2 transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 3h14v14H3V3zm2 2v10h10V5H5z"/></svg>
+                <span>Export Excel</span>
+            </button>
+        </div>
+
         <!-- KPI Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
+        <div id="sla-kpi-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
             <!-- On-Time Rate -->
             <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white" onclick="showOrdersModal('ontime')" title="Click for details">
                 <div class="flex justify-between items-start mb-3">
@@ -593,7 +706,7 @@
         </div>
 
         <!-- Secondary KPIs -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
+        <div id="sla-kpi-summary" class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
             <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showOrdersModal('done')">
                 <p class="text-gray-500 text-xs mb-1">Completed Orders</p>
                 <p class="text-xl lg:text-2xl font-bold text-emerald-600" id="kpi-done-orders">649</p>
@@ -637,7 +750,7 @@
             <div class="p-4 lg:p-6">
                 <!-- Overview Tab -->
                 <div id="tab-overview" class="tab-content active">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div id="sla-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 mb-4">Order Status Distribution</h3>
                             <div class="chart-container">
@@ -1146,7 +1259,7 @@
         </div>
 
         <!-- Monthly Trends -->
-        <div class="card p-6 mb-8">
+        <div id="sla-trends" class="card p-6 mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-6">Monthly Trends</h2>
             <div class="chart-container" style="height: 350px;">
                 <canvas id="trendsChart"></canvas>
@@ -1188,20 +1301,235 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;" onclick="event.stopPropagation()">
+            <div class="modal-header bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-xl">
+                <button class="modal-close" onclick="closeSettingsModal()">&times;</button>
+                <h3 class="text-lg font-bold">Dashboard Settings</h3>
+            </div>
+            <div class="modal-body p-0">
+                <!-- Settings Tabs -->
+                <div class="flex border-b bg-gray-50">
+                    <button onclick="switchSettingsTab('sections')" class="settings-tab active flex-1 py-3 text-sm font-medium" data-tab="sections">
+                        <span>Sections</span>
+                    </button>
+                    <button onclick="switchSettingsTab('export')" class="settings-tab flex-1 py-3 text-sm font-medium" data-tab="export">
+                        <span>Export/Import</span>
+                    </button>
+                </div>
+
+                <!-- Sections Tab -->
+                <div id="settings-sections" class="settings-tab-content p-4">
+                    <p class="text-sm text-gray-500 mb-4">Choose which sections to display</p>
+
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-700 mt-4 mb-2">Main Dashboard</h4>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="sla-filters" checked onchange="toggleSectionSetting(this)">
+                            <span>Filters</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="sla-kpi-cards" checked onchange="toggleSectionSetting(this)">
+                            <span>Main KPI Cards</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="sla-kpi-summary" checked onchange="toggleSectionSetting(this)">
+                            <span>Summary Stats</span>
+                        </label>
+
+                        <h4 class="font-semibold text-gray-700 mt-4 mb-2">Charts & Trends</h4>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="sla-charts" checked onchange="toggleSectionSetting(this)">
+                            <span>Charts</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" data-section="sla-trends" checked onchange="toggleSectionSetting(this)">
+                            <span>Monthly Trends</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Export/Import Tab -->
+                <div id="settings-export" class="settings-tab-content p-4 hidden">
+                    <p class="text-sm text-gray-500 mb-4">Export or import dashboard settings</p>
+
+                    <div class="space-y-4">
+                        <button onclick="exportSettings()" class="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <span>Export Settings</span>
+                        </button>
+
+                        <div class="relative">
+                            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importSettings(this.files[0])">
+                            <button onclick="document.getElementById('importFile').click()" class="w-full py-3 px-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                <span>Import Settings</span>
+                            </button>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <button onclick="resetSettings()" class="w-full py-3 px-4 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-50 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>Reset to Defaults</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Global error handler
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Global error:', msg, 'at line', lineNo);
+            return false;
+        };
+
         let currentModalData = null;
         let slaData = null;
         let filteredRecords = [];
         let charts = {};
-        let currentFilters = { project: '', supplier: '', company: '', status: '' };
+        let currentFilters = { year: '2025', month: '', project: '', supplier: '', company: '', status: '' };
 
         // Chart.js Config
         Chart.defaults.font.family = 'Inter, sans-serif';
         Chart.defaults.font.size = 12;
 
+        // ==========================================
+        // Dashboard Settings System
+        // ==========================================
+        const defaultSettings = {
+            version: '1.0',
+            sections: {
+                'sla-filters': true,
+                'sla-kpi-cards': true,
+                'sla-kpi-summary': true,
+                'sla-charts': true,
+                'sla-trends': true
+            }
+        };
+
+        let dashboardSettings = JSON.parse(JSON.stringify(defaultSettings));
+
+        // Load settings from localStorage
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem('nesma_sla_dashboard_settings');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    dashboardSettings = { ...defaultSettings, ...parsed };
+                    dashboardSettings.sections = { ...defaultSettings.sections, ...parsed.sections };
+                }
+            } catch (e) {
+                console.error('Error loading settings:', e);
+                dashboardSettings = JSON.parse(JSON.stringify(defaultSettings));
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            try {
+                localStorage.setItem('nesma_sla_dashboard_settings', JSON.stringify(dashboardSettings));
+            } catch (e) {
+                console.error('Error saving settings:', e);
+            }
+        }
+
+        // Apply saved settings to UI
+        function applySettings() {
+            Object.keys(dashboardSettings.sections).forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.style.display = dashboardSettings.sections[sectionId] ? '' : 'none';
+                }
+            });
+        }
+
+        // Settings Modal Functions
+        function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.classList.add('active');
+                populateSettingsUI();
+            }
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function switchSettingsTab(tabName) {
+            document.querySelectorAll('.settings-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const content = document.getElementById('settings-' + tabName);
+            if (content) content.classList.remove('hidden');
+            const tab = document.querySelector(`.settings-tab[data-tab="${tabName}"]`);
+            if (tab) tab.classList.add('active');
+        }
+
+        function populateSettingsUI() {
+            document.querySelectorAll('[data-section]').forEach(checkbox => {
+                const sectionId = checkbox.dataset.section;
+                checkbox.checked = dashboardSettings.sections[sectionId] !== false;
+            });
+        }
+
+        function toggleSectionSetting(checkbox) {
+            const sectionId = checkbox.dataset.section;
+            dashboardSettings.sections[sectionId] = checkbox.checked;
+            saveSettings();
+            applySettings();
+        }
+
+        function exportSettings() {
+            const dataStr = JSON.stringify(dashboardSettings, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'sla_dashboard_settings_' + new Date().toISOString().slice(0,10) + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importSettings(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    dashboardSettings = { ...defaultSettings, ...imported };
+                    saveSettings();
+                    applySettings();
+                    alert('Settings imported successfully!');
+                    location.reload();
+                } catch (err) {
+                    alert('Invalid settings file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetSettings() {
+            if (confirm('Reset all settings to defaults?')) {
+                dashboardSettings = JSON.parse(JSON.stringify(defaultSettings));
+                saveSettings();
+                applySettings();
+                location.reload();
+            }
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
+            loadSettings();
             await loadSLAData();
+            applySettings();
         });
 
         // Load SLA Data from JSON
@@ -1212,7 +1540,8 @@
                 slaData = await response.json();
                 filteredRecords = slaData.records || [];
                 populateFilters();
-                updateDashboard();
+                currentFilters.year = document.getElementById('filterYear')?.value || '2025';
+                applyFilters();
                 createCharts();
             } catch (error) {
                 console.error('Error loading SLA data:', error);
@@ -1230,7 +1559,7 @@
 
             // Projects
             if (projectSelect && slaData.filters.projects) {
-                projectSelect.innerHTML = '<option value="">All Projects</option>' +
+                projectSelect.innerHTML = '<option value="">All</option>' +
                     slaData.filters.projects.slice(0, 100).map(p => 
                         `<option value="${p}">${p.length > 40 ? p.substring(0, 40) + '...' : p}</option>`
                     ).join('');
@@ -1238,7 +1567,7 @@
 
             // Suppliers
             if (supplierSelect && slaData.filters.suppliers) {
-                supplierSelect.innerHTML = '<option value="">All Suppliers</option>' +
+                supplierSelect.innerHTML = '<option value="">All</option>' +
                     slaData.filters.suppliers.map(s => `<option value="${s}">${s}</option>`).join('');
             }
 
@@ -1247,10 +1576,29 @@
                 companySelect.innerHTML = '<option value="">All</option>' +
                     slaData.filters.companies.map(c => `<option value="${c}">${c}</option>`).join('');
             }
+
+            // Populate years from data
+            const years = new Set();
+            if (slaData.records) {
+                slaData.records.forEach(r => {
+                    if (r.request_date) {
+                        const year = r.request_date.substring(0, 4);
+                        if (year && !isNaN(year)) years.add(year);
+                    }
+                });
+            }
+            const yearSelect = document.getElementById('filterYear');
+            if (yearSelect && years.size > 0) {
+                const sortedYears = Array.from(years).sort().reverse();
+                yearSelect.innerHTML = '<option value="">All</option>' +
+                    sortedYears.map(y => `<option value="${y}"${y === '2025' ? ' selected' : ''}>${y}</option>`).join('');
+            }
         }
 
         // Apply Filters
         function applyFilters() {
+            currentFilters.year = document.getElementById('filterYear')?.value || '';
+            currentFilters.month = document.getElementById('filterMonth')?.value || '';
             currentFilters.project = document.getElementById('filterProject')?.value || '';
             currentFilters.supplier = document.getElementById('filterSupplier')?.value || '';
             currentFilters.company = document.getElementById('filterCompany')?.value || '';
@@ -1263,13 +1611,15 @@
 
         // Reset Filters
         function resetFilters() {
+            document.getElementById('filterYear').value = '2025';
+            document.getElementById('filterMonth').value = '';
             document.getElementById('filterProject').value = '';
             document.getElementById('filterSupplier').value = '';
             document.getElementById('filterCompany').value = '';
             document.getElementById('filterStatus').value = '';
-            currentFilters = { project: '', supplier: '', company: '', status: '' };
+            currentFilters = { year: '2025', month: '', project: '', supplier: '', company: '', status: '' };
             filteredRecords = slaData?.records || [];
-            updateDashboard();
+            applyFilters();
             createCharts();
         }
 
@@ -1278,6 +1628,16 @@
             if (!slaData || !slaData.records) return [];
             
             return slaData.records.filter(r => {
+                // Year filter
+                if (currentFilters.year && r.request_date) {
+                    const recordYear = r.request_date.substring(0, 4);
+                    if (recordYear !== currentFilters.year) return false;
+                }
+                // Month filter
+                if (currentFilters.month && r.request_date) {
+                    const recordMonth = parseInt(r.request_date.substring(5, 7));
+                    if (recordMonth !== parseInt(currentFilters.month)) return false;
+                }
                 if (currentFilters.project && r.project !== currentFilters.project) return false;
                 if (currentFilters.supplier && r.supplier !== currentFilters.supplier) return false;
                 if (currentFilters.company && r.company !== currentFilters.company) return false;
@@ -1397,6 +1757,75 @@
                 charts.projects.data.datasets[0].data = topProjects.map(p => p[1]);
                 charts.projects.update();
             }
+
+            // Update Monthly Trends Chart with filtered data
+            const monthlyData = {};
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            records.forEach(r => {
+                if (r.request_date) {
+                    const month = r.request_date.substring(0, 7); // YYYY-MM
+                    if (!monthlyData[month]) {
+                        monthlyData[month] = { total: 0, done: 0 };
+                    }
+                    monthlyData[month].total++;
+                    if (r.status === 'Done') monthlyData[month].done++;
+                }
+            });
+
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const trendLabels = sortedMonths.map(m => {
+                const monthNum = parseInt(m.slice(5, 7)) - 1;
+                return monthNames[monthNum] || m;
+            });
+            const trendData = sortedMonths.map(m => {
+                const data = monthlyData[m];
+                return data.total > 0 ? Math.round((data.done / data.total) * 100) : 0;
+            });
+
+            if (charts.trends && trendLabels.length > 0) {
+                charts.trends.data.labels = trendLabels;
+                charts.trends.data.datasets[0].data = trendData;
+                charts.trends.data.datasets[1].data = Array(trendLabels.length).fill(95);
+                charts.trends.update();
+            }
+
+            // Update Suppliers table in tab
+            updateSuppliersTable(supplierCounts);
+            
+            // Update Projects table in tab
+            updateProjectsTable(projectAmounts);
+        }
+
+        // Update Suppliers Table
+        function updateSuppliersTable(supplierCounts) {
+            const tbody = document.querySelector('#tab-suppliers .data-table tbody');
+            if (!tbody) return;
+            
+            const total = Object.values(supplierCounts).reduce((a, b) => a + b, 0);
+            const sortedSuppliers = Object.entries(supplierCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            
+            tbody.innerHTML = sortedSuppliers.map(([name, count]) => `
+                <tr>
+                    <td class="font-medium">${name}</td>
+                    <td>${count}</td>
+                    <td>${total > 0 ? ((count / total) * 100).toFixed(1) : 0}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // Update Projects Table
+        function updateProjectsTable(projectAmounts) {
+            const tbody = document.querySelector('#tab-projects .data-table tbody');
+            if (!tbody) return;
+            
+            const sortedProjects = Object.entries(projectAmounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            
+            tbody.innerHTML = sortedProjects.map(([name, amount]) => `
+                <tr>
+                    <td class="font-medium">${name.length > 30 ? name.substring(0, 30) + '...' : name}</td>
+                    <td>${amount.toLocaleString()}</td>
+                </tr>
+            `).join('');
         }
 
         // Show Orders Modal
