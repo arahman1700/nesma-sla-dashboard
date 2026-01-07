@@ -473,14 +473,57 @@
     <!-- Main Content -->
     <main class="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
 
+        <!-- Filters Section -->
+        <div class="card p-4 mb-6 no-print" id="filters-section">
+            <div class="flex flex-wrap gap-3 items-center">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Project</label>
+                    <select id="filterProject" class="filter-input text-sm min-w-[150px]" onchange="applyFilters()">
+                        <option value="">All Projects</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Supplier</label>
+                    <select id="filterSupplier" class="filter-input text-sm min-w-[150px]" onchange="applyFilters()">
+                        <option value="">All Suppliers</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Company</label>
+                    <select id="filterCompany" class="filter-input text-sm min-w-[120px]" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Status</label>
+                    <select id="filterStatus" class="filter-input text-sm min-w-[120px]" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="Done">Done</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Not Done">Not Done</option>
+                    </select>
+                </div>
+                <div class="flex-grow"></div>
+                <button onclick="resetFilters()" class="btn-secondary text-sm px-4 py-2">Reset</button>
+                <button onclick="exportToExcel()" class="export-btn export-excel">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"/></svg>
+                    Excel
+                </button>
+                <button onclick="exportToPDF()" class="export-btn export-pdf">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm8-16l4 4h-4V2z"/></svg>
+                    PDF
+                </button>
+            </div>
+        </div>
+
         <!-- KPI Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
             <!-- On-Time Rate -->
-            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-red-500 to-red-600 text-white" onclick="showKpiDetails('ontime')" title="Click for details">
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white" onclick="showOrdersModal('ontime')" title="Click for details">
                 <div class="flex justify-between items-start mb-3">
                     <div>
-                        <p class="text-red-100 text-xs lg:text-sm mb-1">On-Time Delivery Rate</p>
-                        <p class="text-2xl lg:text-3xl font-bold">87.8%</p>
+                        <p class="text-emerald-100 text-xs lg:text-sm mb-1">On-Time Delivery Rate</p>
+                        <p class="text-2xl lg:text-3xl font-bold" id="kpi-ontime-rate">85.2%</p>
                     </div>
                     <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                         <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -489,17 +532,17 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 text-xs">
-                    <span class="bg-white/20 px-2 py-1 rounded">Target: &ge;95%</span>
-                    <span class="text-red-200">&darr; 7.2%</span>
+                    <span class="bg-white/20 px-2 py-1 rounded">Target: ≥95%</span>
+                    <span id="kpi-ontime-gap" class="text-emerald-200">Click to view</span>
                 </div>
             </div>
 
             <!-- Open Orders -->
-            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white" onclick="showKpiDetails('openorders')" title="Click for details">
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white" onclick="showOrdersModal('open')" title="Click for details">
                 <div class="flex justify-between items-start mb-3">
                     <div>
                         <p class="text-amber-100 text-xs lg:text-sm mb-1">Open Orders</p>
-                        <p class="text-2xl lg:text-3xl font-bold">19</p>
+                        <p class="text-2xl lg:text-3xl font-bold" id="kpi-open-orders">70</p>
                     </div>
                     <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                         <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -508,16 +551,16 @@
                     </div>
                 </div>
                 <div class="text-xs">
-                    <span class="bg-white/20 px-2 py-1 rounded">Avg: 110 days</span>
+                    <span class="bg-white/20 px-2 py-1 rounded">Click to view details</span>
                 </div>
             </div>
 
             <!-- Total Orders -->
-            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-[#2e3192] to-[#1a1a5e] text-white" onclick="showKpiDetails('totalorders')" title="Click for details">
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-[#2e3192] to-[#1a1a5e] text-white" onclick="showOrdersModal('total')" title="Click for details">
                 <div class="flex justify-between items-start mb-3">
                     <div>
                         <p class="text-blue-100 text-xs lg:text-sm mb-1">Total Orders</p>
-                        <p class="text-2xl lg:text-3xl font-bold">643</p>
+                        <p class="text-2xl lg:text-3xl font-bold" id="kpi-total-orders">719</p>
                     </div>
                     <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                         <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -526,18 +569,17 @@
                         </svg>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 text-xs">
-                    <span class="bg-white/20 px-2 py-1 rounded">NIT: 481</span>
-                    <span class="bg-white/20 px-2 py-1 rounded">NP: 112</span>
+                <div class="flex items-center gap-2 text-xs" id="kpi-company-breakdown">
+                    <span class="bg-white/20 px-2 py-1 rounded">Loading...</span>
                 </div>
             </div>
 
             <!-- Total Amount -->
-            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-[#2E3192] to-[#0E2841] text-white" onclick="showKpiDetails('totalamount')" title="Click for details">
+            <div class="card kpi-card clickable p-4 lg:p-6 bg-gradient-to-br from-[#2E3192] to-[#0E2841] text-white" onclick="showOrdersModal('amount')" title="Click for details">
                 <div class="flex justify-between items-start mb-3">
                     <div>
                         <p class="text-[#80D1E9] text-xs lg:text-sm mb-1">Total Amount</p>
-                        <p class="text-2xl lg:text-3xl font-bold">4.9M</p>
+                        <p class="text-2xl lg:text-3xl font-bold" id="kpi-total-amount">5.1M</p>
                     </div>
                     <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                         <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -546,27 +588,27 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-xs text-[#80D1E9]">SAR</p>
+                <p class="text-xs text-[#80D1E9]">SAR - Click to view breakdown</p>
             </div>
         </div>
 
         <!-- Secondary KPIs -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
+            <div class="card p-3 lg:p-4 text-center cursor-pointer hover:shadow-lg transition-shadow" onclick="showOrdersModal('done')">
+                <p class="text-gray-500 text-xs mb-1">Completed Orders</p>
+                <p class="text-xl lg:text-2xl font-bold text-emerald-600" id="kpi-done-orders">649</p>
+            </div>
             <div class="card p-3 lg:p-4 text-center">
                 <p class="text-gray-500 text-xs mb-1">Avg. Delivery</p>
-                <p class="text-xl lg:text-2xl font-bold text-gray-800">1.81 <span class="text-sm">days</span></p>
+                <p class="text-xl lg:text-2xl font-bold text-gray-800" id="kpi-avg-duration">2.32 <span class="text-sm">days</span></p>
             </div>
             <div class="card p-3 lg:p-4 text-center">
                 <p class="text-gray-500 text-xs mb-1">Median (P50)</p>
-                <p class="text-xl lg:text-2xl font-bold text-gray-800">1.0 <span class="text-sm">day</span></p>
-            </div>
-            <div class="card p-3 lg:p-4 text-center">
-                <p class="text-gray-500 text-xs mb-1">P90</p>
-                <p class="text-xl lg:text-2xl font-bold text-gray-800">4.0 <span class="text-sm">days</span></p>
+                <p class="text-xl lg:text-2xl font-bold text-gray-800" id="kpi-median-duration">1.0 <span class="text-sm">day</span></p>
             </div>
             <div class="card p-3 lg:p-4 text-center">
                 <p class="text-gray-500 text-xs mb-1">Completion Rate</p>
-                <p class="text-xl lg:text-2xl font-bold text-[#10B981]">94.9%</p>
+                <p class="text-xl lg:text-2xl font-bold text-[#10B981]" id="kpi-completion-rate">90.3%</p>
             </div>
         </div>
 
@@ -1149,7 +1191,9 @@
     <script>
         let currentModalData = null;
         let slaData = null;
+        let filteredRecords = [];
         let charts = {};
+        let currentFilters = { project: '', supplier: '', company: '', status: '' };
 
         // Chart.js Config
         Chart.defaults.font.family = 'Inter, sans-serif';
@@ -1166,13 +1210,115 @@
                 const response = await fetch('data/sla_data.json?v=' + Date.now());
                 if (!response.ok) throw new Error('Failed to load SLA data');
                 slaData = await response.json();
+                filteredRecords = slaData.records || [];
+                populateFilters();
                 updateDashboard();
                 createCharts();
             } catch (error) {
                 console.error('Error loading SLA data:', error);
-                // Fallback to default data
                 createCharts();
             }
+        }
+
+        // Populate Filter Dropdowns
+        function populateFilters() {
+            if (!slaData || !slaData.filters) return;
+
+            const projectSelect = document.getElementById('filterProject');
+            const supplierSelect = document.getElementById('filterSupplier');
+            const companySelect = document.getElementById('filterCompany');
+
+            // Projects
+            if (projectSelect && slaData.filters.projects) {
+                projectSelect.innerHTML = '<option value="">All Projects</option>' +
+                    slaData.filters.projects.slice(0, 100).map(p => 
+                        `<option value="${p}">${p.length > 40 ? p.substring(0, 40) + '...' : p}</option>`
+                    ).join('');
+            }
+
+            // Suppliers
+            if (supplierSelect && slaData.filters.suppliers) {
+                supplierSelect.innerHTML = '<option value="">All Suppliers</option>' +
+                    slaData.filters.suppliers.map(s => `<option value="${s}">${s}</option>`).join('');
+            }
+
+            // Companies
+            if (companySelect && slaData.filters.companies) {
+                companySelect.innerHTML = '<option value="">All</option>' +
+                    slaData.filters.companies.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            currentFilters.project = document.getElementById('filterProject')?.value || '';
+            currentFilters.supplier = document.getElementById('filterSupplier')?.value || '';
+            currentFilters.company = document.getElementById('filterCompany')?.value || '';
+            currentFilters.status = document.getElementById('filterStatus')?.value || '';
+
+            filteredRecords = getFilteredRecords();
+            updateFilteredKPIs();
+            updateChartsWithFilteredData();
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            document.getElementById('filterProject').value = '';
+            document.getElementById('filterSupplier').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterStatus').value = '';
+            currentFilters = { project: '', supplier: '', company: '', status: '' };
+            filteredRecords = slaData?.records || [];
+            updateDashboard();
+            createCharts();
+        }
+
+        // Get Filtered Records
+        function getFilteredRecords() {
+            if (!slaData || !slaData.records) return [];
+            
+            return slaData.records.filter(r => {
+                if (currentFilters.project && r.project !== currentFilters.project) return false;
+                if (currentFilters.supplier && r.supplier !== currentFilters.supplier) return false;
+                if (currentFilters.company && r.company !== currentFilters.company) return false;
+                if (currentFilters.status && r.status !== currentFilters.status) return false;
+                return true;
+            });
+        }
+
+        // Update Filtered KPIs
+        function updateFilteredKPIs() {
+            const records = filteredRecords;
+            const total = records.length;
+            const done = records.filter(r => r.status === 'Done').length;
+            const inProgress = records.filter(r => r.status === 'In Progress').length;
+            const open = total - done;
+            const totalAmount = records.reduce((sum, r) => sum + (r.total_amount || 0), 0);
+            
+            // Duration calculations
+            const durations = records.filter(r => r.duration > 0).map(r => r.duration);
+            const avgDuration = durations.length > 0 ? (durations.reduce((a, b) => a + b, 0) / durations.length).toFixed(2) : 0;
+            const onTimeCount = durations.filter(d => d <= 3).length;
+            const onTimeRate = durations.length > 0 ? ((onTimeCount / durations.length) * 100).toFixed(1) : 0;
+            const completionRate = total > 0 ? ((done / total) * 100).toFixed(1) : 0;
+
+            // Update KPIs
+            document.getElementById('kpi-ontime-rate').textContent = onTimeRate + '%';
+            document.getElementById('kpi-open-orders').textContent = open;
+            document.getElementById('kpi-total-orders').textContent = total;
+            document.getElementById('kpi-total-amount').textContent = (totalAmount / 1000000).toFixed(1) + 'M';
+            document.getElementById('kpi-done-orders').textContent = done;
+            document.getElementById('kpi-avg-duration').innerHTML = avgDuration + ' <span class="text-sm">days</span>';
+            document.getElementById('kpi-completion-rate').textContent = completionRate + '%';
+
+            // Company breakdown
+            const companyBreakdown = {};
+            records.forEach(r => {
+                if (r.company) companyBreakdown[r.company] = (companyBreakdown[r.company] || 0) + 1;
+            });
+            const companyHtml = Object.entries(companyBreakdown).slice(0, 2)
+                .map(([name, count]) => `<span class="bg-white/20 px-2 py-1 rounded">${name}: ${count}</span>`).join('');
+            document.getElementById('kpi-company-breakdown').innerHTML = companyHtml || '<span class="bg-white/20 px-2 py-1 rounded">No data</span>';
         }
 
         // Update Dashboard KPIs
@@ -1184,43 +1330,204 @@
             // Update Last Update
             document.getElementById('lastUpdate').textContent = s.last_update || 'January 2026';
             
-            // Update KPI Cards - find and update the values
-            // On-Time Rate
-            const onTimeCard = document.querySelector('.kpi-card:nth-child(1) .text-2xl');
-            if (onTimeCard) onTimeCard.textContent = s.on_time_rate + '%';
-            
-            // Open Orders
-            const openOrdersCard = document.querySelector('.kpi-card:nth-child(2) .text-2xl');
-            if (openOrdersCard) openOrdersCard.textContent = s.open_orders;
-            
-            // Total Orders
-            const totalOrdersCard = document.querySelector('.kpi-card:nth-child(3) .text-2xl');
-            if (totalOrdersCard) totalOrdersCard.textContent = s.total_orders;
-            
-            // Total Amount
-            const totalAmountCard = document.querySelector('.kpi-card:nth-child(4) .text-2xl');
-            if (totalAmountCard) {
-                const amountM = (s.total_amount / 1000000).toFixed(1);
-                totalAmountCard.textContent = amountM + 'M';
-            }
-            
-            // Secondary KPIs
-            const secondaryKPIs = document.querySelectorAll('.grid.grid-cols-2.lg\\:grid-cols-4.gap-3 .card');
-            if (secondaryKPIs[0]) secondaryKPIs[0].querySelector('.text-xl').innerHTML = s.avg_duration + ' <span class="text-sm">days</span>';
-            if (secondaryKPIs[1]) secondaryKPIs[1].querySelector('.text-xl').innerHTML = s.median_duration + ' <span class="text-sm">day</span>';
-            if (secondaryKPIs[2]) secondaryKPIs[2].querySelector('.text-xl').innerHTML = s.p90_duration + ' <span class="text-sm">days</span>';
-            if (secondaryKPIs[3]) secondaryKPIs[3].querySelector('.text-xl').textContent = s.completion_rate + '%';
+            // Update KPIs using IDs
+            document.getElementById('kpi-ontime-rate').textContent = s.on_time_rate + '%';
+            document.getElementById('kpi-open-orders').textContent = s.open_orders;
+            document.getElementById('kpi-total-orders').textContent = s.total_orders;
+            document.getElementById('kpi-total-amount').textContent = (s.total_amount / 1000000).toFixed(1) + 'M';
+            document.getElementById('kpi-done-orders').textContent = s.done_orders;
+            document.getElementById('kpi-avg-duration').innerHTML = s.avg_duration + ' <span class="text-sm">days</span>';
+            document.getElementById('kpi-median-duration').innerHTML = s.median_duration + ' <span class="text-sm">day</span>';
+            document.getElementById('kpi-completion-rate').textContent = s.completion_rate + '%';
 
-            // Update company breakdown in Total Orders card
-            const companyBreakdown = document.querySelector('.kpi-card:nth-child(3) .flex.items-center.gap-2');
-            if (companyBreakdown && slaData.company_breakdown) {
-                const companies = Object.entries(slaData.company_breakdown).slice(0, 2);
-                let html = '';
-                companies.forEach(([name, count]) => {
-                    html += `<span class="bg-white/20 px-2 py-1 rounded">${name}: ${count}</span>`;
-                });
-                companyBreakdown.innerHTML = html;
+            // Company breakdown
+            if (slaData.company_breakdown) {
+                const companyHtml = Object.entries(slaData.company_breakdown).slice(0, 2)
+                    .map(([name, count]) => `<span class="bg-white/20 px-2 py-1 rounded">${name}: ${count}</span>`).join('');
+                document.getElementById('kpi-company-breakdown').innerHTML = companyHtml;
             }
+        }
+
+        // Update Charts with Filtered Data
+        function updateChartsWithFilteredData() {
+            const records = filteredRecords;
+            
+            // Status distribution
+            const statusCounts = { 'Done': 0, 'In Progress': 0, 'Not Done': 0 };
+            records.forEach(r => {
+                if (statusCounts.hasOwnProperty(r.status)) statusCounts[r.status]++;
+            });
+
+            if (charts.status) {
+                charts.status.data.datasets[0].data = Object.values(statusCounts);
+                charts.status.update();
+            }
+
+            // Company distribution
+            const companyCounts = {};
+            records.forEach(r => {
+                if (r.company) companyCounts[r.company] = (companyCounts[r.company] || 0) + 1;
+            });
+            if (charts.company) {
+                charts.company.data.labels = Object.keys(companyCounts);
+                charts.company.data.datasets[0].data = Object.values(companyCounts);
+                charts.company.update();
+            }
+
+            // Supplier distribution
+            const supplierCounts = {};
+            records.forEach(r => {
+                if (r.supplier) supplierCounts[r.supplier] = (supplierCounts[r.supplier] || 0) + 1;
+            });
+            const topSuppliers = Object.entries(supplierCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            if (charts.suppliers) {
+                charts.suppliers.data.labels = topSuppliers.map(s => s[0]);
+                charts.suppliers.data.datasets[0].data = topSuppliers.map(s => s[1]);
+                charts.suppliers.update();
+            }
+
+            // Project amounts
+            const projectAmounts = {};
+            records.forEach(r => {
+                if (r.project) projectAmounts[r.project] = (projectAmounts[r.project] || 0) + (r.total_amount || 0);
+            });
+            const topProjects = Object.entries(projectAmounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            if (charts.projects) {
+                charts.projects.data.labels = topProjects.map(p => p[0].length > 15 ? p[0].substring(0, 15) + '...' : p[0]);
+                charts.projects.data.datasets[0].data = topProjects.map(p => p[1]);
+                charts.projects.update();
+            }
+        }
+
+        // Show Orders Modal
+        function showOrdersModal(type) {
+            const modal = document.getElementById('detailModal');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const body = document.getElementById('modalBody');
+
+            if (!slaData || !slaData.records) {
+                body.innerHTML = '<p class="text-center py-8 text-gray-500">Loading data...</p>';
+                modal.classList.add('active');
+                return;
+            }
+
+            let records = filteredRecords;
+            let titleText = '';
+            let subtitleText = '';
+
+            switch(type) {
+                case 'ontime':
+                    titleText = 'On-Time Orders';
+                    subtitleText = 'Orders completed within 3 days';
+                    records = records.filter(r => r.duration > 0 && r.duration <= 3);
+                    break;
+                case 'open':
+                    titleText = 'Open Orders';
+                    subtitleText = 'Orders not yet completed';
+                    records = records.filter(r => r.status !== 'Done');
+                    break;
+                case 'total':
+                    titleText = 'All Orders';
+                    subtitleText = 'Complete list of all orders';
+                    break;
+                case 'amount':
+                    titleText = 'Orders by Amount';
+                    subtitleText = 'All orders with cost details';
+                    records = records.filter(r => r.total_amount > 0).sort((a, b) => b.total_amount - a.total_amount);
+                    break;
+                case 'done':
+                    titleText = 'Completed Orders';
+                    subtitleText = 'All completed orders';
+                    records = records.filter(r => r.status === 'Done');
+                    break;
+                default:
+                    titleText = 'Order Details';
+            }
+
+            currentModalData = records;
+            title.textContent = titleText;
+            subtitle.textContent = subtitleText + ` (${records.length} records)`;
+            body.innerHTML = generateOrdersTable(records);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            setupModalSearch();
+        }
+
+        // Generate Orders Table
+        function generateOrdersTable(records) {
+            if (records.length === 0) {
+                return '<p class="text-center py-8 text-gray-500">No records found</p>';
+            }
+
+            const rows = records.slice(0, 200).map((r, i) => {
+                const statusClass = r.status === 'Done' ? 'bg-green-100 text-green-800' : 
+                                   r.status === 'In Progress' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
+                return `
+                    <tr class="modal-row" data-project="${r.project || ''}" data-supplier="${r.supplier || ''}" data-status="${r.status || ''}">
+                        <td class="text-center text-gray-500">${i + 1}</td>
+                        <td class="font-medium">${r.job_order_no || '-'}</td>
+                        <td class="max-w-[120px] truncate" title="${r.project}">${r.project || '-'}</td>
+                        <td>${r.supplier || '-'}</td>
+                        <td>${r.equipment_1 || '-'}</td>
+                        <td class="text-right font-medium">${r.total_amount ? r.total_amount.toLocaleString() : '-'}</td>
+                        <td class="text-center">${r.duration || '-'}</td>
+                        <td><span class="px-2 py-1 rounded text-xs ${statusClass}">${r.status || '-'}</span></td>
+                        <td>${r.request_date || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            return `
+                <div class="mb-3 flex flex-wrap gap-3 items-center justify-between">
+                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full" id="modalCountLabel">Total: ${records.length} orders</span>
+                    <input type="text" id="modalSearch" placeholder="Search..." 
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
+                </div>
+                <div class="scroll-container" style="max-height: 400px;">
+                    <table class="data-table text-sm w-full" id="modalTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>Job Order</th>
+                                <th>Project</th>
+                                <th>Supplier</th>
+                                <th>Equipment</th>
+                                <th class="text-right">Amount (SAR)</th>
+                                <th class="text-center">Days</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                ${records.length > 200 ? '<p class="text-xs text-gray-400 mt-2 text-center">Showing first 200 records</p>' : ''}
+            `;
+        }
+
+        // Setup Modal Search
+        function setupModalSearch() {
+            const searchInput = document.getElementById('modalSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const term = this.value.toLowerCase();
+                    let visibleCount = 0;
+                    document.querySelectorAll('#modalTable tbody tr').forEach(row => {
+                        const visible = row.textContent.toLowerCase().includes(term);
+                        row.style.display = visible ? '' : 'none';
+                        if (visible) visibleCount++;
+                    });
+                    document.getElementById('modalCountLabel').textContent = `Total: ${visibleCount} orders`;
+                });
+            }
+        }
+
+        // Close Modal
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('detailModal').classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         function createCharts() {

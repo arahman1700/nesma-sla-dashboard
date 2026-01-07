@@ -287,6 +287,51 @@ def calculate_sla_metrics(records):
     }
 
 
+def format_records_for_output(records):
+    """Format records for JSON output"""
+    formatted = []
+    for r in records:
+        # Calculate total amount if not present
+        if not r.get("total_amount"):
+            total = sum(
+                [
+                    safe_float(r.get("price_1")),
+                    safe_float(r.get("price_2")),
+                    safe_float(r.get("price_3")),
+                    safe_float(r.get("price_4")),
+                    safe_float(r.get("price_5")),
+                ]
+            )
+        else:
+            total = safe_float(r.get("total_amount"))
+
+        formatted.append(
+            {
+                "job_order_no": r.get("job_order_no", ""),
+                "company": r.get("company", ""),
+                "project": r.get("project", "Unknown"),
+                "requester": r.get("requester", ""),
+                "request_date": str(r.get("request_date", ""))
+                if r.get("request_date")
+                else "",
+                "supplier": r.get("supplier", ""),
+                "equipment_1": r.get("equipment_1", ""),
+                "equipment_2": r.get("equipment_2", ""),
+                "equipment_3": r.get("equipment_3", ""),
+                "total_amount": total,
+                "actual_date": str(r.get("actual_date", ""))
+                if r.get("actual_date")
+                else "",
+                "duration": safe_float(r.get("duration")),
+                "status": r.get("status", "In Progress"),
+                "pending_with": r.get("pending_with", ""),
+                "remarks": r.get("remarks", ""),
+                "rent_type": r.get("rent_type", "Daily"),
+            }
+        )
+    return formatted
+
+
 def main():
     print(f"=== SLA Dashboard Data Sync ===")
     print(f"Started at: {datetime.now()}")
@@ -307,6 +352,26 @@ def main():
         print("\nCalculating SLA metrics...")
         sla_data = calculate_sla_metrics(records)
 
+        # Format records for output
+        print("\nFormatting records...")
+        formatted_records = format_records_for_output(records)
+
+        # Extract filter options
+        projects = sorted(set(r.get("project") for r in records if r.get("project")))
+        suppliers = sorted(
+            [
+                str(s)
+                for s in set(
+                    r.get("supplier")
+                    for r in records
+                    if r.get("supplier")
+                    and not str(r.get("supplier", "")).startswith("202")
+                )
+            ]
+        )
+        companies = sorted(set(r.get("company") for r in records if r.get("company")))
+        statuses = sorted(set(r.get("status") for r in records if r.get("status")))
+
         # Add metadata
         output_data = {
             "metadata": {
@@ -314,6 +379,13 @@ def main():
                 "source_sheet": sheet_data.get("name"),
                 "total_records": len(records),
             },
+            "filters": {
+                "projects": projects,
+                "suppliers": suppliers,
+                "companies": companies,
+                "statuses": statuses,
+            },
+            "records": formatted_records,
             **sla_data,
         }
 
