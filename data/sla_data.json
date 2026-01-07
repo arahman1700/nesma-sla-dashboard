@@ -1,0 +1,262 @@
+{
+  "metadata": {
+    "last_update": "2026-01-07T15:23:35.912414",
+    "source_sheet": "Transportation_Tracking",
+    "total_records": 719
+  },
+  "summary": {
+    "total_orders": 719,
+    "done_orders": 649,
+    "in_progress_orders": 62,
+    "not_done_orders": 8,
+    "open_orders": 70,
+    "on_time_rate": 85.2,
+    "completion_rate": 90.3,
+    "total_amount": 5122435.63,
+    "avg_duration": 2.32,
+    "median_duration": 2.0,
+    "p90_duration": 5.0,
+    "last_update": "2026-01-07"
+  },
+  "status": {
+    "Done": 649,
+    "In Progress": 62,
+    "Not Done": 8
+  },
+  "company_breakdown": {
+    "NIT": 549,
+    "LOGISTIC": 46,
+    "NP": 117,
+    "OVERHEAD": 7
+  },
+  "top_suppliers": {
+    "AWTAD": 139,
+    "Zad Alomran": 138,
+    "ALMAMORAH": 121,
+    "FIFO": 114,
+    "CPCC": 66,
+    "ALBURAQ": 55,
+    "albede": 39,
+    "Alhay Alsayeed": 34,
+    "Awtad": 4,
+    "ZAD Alomran": 2
+  },
+  "suppliers_by_amount": {
+    "ALMAMORAH": 1635275.0,
+    "AWTAD": 1614885.6300000001,
+    "Zad Alomran": 537850.0,
+    "CPCC": 405750.0,
+    "ALBURAQ": 353700.0,
+    "FIFO": 342465.0,
+    "albede": 217150.0,
+    "ZAD Alomran": 5500.0,
+    "Alhay Alsayeed": 3700.0,
+    "MED-RUH-Murjan ": 0.0
+  },
+  "top_projects_by_orders": {
+    "MED-RUH-Diriyahy": 52,
+    "WEST-JAZERA ROYAL": 51,
+    "MED-RUH-Murjan ": 44,
+    "WEST-JED-UFPDS": 40,
+    "WH-JED": 32,
+    "WEST-YNP-UFPDS": 27,
+    "EST-JAFURAH": 25,
+    "WEST-JED-Buhaiyrat ": 23,
+    "NORTH-MED-UFPDS": 22,
+    "SOUTH-Furasan ": 21,
+    "EST-bayouniyah-khobar": 19,
+    "WEST-Makkah-Waly Al Ahad-3 ": 17,
+    "EST-ALBAHAR": 17,
+    "NORTH-DHEBA-NIC": 16,
+    "EST-AINDAR": 16,
+    "NORTH-MED-TAIBA": 15,
+    "NORTH-MED-HARAM": 12,
+    "EST-Defaa ": 12,
+    "NORTH-NEOM-Mountain PSS A & B OHTL Project": 11,
+    "WEST-RABIGH-UFPDS": 10
+  },
+  "top_projects_by_amount": {
+    "WEST-JAZERA ROYAL": 796540.0,
+    "EST-JAFURAH": 427300.0,
+    "MED-RUH-Diriyahy": 307610.0,
+    "MED-RUH-Murjan ": 238820.0,
+    "WEST-Makkah-Waly Al Ahad-3 ": 223625.0,
+    "NORTH-NEOM-Mountain PSS A & B OHTL Project": 216700.0,
+    "NORTH-MED-TAIBA": 207597.88,
+    "WEST-JED-Buhaiyrat ": 190430.0,
+    "NORTH-MED-HARAM": 182495.26,
+    "WEST-JED-UFPDS": 162350.0,
+    "WEST-YNP-UFPDS": 133100.0,
+    "NORTH-DHEBA-NIC": 130300.0,
+    "NORTH-NEOM-Mountain PSS B Substation Project": 120900.0,
+    "SOUTH-Furasan ": 120500.0,
+    "NORTH-HAFAR BATIN": 119384.59,
+    "WH-JED": 106320.0,
+    "EST-ZATCKA": 92000.0,
+    "EST-AINDAR": 88800.0,
+    "NORTH-MED-UFPDS": 86700.0,
+    "WH-DMM": 77350.0
+  },
+  "equipment_distribution": {
+    "Trailr": 171,
+    "Laberor": 117,
+    "EQ transporting ": 115,
+    "Diyana 3-5T": 84,
+    "BOOM TRUCK 10t": 81,
+    "Crain 50t": 72,
+    "Diyana 10T": 66,
+    "Low Bed": 53,
+    "Forklift 5t": 52,
+    "Forklift 10t": 51,
+    "Diyana 7T": 40,
+    "BOOM TRUCK 5t": 37,
+    "Crain 25t": 24,
+    "Forklift 3t": 23,
+    "Forklift 7t": 20
+  },
+  "equipment_by_amount": {
+    "Trailr": 1259275.0,
+    "BOOM TRUCK 10t": 613843.14,
+    "Crain 50t": 551650.0,
+    "Forklift 10t": 414592.49000000005,
+    "EQ transporting ": 331400.0,
+    "Diyana 10T": 223000.0,
+    "Low Bed": 209400.0,
+    "Crain 25t": 194900.0,
+    "Diyana 3-5T": 171850.0,
+    "Forklift 7t": 163800.0,
+    "Forklift 5t": 149750.0,
+    "Laberor": 124000.0,
+    "Diyana 7T": 105350.0,
+    "Manlift 28m": 90200.0,
+    "BOOM TRUCK 5t": 83750.0
+  },
+  "monthly_trend": [
+    {
+      "month": "2024-04",
+      "orders": 1,
+      "amount": 36500.0,
+      "done": 1,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2024-07",
+      "orders": 2,
+      "amount": 65500.0,
+      "done": 2,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2024-08",
+      "orders": 2,
+      "amount": 25800.0,
+      "done": 2,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2024-11",
+      "orders": 6,
+      "amount": 79523.16,
+      "done": 6,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2024-12",
+      "orders": 14,
+      "amount": 260039.88,
+      "done": 14,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2025-01",
+      "orders": 79,
+      "amount": 875660.0,
+      "done": 79,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2025-02",
+      "orders": 47,
+      "amount": 624130.0,
+      "done": 47,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2025-03",
+      "orders": 34,
+      "amount": 560298.0,
+      "done": 34,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2025-04",
+      "orders": 63,
+      "amount": 681750.0,
+      "done": 62,
+      "completion_rate": 98.4
+    },
+    {
+      "month": "2025-05",
+      "orders": 61,
+      "amount": 445234.59,
+      "done": 61,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2025-06",
+      "orders": 41,
+      "amount": 325375.0,
+      "done": 39,
+      "completion_rate": 95.1
+    },
+    {
+      "month": "2025-07",
+      "orders": 117,
+      "amount": 405750.0,
+      "done": 106,
+      "completion_rate": 90.6
+    },
+    {
+      "month": "2025-08",
+      "orders": 37,
+      "amount": 98150.0,
+      "done": 37,
+      "completion_rate": 100.0
+    },
+    {
+      "month": "2025-09",
+      "orders": 53,
+      "amount": 151760.0,
+      "done": 52,
+      "completion_rate": 98.1
+    },
+    {
+      "month": "2025-10",
+      "orders": 57,
+      "amount": 222775.0,
+      "done": 55,
+      "completion_rate": 96.5
+    },
+    {
+      "month": "2025-11",
+      "orders": 67,
+      "amount": 196290.0,
+      "done": 48,
+      "completion_rate": 71.6
+    },
+    {
+      "month": "2025-12",
+      "orders": 35,
+      "amount": 67900.0,
+      "done": 4,
+      "completion_rate": 11.4
+    },
+    {
+      "month": "2026-01",
+      "orders": 3,
+      "amount": 0.0,
+      "done": 0,
+      "completion_rate": 0.0
+    }
+  ]
+}

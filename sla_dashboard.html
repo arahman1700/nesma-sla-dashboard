@@ -1148,26 +1148,99 @@
 
     <script>
         let currentModalData = null;
+        let slaData = null;
+        let charts = {};
 
         // Chart.js Config
         Chart.defaults.font.family = 'Inter, sans-serif';
         Chart.defaults.font.size = 12;
 
-        // Initialize Charts
-        document.addEventListener('DOMContentLoaded', () => {
-            createCharts();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadSLAData();
         });
 
+        // Load SLA Data from JSON
+        async function loadSLAData() {
+            try {
+                const response = await fetch('data/sla_data.json?v=' + Date.now());
+                if (!response.ok) throw new Error('Failed to load SLA data');
+                slaData = await response.json();
+                updateDashboard();
+                createCharts();
+            } catch (error) {
+                console.error('Error loading SLA data:', error);
+                // Fallback to default data
+                createCharts();
+            }
+        }
+
+        // Update Dashboard KPIs
+        function updateDashboard() {
+            if (!slaData || !slaData.summary) return;
+
+            const s = slaData.summary;
+            
+            // Update Last Update
+            document.getElementById('lastUpdate').textContent = s.last_update || 'January 2026';
+            
+            // Update KPI Cards - find and update the values
+            // On-Time Rate
+            const onTimeCard = document.querySelector('.kpi-card:nth-child(1) .text-2xl');
+            if (onTimeCard) onTimeCard.textContent = s.on_time_rate + '%';
+            
+            // Open Orders
+            const openOrdersCard = document.querySelector('.kpi-card:nth-child(2) .text-2xl');
+            if (openOrdersCard) openOrdersCard.textContent = s.open_orders;
+            
+            // Total Orders
+            const totalOrdersCard = document.querySelector('.kpi-card:nth-child(3) .text-2xl');
+            if (totalOrdersCard) totalOrdersCard.textContent = s.total_orders;
+            
+            // Total Amount
+            const totalAmountCard = document.querySelector('.kpi-card:nth-child(4) .text-2xl');
+            if (totalAmountCard) {
+                const amountM = (s.total_amount / 1000000).toFixed(1);
+                totalAmountCard.textContent = amountM + 'M';
+            }
+            
+            // Secondary KPIs
+            const secondaryKPIs = document.querySelectorAll('.grid.grid-cols-2.lg\\:grid-cols-4.gap-3 .card');
+            if (secondaryKPIs[0]) secondaryKPIs[0].querySelector('.text-xl').innerHTML = s.avg_duration + ' <span class="text-sm">days</span>';
+            if (secondaryKPIs[1]) secondaryKPIs[1].querySelector('.text-xl').innerHTML = s.median_duration + ' <span class="text-sm">day</span>';
+            if (secondaryKPIs[2]) secondaryKPIs[2].querySelector('.text-xl').innerHTML = s.p90_duration + ' <span class="text-sm">days</span>';
+            if (secondaryKPIs[3]) secondaryKPIs[3].querySelector('.text-xl').textContent = s.completion_rate + '%';
+
+            // Update company breakdown in Total Orders card
+            const companyBreakdown = document.querySelector('.kpi-card:nth-child(3) .flex.items-center.gap-2');
+            if (companyBreakdown && slaData.company_breakdown) {
+                const companies = Object.entries(slaData.company_breakdown).slice(0, 2);
+                let html = '';
+                companies.forEach(([name, count]) => {
+                    html += `<span class="bg-white/20 px-2 py-1 rounded">${name}: ${count}</span>`;
+                });
+                companyBreakdown.innerHTML = html;
+            }
+        }
+
         function createCharts() {
+            const data = slaData || {};
+            const status = data.status || { 'Done': 610, 'In Progress': 27, 'Not Done': 4 };
+            const companies = data.company_breakdown || { 'NIT': 481, 'NP': 112, 'LOGISTIC': 43, 'OVERHEAD': 7 };
+            const suppliers = data.top_suppliers || {};
+            const projects = data.top_projects_by_amount || {};
+            const trends = data.monthly_trend || [];
+
             // Status Chart
             const statusCtx = document.getElementById('statusChart')?.getContext('2d');
             if (statusCtx) {
-                new Chart(statusCtx, {
+                if (charts.status) charts.status.destroy();
+                charts.status = new Chart(statusCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Done', 'In Progress', 'Not Done'],
+                        labels: Object.keys(status),
                         datasets: [{
-                            data: [610, 27, 4],
+                            data: Object.values(status),
                             backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
                             borderWidth: 0
                         }]
@@ -1183,13 +1256,14 @@
             // Company Chart
             const companyCtx = document.getElementById('companyChart')?.getContext('2d');
             if (companyCtx) {
-                new Chart(companyCtx, {
+                if (charts.company) charts.company.destroy();
+                charts.company = new Chart(companyCtx, {
                     type: 'pie',
                     data: {
-                        labels: ['NIT', 'NP', 'LOGISTIC', 'OVERHEAD'],
+                        labels: Object.keys(companies),
                         datasets: [{
-                            data: [481, 112, 43, 7],
-                            backgroundColor: ['#2E3192', '#80D1E9', '#0E2841', '#203366'],
+                            data: Object.values(companies),
+                            backgroundColor: ['#2E3192', '#80D1E9', '#0E2841', '#203366', '#10B981'],
                             borderWidth: 0
                         }]
                     },
@@ -1204,13 +1278,16 @@
             // Suppliers Chart
             const suppliersCtx = document.getElementById('suppliersChart')?.getContext('2d');
             if (suppliersCtx) {
-                new Chart(suppliersCtx, {
+                if (charts.suppliers) charts.suppliers.destroy();
+                const supplierLabels = Object.keys(suppliers).slice(0, 8);
+                const supplierData = Object.values(suppliers).slice(0, 8);
+                charts.suppliers = new Chart(suppliersCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['AWTAD', 'Zad Alomran', 'ALMAMORAH', 'FIFO', 'CPCC', 'ALBURAQ', 'albede', 'AlhayAlsayeed'],
+                        labels: supplierLabels,
                         datasets: [{
                             label: 'Orders',
-                            data: [131, 123, 121, 83, 66, 55, 40, 22],
+                            data: supplierData,
                             backgroundColor: '#2E3192',
                             borderRadius: 6
                         }]
@@ -1228,13 +1305,16 @@
             // Projects Chart
             const projectsCtx = document.getElementById('projectsChart')?.getContext('2d');
             if (projectsCtx) {
-                new Chart(projectsCtx, {
+                if (charts.projects) charts.projects.destroy();
+                const projectLabels = Object.keys(projects).slice(0, 8);
+                const projectData = Object.values(projects).slice(0, 8);
+                charts.projects = new Chart(projectsCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['WEST-JAZERA', 'EST-JAFURAH', 'MED-RUH-Dir', 'MED-RUH-Mur', 'WEST-Makkah', 'NORTH-NEOM', 'NORTH-TAIBA', 'WEST-JED'],
+                        labels: projectLabels,
                         datasets: [{
                             label: 'Amount (SAR)',
-                            data: [777340, 424900, 304610, 235820, 223625, 216700, 207598, 190430],
+                            data: projectData,
                             backgroundColor: '#80D1E9',
                             borderRadius: 6
                         }]
@@ -1256,14 +1336,20 @@
             // Trends Chart
             const trendsCtx = document.getElementById('trendsChart')?.getContext('2d');
             if (trendsCtx) {
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-                new Chart(trendsCtx, {
+                if (charts.trends) charts.trends.destroy();
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const trendLabels = trends.length > 0 ? trends.map(t => {
+                    const monthNum = parseInt(t.month.slice(5, 7)) - 1;
+                    return monthNames[monthNum] || t.month;
+                }) : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
+                const trendOnTime = trends.length > 0 ? trends.map(t => t.completion_rate) : [92, 89, 91, 88, 86, 85, 87, 89, 88, 87, 88];
+                charts.trends = new Chart(trendsCtx, {
                     type: 'line',
                     data: {
-                        labels: months,
+                        labels: trendLabels,
                         datasets: [{
-                            label: 'On-Time Rate %',
-                            data: [92, 89, 91, 88, 86, 85, 87, 89, 88, 87, 88],
+                            label: 'Completion Rate %',
+                            data: trendOnTime,
                             borderColor: '#2E3192',
                             backgroundColor: 'rgba(46, 49, 146, 0.1)',
                             tension: 0.4,
@@ -1271,7 +1357,7 @@
                             fill: true
                         }, {
                             label: 'Target 95%',
-                            data: Array(11).fill(95),
+                            data: Array(trendLabels.length).fill(95),
                             borderColor: '#10B981',
                             borderDash: [5, 5],
                             borderWidth: 2,
@@ -1282,7 +1368,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: { legend: { position: 'bottom' } },
-                        scales: { y: { min: 80, max: 100, ticks: { callback: v => v + '%' } } }
+                        scales: { y: { min: 0, max: 100, ticks: { callback: v => v + '%' } } }
                     }
                 });
             }
