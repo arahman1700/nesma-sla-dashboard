@@ -1832,6 +1832,11 @@
 
             // Apply saved settings (section visibility, custom labels)
             applySettings();
+            
+            // Initialize SLA display after data loads
+            if (typeof updateSLADisplay === 'function') {
+                updateSLADisplay();
+            }
         });
 
         // Load data from JSON files with cache-busting
@@ -4394,44 +4399,76 @@
         
         // Update SLA Display
         function updateSLADisplay() {
+            // Check if data is loaded
+            const allPRs = getFilteredPRs();
+            if (!allPRs || allPRs.length === 0) {
+                console.log('SLA Update: No data available yet');
+                return;
+            }
+            
+            console.log('SLA Update: Processing', allPRs.length, 'PRs');
             const metrics = calculateSLAMetrics();
+            console.log('SLA Metrics:', metrics);
             
             // Update PR Processing SLA
             const prCard = document.getElementById('sla-pr-processing');
-            const prRate = parseFloat(metrics.prOnTimeRate);
-            document.getElementById('sla-pr-rate').textContent = metrics.prOnTimeRate + '%';
-            updateSLACardClass(prCard, prRate);
+            const prRateEl = document.getElementById('sla-pr-rate');
+            if (prRateEl) {
+                const prRate = parseFloat(metrics.prOnTimeRate);
+                prRateEl.textContent = metrics.prOnTimeRate + '%';
+                updateSLACardClass(prCard, prRate);
+            }
             
             // Update PO Issuance SLA
             const poCard = document.getElementById('sla-po-issuance');
-            const poRate = parseFloat(metrics.poOnTimeRate);
-            document.getElementById('sla-po-rate').textContent = metrics.poOnTimeRate + '%';
-            updateSLACardClass(poCard, poRate);
+            const poRateEl = document.getElementById('sla-po-rate');
+            if (poRateEl) {
+                const poRate = parseFloat(metrics.poOnTimeRate);
+                poRateEl.textContent = metrics.poOnTimeRate + '%';
+                updateSLACardClass(poCard, poRate);
+            }
             
             // Update Cycle Time
-            document.getElementById('cycle-avg').textContent = metrics.avgDays;
-            document.getElementById('cycle-p50').textContent = metrics.p50;
-            document.getElementById('cycle-p90').textContent = metrics.p90;
+            const cycleAvgEl = document.getElementById('cycle-avg');
+            const cycleP50El = document.getElementById('cycle-p50');
+            const cycleP90El = document.getElementById('cycle-p90');
+            if (cycleAvgEl) cycleAvgEl.textContent = metrics.avgDays;
+            if (cycleP50El) cycleP50El.textContent = metrics.p50;
+            if (cycleP90El) cycleP90El.textContent = metrics.p90;
             
             // Update Overall
             const overallCard = document.getElementById('sla-overall');
-            const overallRate = parseFloat(metrics.overallRate);
-            document.getElementById('sla-overall-rate').textContent = metrics.overallRate + '%';
-            updateSLACardClass(overallCard, overallRate);
+            const overallRateEl = document.getElementById('sla-overall-rate');
+            if (overallRateEl) {
+                const overallRate = parseFloat(metrics.overallRate);
+                overallRateEl.textContent = metrics.overallRate + '%';
+                updateSLACardClass(overallCard, overallRate);
+            }
             
             // Update PO tab cards
-            document.getElementById('po-kpi-within20').textContent = metrics.poWithin20.toLocaleString();
-            document.getElementById('po-kpi-after20').textContent = metrics.poAfter20.toLocaleString();
             const within20Pct = metrics.poTotal > 0 ? (metrics.poWithin20 / metrics.poTotal * 100).toFixed(1) : 0;
             const after20Pct = metrics.poTotal > 0 ? (metrics.poAfter20 / metrics.poTotal * 100).toFixed(1) : 0;
-            document.getElementById('po-kpi-within20-pct').textContent = within20Pct + '%';
-            document.getElementById('po-kpi-after20-pct').textContent = after20Pct + '%';
+            
+            const poKpiWithin20 = document.getElementById('po-kpi-within20');
+            const poKpiAfter20 = document.getElementById('po-kpi-after20');
+            const poKpiWithin20Pct = document.getElementById('po-kpi-within20-pct');
+            const poKpiAfter20Pct = document.getElementById('po-kpi-after20-pct');
+            
+            if (poKpiWithin20) poKpiWithin20.textContent = metrics.poWithin20.toLocaleString();
+            if (poKpiAfter20) poKpiAfter20.textContent = metrics.poAfter20.toLocaleString();
+            if (poKpiWithin20Pct) poKpiWithin20Pct.textContent = within20Pct + '%';
+            if (poKpiAfter20Pct) poKpiAfter20Pct.textContent = after20Pct + '%';
             
             // Update PO SLA Compliance card
-            document.getElementById('po-sla-on-time').textContent = metrics.poWithin20;
-            document.getElementById('po-sla-late').textContent = metrics.poAfter20;
-            document.getElementById('po-sla-circle-value').textContent = within20Pct + '%';
-            document.getElementById('po-sla-status-icon').textContent = parseFloat(within20Pct) >= 95 ? '🟢' : parseFloat(within20Pct) >= 85 ? '🟡' : '🔴';
+            const poSlaOnTime = document.getElementById('po-sla-on-time');
+            const poSlaLate = document.getElementById('po-sla-late');
+            const poSlaCircleValue = document.getElementById('po-sla-circle-value');
+            const poSlaStatusIcon = document.getElementById('po-sla-status-icon');
+            
+            if (poSlaOnTime) poSlaOnTime.textContent = metrics.poWithin20;
+            if (poSlaLate) poSlaLate.textContent = metrics.poAfter20;
+            if (poSlaCircleValue) poSlaCircleValue.textContent = within20Pct + '%';
+            if (poSlaStatusIcon) poSlaStatusIcon.textContent = parseFloat(within20Pct) >= 95 ? '🟢' : parseFloat(within20Pct) >= 85 ? '🟡' : '🔴';
             
             // Update circle gradient
             const circle = document.getElementById('po-sla-circle');
@@ -4445,6 +4482,8 @@
             
             // Update Cycle Time Distribution Chart
             updateCycleTimeDistributionChart();
+            
+            console.log('SLA Display updated successfully');
         }
         
         function updateSLACardClass(card, rate) {
@@ -4470,10 +4509,17 @@
         
         function updateAgingAnalysis() {
             const allPRs = getFilteredPRs();
+            if (!allPRs || allPRs.length === 0) {
+                console.log('Aging Analysis: No data available');
+                return;
+            }
+            
             const inProcessPRs = allPRs.filter(pr => {
                 const status = (pr.status || pr.pr_status || '').toUpperCase();
                 return status === 'IN PROCESS' || status === 'INCOMPLETE';
             });
+            
+            console.log('Aging Analysis: Found', inProcessPRs.length, 'in-process PRs');
             
             const today = new Date();
             const agingBuckets = {
@@ -4934,28 +4980,57 @@
         }
         
         // ==========================================
-        // INITIALIZE SLA ON PAGE LOAD
+        // INTEGRATE SLA WITH EXISTING FILTERS
         // ==========================================
         
-        // Add SLA update to existing filter functions
-        const originalApplyFilters = applyFilters;
-        applyFilters = function() {
-            originalApplyFilters();
-            updateSLADisplay();
-        };
-        
-        const originalResetFilters = resetFilters;
-        resetFilters = function() {
-            originalResetFilters();
-            updateSLADisplay();
-        };
-        
-        // Initialize SLA display after data loads
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                updateSLADisplay();
-            }, 1500);
-        });
+        // Store reference to original filter functions and extend them
+        (function() {
+            // Wait for applyFilters to be defined
+            const checkAndExtend = setInterval(() => {
+                if (typeof window.applyFilters === 'function' && !window._slaExtended) {
+                    window._slaExtended = true;
+                    clearInterval(checkAndExtend);
+                    
+                    const originalApplyFilters = window.applyFilters;
+                    window.applyFilters = function() {
+                        originalApplyFilters();
+                        if (typeof updateSLADisplay === 'function') {
+                            updateSLADisplay();
+                        }
+                    };
+                    
+                    const originalResetFilters = window.resetFilters;
+                    window.resetFilters = function() {
+                        originalResetFilters();
+                        if (typeof updateSLADisplay === 'function') {
+                            updateSLADisplay();
+                        }
+                    };
+                    
+                    const originalApplyPOFilters = window.applyPOFilters;
+                    if (originalApplyPOFilters) {
+                        window.applyPOFilters = function() {
+                            originalApplyPOFilters();
+                            if (typeof updateSLADisplay === 'function') {
+                                updateSLADisplay();
+                            }
+                        };
+                    }
+                    
+                    const originalResetPOFilters = window.resetPOFilters;
+                    if (originalResetPOFilters) {
+                        window.resetPOFilters = function() {
+                            originalResetPOFilters();
+                            if (typeof updateSLADisplay === 'function') {
+                                updateSLADisplay();
+                            }
+                        };
+                    }
+                    
+                    console.log('SLA functions integrated with filters');
+                }
+            }, 100);
+        })();
     </script>
 </body>
 </html>
