@@ -190,6 +190,127 @@
         .score-poor { background: #fee2e2; color: #991b1b; }
         .score-critical { background: #fecaca; color: #7f1d1d; }
 
+        /* SLA Traffic Light Styles */
+        .sla-compliance-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(46, 49, 146, 0.1);
+        }
+
+        .sla-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sla-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .sla-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .sla-green::before { background: linear-gradient(90deg, #10B981, #34D399); }
+        .sla-yellow::before { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+        .sla-red::before { background: linear-gradient(90deg, #EF4444, #F87171); }
+
+        .sla-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+
+        .sla-green .sla-value { color: #10B981; }
+        .sla-yellow .sla-value { color: #F59E0B; }
+        .sla-red .sla-value { color: #EF4444; }
+
+        .sla-target {
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-top: 4px;
+        }
+
+        .sla-trend {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .trend-up { color: #10B981; }
+        .trend-down { color: #EF4444; }
+        .trend-stable { color: #6B7280; }
+
+        .sla-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .sla-green .sla-indicator { background: #D1FAE5; }
+        .sla-yellow .sla-indicator { background: #FEF3C7; }
+        .sla-red .sla-indicator { background: #FEE2E2; }
+
+        /* Cycle Time Section */
+        .cycle-time-card {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #BFDBFE;
+        }
+
+        .cycle-time-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1E40AF;
+        }
+
+        /* Aging Buckets */
+        .aging-bucket {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .aging-bucket:hover {
+            transform: translateX(4px);
+        }
+
+        .aging-bucket-bar {
+            height: 24px;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .aging-0-5 { background: #10B981; }
+        .aging-6-10 { background: #F59E0B; }
+        .aging-11-20 { background: #F97316; }
+        .aging-20plus { background: #EF4444; }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -473,6 +594,149 @@
                         </button>
                     </div>
 
+                    <!-- SLA Compliance Section -->
+                    <div id="sla-compliance-section" class="sla-compliance-section mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                SLA Compliance Dashboard
+                            </h3>
+                            <span class="text-xs text-gray-500">Target: ≥95%</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- PR Processing SLA -->
+                            <div class="sla-card sla-green" id="sla-pr-processing" onclick="showSLADetails('pr-processing')">
+                                <div class="sla-indicator">✓</div>
+                                <p class="text-xs text-gray-600 font-medium">PR Processing</p>
+                                <p class="text-xs text-gray-400">≤2 Business Days</p>
+                                <p class="sla-value" id="sla-pr-rate">96.2%</p>
+                                <p class="sla-target">Target: 95%</p>
+                                <p class="sla-trend trend-up" id="sla-pr-trend">↑ +1.2% vs LM</p>
+                            </div>
+
+                            <!-- PO Issuance SLA -->
+                            <div class="sla-card sla-red" id="sla-po-issuance" onclick="showSLADetails('po-issuance')">
+                                <div class="sla-indicator">✗</div>
+                                <p class="text-xs text-gray-600 font-medium">PO Issuance</p>
+                                <p class="text-xs text-gray-400">≤20 Business Days</p>
+                                <p class="sla-value" id="sla-po-rate">62.5%</p>
+                                <p class="sla-target">Target: 95%</p>
+                                <p class="sla-trend trend-down" id="sla-po-trend">↓ -2.3% vs LM</p>
+                            </div>
+
+                            <!-- Cycle Time Analysis -->
+                            <div class="sla-card" onclick="showSLADetails('cycle-time')" style="background: linear-gradient(135deg, #EFF6FF, #DBEAFE);">
+                                <p class="text-xs text-gray-600 font-medium mb-2">Cycle Time Analysis</p>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div>
+                                        <p class="text-lg font-bold text-blue-600" id="cycle-avg">43.7</p>
+                                        <p class="text-xs text-gray-500">Avg</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-lg font-bold text-green-600" id="cycle-p50">28</p>
+                                        <p class="text-xs text-gray-500">P50</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-lg font-bold text-red-600" id="cycle-p90">72</p>
+                                        <p class="text-xs text-gray-500">P90</p>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">Days (PR → PO)</p>
+                            </div>
+
+                            <!-- Overall Compliance -->
+                            <div class="sla-card sla-yellow" id="sla-overall" onclick="showSLADetails('overall')">
+                                <div class="sla-indicator">!</div>
+                                <p class="text-xs text-gray-600 font-medium">Overall Compliance</p>
+                                <p class="text-xs text-gray-400">Combined SLA</p>
+                                <p class="sla-value" id="sla-overall-rate">79.4%</p>
+                                <p class="sla-target">Target: 95%</p>
+                                <p class="sla-trend trend-stable" id="sla-overall-trend">→ +0.1% vs LM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aging Analysis Section -->
+                    <div id="aging-analysis-section" class="card p-4 lg:p-6 mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                Open Items Aging (In Process)
+                            </h3>
+                            <span class="text-sm font-medium px-3 py-1 bg-blue-50 text-blue-600 rounded-full" id="aging-total-count">85 items</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Aging Buckets -->
+                            <div class="space-y-3" id="aging-buckets-container">
+                                <div class="aging-bucket bg-green-50" onclick="showAgingDetails('0-5')">
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="text-sm font-medium text-green-800">0-5 Days</span>
+                                            <span class="text-sm font-bold text-green-600" id="aging-0-5-count">45</span>
+                                        </div>
+                                        <div class="w-full bg-green-200 rounded-full h-3">
+                                            <div class="aging-bucket-bar aging-0-5 h-3 rounded-full" id="aging-0-5-bar" style="width: 53%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="ml-3 text-xs text-green-600 font-medium" id="aging-0-5-pct">53%</span>
+                                </div>
+
+                                <div class="aging-bucket bg-yellow-50" onclick="showAgingDetails('6-10')">
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="text-sm font-medium text-yellow-800">6-10 Days</span>
+                                            <span class="text-sm font-bold text-yellow-600" id="aging-6-10-count">23</span>
+                                        </div>
+                                        <div class="w-full bg-yellow-200 rounded-full h-3">
+                                            <div class="aging-bucket-bar aging-6-10 h-3 rounded-full" id="aging-6-10-bar" style="width: 27%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="ml-3 text-xs text-yellow-600 font-medium" id="aging-6-10-pct">27%</span>
+                                </div>
+
+                                <div class="aging-bucket bg-orange-50" onclick="showAgingDetails('11-20')">
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="text-sm font-medium text-orange-800">11-20 Days</span>
+                                            <span class="text-sm font-bold text-orange-600" id="aging-11-20-count">12</span>
+                                        </div>
+                                        <div class="w-full bg-orange-200 rounded-full h-3">
+                                            <div class="aging-bucket-bar aging-11-20 h-3 rounded-full" id="aging-11-20-bar" style="width: 14%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="ml-3 text-xs text-orange-600 font-medium" id="aging-11-20-pct">14%</span>
+                                </div>
+
+                                <div class="aging-bucket bg-red-50" onclick="showAgingDetails('20plus')">
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="text-sm font-medium text-red-800">>20 Days ⚠️</span>
+                                            <span class="text-sm font-bold text-red-600" id="aging-20plus-count">5</span>
+                                        </div>
+                                        <div class="w-full bg-red-200 rounded-full h-3">
+                                            <div class="aging-bucket-bar aging-20plus h-3 rounded-full" id="aging-20plus-bar" style="width: 6%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="ml-3 text-xs text-red-600 font-medium" id="aging-20plus-pct">6%</span>
+                                </div>
+                            </div>
+
+                            <!-- Cycle Time Distribution Chart -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3">PR→PO Days Distribution</h4>
+                                <div class="chart-container" style="height: 200px;">
+                                    <canvas id="cycleTimeDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- PR Return KPIs -->
                     <div id="pr-kpi-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
                         <!-- Total PRs Approved -->
@@ -721,30 +985,31 @@
                             </div>
                         </div>
 
-                        <!-- Within 30 Days -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white" onclick="showPOKPIDetails('within30days')">
+                        <!-- Within 20 Days (SLA Target) -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-green-500 to-green-600 text-white" onclick="showPOKPIDetails('within20days')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-blue-100 text-xs lg:text-sm mb-1">PO ≤30 Days</p>
-                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-within30">165</p>
+                                    <p class="text-green-100 text-xs lg:text-sm mb-1">PO ≤20 Days (SLA)</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-within20">120</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-blue-100">
-                                <span id="po-kpi-within30-pct">83.3%</span> <span>of issued</span>
+                            <div class="text-xs text-green-100">
+                                <span id="po-kpi-within20-pct">60.6%</span> <span>of issued</span>
+                                <span class="ml-2 px-2 py-0.5 rounded text-xs" id="po-sla-badge">Target: 95%</span>
                             </div>
                         </div>
 
-                        <!-- After 30 Days -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white" onclick="showPOKPIDetails('after30days')">
+                        <!-- After 20 Days (SLA Breach) -->
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-red-500 to-red-600 text-white" onclick="showPOKPIDetails('after20days')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-amber-100 text-xs lg:text-sm mb-1">PO >30 Days</p>
-                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-after30">33</p>
+                                    <p class="text-red-100 text-xs lg:text-sm mb-1">PO >20 Days ⚠️</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-after20">78</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
                                     <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -752,8 +1017,39 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-amber-100">
-                                <span id="po-kpi-after30-pct">16.7%</span> <span>of issued</span>
+                            <div class="text-xs text-red-100">
+                                <span id="po-kpi-after20-pct">39.4%</span> <span>SLA Breach</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PO SLA Compliance Card -->
+                    <div id="po-sla-compliance" class="card p-4 lg:p-6 mb-6" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac;">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold" id="po-sla-circle" style="background: conic-gradient(#ef4444 0deg, #ef4444 calc(39.4 * 3.6deg), #22c55e calc(39.4 * 3.6deg), #22c55e 360deg);">
+                                    <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                                        <span class="text-sm font-bold" id="po-sla-circle-value">60.6%</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-gray-800">PO Issuance SLA Compliance</h4>
+                                    <p class="text-sm text-gray-600">Target: Issue PO within 20 business days (≥95%)</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-6">
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-green-600" id="po-sla-on-time">120</p>
+                                    <p class="text-xs text-gray-500">On-time</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-red-600" id="po-sla-late">78</p>
+                                    <p class="text-xs text-gray-500">Late</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold" id="po-sla-status-icon">🔴</p>
+                                    <p class="text-xs text-gray-500">Status</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -783,7 +1079,7 @@
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-4">30 Days Compliance Rate</h3>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">20 Days SLA Compliance Rate</h3>
                             <div class="chart-container">
                                 <canvas id="complianceChart"></canvas>
                             </div>
@@ -3706,6 +4002,14 @@
                         titleText = `POs Issued - ${filterDesc}`;
                         filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined);
                         break;
+                    case 'within20days':
+                        titleText = `POs Within 20 Days (SLA) - ${filterDesc}`;
+                        filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 20);
+                        break;
+                    case 'after20days':
+                        titleText = `POs After 20 Days (SLA Breach) - ${filterDesc}`;
+                        filteredPRs = basePRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days > 20);
+                        break;
                     case 'within30days':
                     case 'within30-ytd':
                         titleText = `POs Within 30 Days - ${filterDesc}`;
@@ -3785,7 +4089,8 @@
 
                     if (col.isDays) {
                         const days = pr.pr_to_po_days;
-                        return `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${days !== null && days <= 30 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${days !== null ? days + ' days' : '-'}</span></td>`;
+                        const colorClass = days !== null && days <= 20 ? 'bg-green-100 text-green-800' : days !== null && days <= 30 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
+                        return `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${colorClass}">${days !== null ? days + ' days' : '-'}</span></td>`;
                     }
 
                     return `<td class="${className}" title="${value}">${value}</td>`;
@@ -4027,6 +4332,630 @@
             link.download = filename + '.csv';
             link.click();
         }
+
+        // ==========================================
+        // SLA COMPLIANCE FUNCTIONS
+        // ==========================================
+        
+        // Calculate SLA Compliance Metrics
+        function calculateSLAMetrics() {
+            const allPRs = getFilteredPRs();
+            
+            // PR Processing SLA (≤2 days for approval/feedback)
+            const prsWithApprovalDate = allPRs.filter(pr => pr.approved_date && pr.submission_date);
+            let prOnTime = 0;
+            prsWithApprovalDate.forEach(pr => {
+                const submitted = new Date(pr.submission_date);
+                const approved = new Date(pr.approved_date);
+                const days = Math.floor((approved - submitted) / 86400000);
+                if (days <= 2) prOnTime++;
+            });
+            const prOnTimeRate = prsWithApprovalDate.length > 0 
+                ? (prOnTime / prsWithApprovalDate.length * 100).toFixed(1) 
+                : 0;
+            
+            // PO Issuance SLA (≤20 days)
+            const prsWithPO = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined);
+            const poWithin20 = prsWithPO.filter(pr => pr.pr_to_po_days <= 20).length;
+            const poAfter20 = prsWithPO.length - poWithin20;
+            const poOnTimeRate = prsWithPO.length > 0 
+                ? (poWithin20 / prsWithPO.length * 100).toFixed(1) 
+                : 0;
+            
+            // Cycle Time Analysis (P50, P90)
+            const prToPoDays = prsWithPO.map(pr => pr.pr_to_po_days).sort((a, b) => a - b);
+            const avgDays = prToPoDays.length > 0 
+                ? (prToPoDays.reduce((a, b) => a + b, 0) / prToPoDays.length).toFixed(1) 
+                : 0;
+            const p50 = prToPoDays.length > 0 
+                ? prToPoDays[Math.floor(prToPoDays.length * 0.5)] 
+                : 0;
+            const p90 = prToPoDays.length > 0 
+                ? prToPoDays[Math.floor(prToPoDays.length * 0.9)] 
+                : 0;
+            
+            // Overall Compliance
+            const overallRate = ((parseFloat(prOnTimeRate) + parseFloat(poOnTimeRate)) / 2).toFixed(1);
+            
+            return {
+                prOnTimeRate,
+                prOnTime,
+                prTotal: prsWithApprovalDate.length,
+                poOnTimeRate,
+                poWithin20,
+                poAfter20,
+                poTotal: prsWithPO.length,
+                avgDays,
+                p50,
+                p90,
+                overallRate
+            };
+        }
+        
+        // Update SLA Display
+        function updateSLADisplay() {
+            const metrics = calculateSLAMetrics();
+            
+            // Update PR Processing SLA
+            const prCard = document.getElementById('sla-pr-processing');
+            const prRate = parseFloat(metrics.prOnTimeRate);
+            document.getElementById('sla-pr-rate').textContent = metrics.prOnTimeRate + '%';
+            updateSLACardClass(prCard, prRate);
+            
+            // Update PO Issuance SLA
+            const poCard = document.getElementById('sla-po-issuance');
+            const poRate = parseFloat(metrics.poOnTimeRate);
+            document.getElementById('sla-po-rate').textContent = metrics.poOnTimeRate + '%';
+            updateSLACardClass(poCard, poRate);
+            
+            // Update Cycle Time
+            document.getElementById('cycle-avg').textContent = metrics.avgDays;
+            document.getElementById('cycle-p50').textContent = metrics.p50;
+            document.getElementById('cycle-p90').textContent = metrics.p90;
+            
+            // Update Overall
+            const overallCard = document.getElementById('sla-overall');
+            const overallRate = parseFloat(metrics.overallRate);
+            document.getElementById('sla-overall-rate').textContent = metrics.overallRate + '%';
+            updateSLACardClass(overallCard, overallRate);
+            
+            // Update PO tab cards
+            document.getElementById('po-kpi-within20').textContent = metrics.poWithin20.toLocaleString();
+            document.getElementById('po-kpi-after20').textContent = metrics.poAfter20.toLocaleString();
+            const within20Pct = metrics.poTotal > 0 ? (metrics.poWithin20 / metrics.poTotal * 100).toFixed(1) : 0;
+            const after20Pct = metrics.poTotal > 0 ? (metrics.poAfter20 / metrics.poTotal * 100).toFixed(1) : 0;
+            document.getElementById('po-kpi-within20-pct').textContent = within20Pct + '%';
+            document.getElementById('po-kpi-after20-pct').textContent = after20Pct + '%';
+            
+            // Update PO SLA Compliance card
+            document.getElementById('po-sla-on-time').textContent = metrics.poWithin20;
+            document.getElementById('po-sla-late').textContent = metrics.poAfter20;
+            document.getElementById('po-sla-circle-value').textContent = within20Pct + '%';
+            document.getElementById('po-sla-status-icon').textContent = parseFloat(within20Pct) >= 95 ? '🟢' : parseFloat(within20Pct) >= 85 ? '🟡' : '🔴';
+            
+            // Update circle gradient
+            const circle = document.getElementById('po-sla-circle');
+            if (circle) {
+                const lateAngle = parseFloat(after20Pct) * 3.6;
+                circle.style.background = `conic-gradient(#ef4444 0deg, #ef4444 ${lateAngle}deg, #22c55e ${lateAngle}deg, #22c55e 360deg)`;
+            }
+            
+            // Update Aging Analysis
+            updateAgingAnalysis();
+            
+            // Update Cycle Time Distribution Chart
+            updateCycleTimeDistributionChart();
+        }
+        
+        function updateSLACardClass(card, rate) {
+            if (!card) return;
+            card.classList.remove('sla-green', 'sla-yellow', 'sla-red');
+            const indicator = card.querySelector('.sla-indicator');
+            
+            if (rate >= 95) {
+                card.classList.add('sla-green');
+                if (indicator) indicator.textContent = '✓';
+            } else if (rate >= 85) {
+                card.classList.add('sla-yellow');
+                if (indicator) indicator.textContent = '!';
+            } else {
+                card.classList.add('sla-red');
+                if (indicator) indicator.textContent = '✗';
+            }
+        }
+        
+        // ==========================================
+        // AGING ANALYSIS FUNCTIONS
+        // ==========================================
+        
+        function updateAgingAnalysis() {
+            const allPRs = getFilteredPRs();
+            const inProcessPRs = allPRs.filter(pr => {
+                const status = (pr.status || pr.pr_status || '').toUpperCase();
+                return status === 'IN PROCESS' || status === 'INCOMPLETE';
+            });
+            
+            const today = new Date();
+            const agingBuckets = {
+                '0-5': [],
+                '6-10': [],
+                '11-20': [],
+                '20plus': []
+            };
+            
+            inProcessPRs.forEach(pr => {
+                const dateField = pr.submission_date || pr.pending_since;
+                if (!dateField) return;
+                
+                const startDate = new Date(dateField);
+                const daysPending = Math.floor((today - startDate) / 86400000);
+                
+                if (daysPending <= 5) {
+                    agingBuckets['0-5'].push({ ...pr, daysPending });
+                } else if (daysPending <= 10) {
+                    agingBuckets['6-10'].push({ ...pr, daysPending });
+                } else if (daysPending <= 20) {
+                    agingBuckets['11-20'].push({ ...pr, daysPending });
+                } else {
+                    agingBuckets['20plus'].push({ ...pr, daysPending });
+                }
+            });
+            
+            const total = inProcessPRs.length || 1;
+            
+            // Update counts and percentages
+            document.getElementById('aging-total-count').textContent = inProcessPRs.length + ' items';
+            
+            const bucketIds = ['0-5', '6-10', '11-20', '20plus'];
+            bucketIds.forEach(id => {
+                const count = agingBuckets[id].length;
+                const pct = ((count / total) * 100).toFixed(0);
+                
+                const countEl = document.getElementById(`aging-${id}-count`);
+                const pctEl = document.getElementById(`aging-${id}-pct`);
+                const barEl = document.getElementById(`aging-${id}-bar`);
+                
+                if (countEl) countEl.textContent = count;
+                if (pctEl) pctEl.textContent = pct + '%';
+                if (barEl) barEl.style.width = pct + '%';
+            });
+        }
+        
+        function showAgingDetails(bucket) {
+            const modal = document.getElementById('kpiModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            const allPRs = getFilteredPRs();
+            const inProcessPRs = allPRs.filter(pr => {
+                const status = (pr.status || pr.pr_status || '').toUpperCase();
+                return status === 'IN PROCESS' || status === 'INCOMPLETE';
+            });
+            
+            const today = new Date();
+            let filteredPRs = [];
+            let titleText = '';
+            
+            inProcessPRs.forEach(pr => {
+                const dateField = pr.submission_date || pr.pending_since;
+                if (!dateField) return;
+                
+                const startDate = new Date(dateField);
+                const daysPending = Math.floor((today - startDate) / 86400000);
+                
+                if (bucket === '0-5' && daysPending <= 5) {
+                    filteredPRs.push({ ...pr, daysPending });
+                } else if (bucket === '6-10' && daysPending > 5 && daysPending <= 10) {
+                    filteredPRs.push({ ...pr, daysPending });
+                } else if (bucket === '11-20' && daysPending > 10 && daysPending <= 20) {
+                    filteredPRs.push({ ...pr, daysPending });
+                } else if (bucket === '20plus' && daysPending > 20) {
+                    filteredPRs.push({ ...pr, daysPending });
+                }
+            });
+            
+            const bucketLabels = {
+                '0-5': 'Pending 0-5 Days',
+                '6-10': 'Pending 6-10 Days',
+                '11-20': 'Pending 11-20 Days',
+                '20plus': 'Pending >20 Days (At Risk)'
+            };
+            
+            titleText = bucketLabels[bucket] || 'Pending Items';
+            currentModalData = filteredPRs;
+            
+            content.innerHTML = generateAgingTable(filteredPRs);
+            title.textContent = titleText + ` (${filteredPRs.length} items)`;
+            modal.classList.add('show');
+            setupModalSearch();
+        }
+        
+        function generateAgingTable(prs) {
+            if (prs.length === 0) {
+                return '<p class="text-gray-500 text-center py-8">No items in this category</p>';
+            }
+            
+            const rows = prs.sort((a, b) => b.daysPending - a.daysPending).map((pr, i) => `
+                <tr>
+                    <td class="text-center">${i + 1}</td>
+                    <td class="font-medium">${pr.pr_num || '-'}</td>
+                    <td class="max-w-[150px] truncate" title="${pr.project || ''}">${pr.project || '-'}</td>
+                    <td class="max-w-[100px] truncate">${pr.vendor || '-'}</td>
+                    <td class="text-center">
+                        <span class="px-2 py-1 rounded text-xs font-medium ${
+                            pr.daysPending <= 5 ? 'bg-green-100 text-green-800' :
+                            pr.daysPending <= 10 ? 'bg-yellow-100 text-yellow-800' :
+                            pr.daysPending <= 20 ? 'bg-orange-100 text-orange-800' :
+                            'bg-red-100 text-red-800'
+                        }">${pr.daysPending} days</span>
+                    </td>
+                    <td>${pr.pending_with || '-'}</td>
+                    <td><span class="px-2 py-1 rounded text-xs bg-gray-100">${pr.status || '-'}</span></td>
+                </tr>
+            `).join('');
+            
+            return `
+                <div class="mb-4 flex justify-between items-center">
+                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Total: ${prs.length}</span>
+                    <div class="flex gap-2">
+                        <input type="text" id="modalSearch" placeholder="Search..." class="px-3 py-2 border rounded-lg text-sm w-48">
+                        <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm">PDF</button>
+                        <button onclick="exportAgingToCSV()" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm">CSV</button>
+                    </div>
+                </div>
+                <div class="scroll-container" style="max-height: 400px;">
+                    <table class="data-table text-sm w-full" id="modalTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>PR #</th>
+                                <th>Project</th>
+                                <th>Vendor</th>
+                                <th class="text-center">Days Pending</th>
+                                <th>Pending With</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function exportAgingToCSV() {
+            if (!currentModalData || currentModalData.length === 0) return;
+            
+            const headers = ['PR #', 'Project', 'Vendor', 'Days Pending', 'Pending With', 'Status', 'Submission Date'];
+            const rows = currentModalData.map(pr => [
+                pr.pr_num || '',
+                pr.project || '',
+                pr.vendor || '',
+                pr.daysPending || '',
+                pr.pending_with || '',
+                pr.status || '',
+                pr.submission_date || ''
+            ]);
+            
+            let csv = '\uFEFF' + headers.join(',') + '\n';
+            rows.forEach(r => { csv += r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',') + '\n'; });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Aging_Report_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        }
+        
+        // ==========================================
+        // CYCLE TIME DISTRIBUTION CHART
+        // ==========================================
+        
+        function updateCycleTimeDistributionChart() {
+            const ctx = document.getElementById('cycleTimeDistributionChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            const allPRs = getFilteredPRs();
+            const prsWithPO = allPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined);
+            
+            // Create distribution buckets
+            const buckets = {
+                '0-10': 0,
+                '11-20': 0,
+                '21-30': 0,
+                '31-50': 0,
+                '51-100': 0,
+                '>100': 0
+            };
+            
+            prsWithPO.forEach(pr => {
+                const days = pr.pr_to_po_days;
+                if (days <= 10) buckets['0-10']++;
+                else if (days <= 20) buckets['11-20']++;
+                else if (days <= 30) buckets['21-30']++;
+                else if (days <= 50) buckets['31-50']++;
+                else if (days <= 100) buckets['51-100']++;
+                else buckets['>100']++;
+            });
+            
+            // Destroy existing chart if exists
+            if (charts.cycleTimeDistribution) {
+                charts.cycleTimeDistribution.destroy();
+            }
+            
+            charts.cycleTimeDistribution = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(buckets).map(k => k + ' days'),
+                    datasets: [{
+                        label: 'Number of PRs',
+                        data: Object.values(buckets),
+                        backgroundColor: [
+                            '#10B981', // Green - 0-10
+                            '#22C55E', // Light Green - 11-20 (SLA)
+                            '#F59E0B', // Yellow - 21-30
+                            '#F97316', // Orange - 31-50
+                            '#EF4444', // Red - 51-100
+                            '#DC2626'  // Dark Red - >100
+                        ],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const total = prsWithPO.length;
+                                    const pct = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                                    return pct + '% of total';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+        
+        // ==========================================
+        // SLA DETAILS MODAL
+        // ==========================================
+        
+        function showSLADetails(slaType) {
+            const modal = document.getElementById('kpiModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            const allPRs = getFilteredPRs();
+            let filteredPRs = [];
+            let titleText = '';
+            
+            switch(slaType) {
+                case 'pr-processing':
+                    titleText = 'PR Processing SLA Details (≤2 Days)';
+                    filteredPRs = allPRs.filter(pr => pr.approved_date && pr.submission_date).map(pr => {
+                        const submitted = new Date(pr.submission_date);
+                        const approved = new Date(pr.approved_date);
+                        const days = Math.floor((approved - submitted) / 86400000);
+                        return { ...pr, processingDays: days, isOnTime: days <= 2 };
+                    });
+                    break;
+                    
+                case 'po-issuance':
+                    titleText = 'PO Issuance SLA Details (≤20 Days)';
+                    filteredPRs = allPRs.filter(pr => pr.pr_to_po_days !== null).map(pr => ({
+                        ...pr,
+                        isOnTime: pr.pr_to_po_days <= 20
+                    }));
+                    break;
+                    
+                case 'cycle-time':
+                    titleText = 'Cycle Time Analysis (PR → PO Days)';
+                    filteredPRs = allPRs.filter(pr => pr.pr_to_po_days !== null);
+                    break;
+                    
+                case 'overall':
+                    titleText = 'Overall SLA Compliance Summary';
+                    const metrics = calculateSLAMetrics();
+                    content.innerHTML = generateSLASummaryContent(metrics);
+                    title.textContent = titleText;
+                    modal.classList.add('show');
+                    return;
+            }
+            
+            currentModalData = filteredPRs;
+            content.innerHTML = generateSLADetailTable(filteredPRs, slaType);
+            title.textContent = titleText + ` (${filteredPRs.length} records)`;
+            modal.classList.add('show');
+            setupModalSearch();
+        }
+        
+        function generateSLADetailTable(prs, slaType) {
+            if (prs.length === 0) {
+                return '<p class="text-gray-500 text-center py-8">No data available</p>';
+            }
+            
+            const onTimeCount = prs.filter(pr => pr.isOnTime).length;
+            const lateCount = prs.length - onTimeCount;
+            const onTimeRate = ((onTimeCount / prs.length) * 100).toFixed(1);
+            
+            const summaryCards = `
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div class="bg-green-50 rounded-lg p-3 text-center border border-green-200">
+                        <p class="text-2xl font-bold text-green-600">${onTimeCount}</p>
+                        <p class="text-xs text-green-700">On-Time</p>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-3 text-center border border-red-200">
+                        <p class="text-2xl font-bold text-red-600">${lateCount}</p>
+                        <p class="text-xs text-red-700">Late</p>
+                    </div>
+                    <div class="rounded-lg p-3 text-center ${parseFloat(onTimeRate) >= 95 ? 'bg-green-100 border-green-300' : 'bg-red-100 border-red-300'} border">
+                        <p class="text-2xl font-bold ${parseFloat(onTimeRate) >= 95 ? 'text-green-600' : 'text-red-600'}">${onTimeRate}%</p>
+                        <p class="text-xs ${parseFloat(onTimeRate) >= 95 ? 'text-green-700' : 'text-red-700'}">Compliance (Target: 95%)</p>
+                    </div>
+                </div>
+            `;
+            
+            const rows = prs.slice(0, 100).map((pr, i) => {
+                const daysValue = slaType === 'pr-processing' ? pr.processingDays : pr.pr_to_po_days;
+                const isOnTime = pr.isOnTime;
+                
+                return `
+                    <tr>
+                        <td class="text-center">${i + 1}</td>
+                        <td class="font-medium">${pr.pr_num || '-'}</td>
+                        <td class="max-w-[120px] truncate">${pr.project || '-'}</td>
+                        <td class="max-w-[100px] truncate">${pr.vendor || '-'}</td>
+                        <td class="text-center">
+                            <span class="px-2 py-1 rounded text-xs font-medium ${isOnTime ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${daysValue} days
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            ${isOnTime ? '<span class="text-green-600">✓ On-Time</span>' : '<span class="text-red-600">✗ Late</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            return `
+                ${summaryCards}
+                <div class="mb-4 flex justify-between items-center">
+                    <input type="text" id="modalSearch" placeholder="Search..." class="px-3 py-2 border rounded-lg text-sm w-48">
+                    <div class="flex gap-2">
+                        <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm">PDF</button>
+                        <button onclick="exportToCSV()" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm">CSV</button>
+                    </div>
+                </div>
+                <div class="scroll-container" style="max-height: 350px;">
+                    <table class="data-table text-sm w-full" id="modalTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>PR #</th>
+                                <th>Project</th>
+                                <th>Vendor</th>
+                                <th class="text-center">Days</th>
+                                <th class="text-center">SLA Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                ${prs.length > 100 ? '<p class="text-xs text-gray-400 mt-2 text-center">Showing first 100 records</p>' : ''}
+            `;
+        }
+        
+        function generateSLASummaryContent(metrics) {
+            return `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                            <h4 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
+                                <span class="text-2xl">📋</span> PR Processing
+                            </h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">SLA Standard:</span>
+                                    <span class="font-medium">≤2 Business Days</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Target:</span>
+                                    <span class="font-medium">≥95%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Actual:</span>
+                                    <span class="font-bold ${parseFloat(metrics.prOnTimeRate) >= 95 ? 'text-green-600' : 'text-red-600'}">${metrics.prOnTimeRate}%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Status:</span>
+                                    <span>${parseFloat(metrics.prOnTimeRate) >= 95 ? '🟢 Meeting SLA' : '🔴 Below Target'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                            <h4 class="font-bold text-purple-800 mb-3 flex items-center gap-2">
+                                <span class="text-2xl">📦</span> PO Issuance
+                            </h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">SLA Standard:</span>
+                                    <span class="font-medium">≤20 Business Days</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Target:</span>
+                                    <span class="font-medium">≥95%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Actual:</span>
+                                    <span class="font-bold ${parseFloat(metrics.poOnTimeRate) >= 95 ? 'text-green-600' : 'text-red-600'}">${metrics.poOnTimeRate}%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Status:</span>
+                                    <span>${parseFloat(metrics.poOnTimeRate) >= 95 ? '🟢 Meeting SLA' : '🔴 Below Target'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4 border">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <span class="text-2xl">⏱️</span> Cycle Time Analysis
+                        </h4>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <p class="text-2xl font-bold text-blue-600">${metrics.avgDays}</p>
+                                <p class="text-xs text-gray-500">Average Days</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <p class="text-2xl font-bold text-green-600">${metrics.p50}</p>
+                                <p class="text-xs text-gray-500">P50 (Median)</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <p class="text-2xl font-bold text-red-600">${metrics.p90}</p>
+                                <p class="text-xs text-gray-500">P90 (90th %ile)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center p-4 rounded-xl ${parseFloat(metrics.overallRate) >= 95 ? 'bg-green-100 border-green-300' : parseFloat(metrics.overallRate) >= 85 ? 'bg-yellow-100 border-yellow-300' : 'bg-red-100 border-red-300'} border-2">
+                        <p class="text-sm text-gray-600 mb-1">Overall SLA Compliance</p>
+                        <p class="text-4xl font-bold ${parseFloat(metrics.overallRate) >= 95 ? 'text-green-600' : parseFloat(metrics.overallRate) >= 85 ? 'text-yellow-600' : 'text-red-600'}">${metrics.overallRate}%</p>
+                        <p class="text-sm mt-2">${parseFloat(metrics.overallRate) >= 95 ? '✅ Meeting Target' : parseFloat(metrics.overallRate) >= 85 ? '⚠️ Needs Improvement' : '❌ Below Target - Action Required'}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ==========================================
+        // INITIALIZE SLA ON PAGE LOAD
+        // ==========================================
+        
+        // Add SLA update to existing filter functions
+        const originalApplyFilters = applyFilters;
+        applyFilters = function() {
+            originalApplyFilters();
+            updateSLADisplay();
+        };
+        
+        const originalResetFilters = resetFilters;
+        resetFilters = function() {
+            originalResetFilters();
+            updateSLADisplay();
+        };
+        
+        // Initialize SLA display after data loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                updateSLADisplay();
+            }, 1500);
+        });
     </script>
 </body>
 </html>
