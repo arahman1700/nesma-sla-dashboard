@@ -1,9 +1,9 @@
 name: Sync from Smartsheet
 
 on:
-  # Run every hour
+  # Run every 4 hours
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 */4 * * *'
 
   # Allow manual trigger
   workflow_dispatch:
@@ -27,14 +27,19 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Sync from Smartsheet
+      - name: Sync Logistics Data (Transportation & Payments)
         env:
           SMARTSHEET_TOKEN: ${{ secrets.SMARTSHEET_TOKEN }}
-        run: python sync_smartsheet.py
+        run: python sync_logistics.py
+
+      - name: Sync Procurement Data
+        env:
+          SMARTSHEET_TOKEN: ${{ secrets.SMARTSHEET_TOKEN }}
+        run: python sync_procurement.py
 
       - name: Commit and push if changed
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data.js transportation_full_data.json payments_full_data.json
-          git diff --staged --quiet || (git commit -m "Auto-sync from Smartsheet" && git push)
+          git add transportation_full_data.json payments_full_data.json data/pr_data.json
+          git diff --staged --quiet || (git commit -m "chore: Auto-sync from Smartsheet [automated]" && git push)
