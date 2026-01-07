@@ -1054,6 +1054,78 @@
                         </div>
                     </div>
 
+                    <!-- SLA by Value Band (Per NIT-SCM-SLA-KSA-001 Requirements) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                        <!-- High Value SLA (≥500K SAR) -->
+                        <div class="card p-4 cursor-pointer hover:shadow-lg transition-all" onclick="showValueBandDetails('high')">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xl">💰</span>
+                                    <span class="font-semibold text-gray-700">High Value (≥500K)</span>
+                                </div>
+                                <span class="px-2 py-1 rounded text-xs font-bold bg-purple-100 text-purple-700">≤20 Days</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="text-3xl font-bold text-purple-600" id="sla-high-value-rate">0%</p>
+                                    <p class="text-xs text-gray-500">SLA Compliance</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-600" id="sla-high-value-count">0/0</p>
+                                    <p class="text-xs text-gray-400">On-time/Total</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-purple-500 rounded-full transition-all" id="sla-high-value-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Low Value SLA (<500K SAR) -->
+                        <div class="card p-4 cursor-pointer hover:shadow-lg transition-all" onclick="showValueBandDetails('low')">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xl">📋</span>
+                                    <span class="font-semibold text-gray-700">Standard (<500K)</span>
+                                </div>
+                                <span class="px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-700">≤15 Days</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="text-3xl font-bold text-blue-600" id="sla-low-value-rate">0%</p>
+                                    <p class="text-xs text-gray-500">SLA Compliance</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-600" id="sla-low-value-count">0/0</p>
+                                    <p class="text-xs text-gray-400">On-time/Total</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-500 rounded-full transition-all" id="sla-low-value-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- APRs Not Converted >30 Days -->
+                        <div class="card p-4 cursor-pointer hover:shadow-lg transition-all" onclick="showAPRsPendingDetails()" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b;">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xl">⚠️</span>
+                                    <span class="font-semibold text-amber-800">APRs Pending >30 Days</span>
+                                </div>
+                                <span class="px-2 py-1 rounded text-xs font-bold bg-amber-600 text-white">Action Required</span>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <p class="text-3xl font-bold text-amber-700" id="aprs-pending-count">0</p>
+                                    <p class="text-xs text-amber-600">Approved PRs without PO</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-amber-700">Click to view</p>
+                                    <p class="text-xs text-amber-500">details & take action</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Charts -->
                     <div id="po-charts" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -2040,50 +2112,9 @@
             document.getElementById('kpi-avg-pr-to-po').textContent = avgPrToPo;
         }
 
-        // Update PR to PO KPIs
-        function updatePOKPIs() {
-            if (!prData || !prData.monthly) return;
-
-            // Find the latest month with actual data
-            let currentMonth = new Date().getMonth();
-            while (currentMonth >= 0 && prData.monthly.approved[currentMonth] === 0) {
-                currentMonth--;
-            }
-            if (currentMonth < 0) currentMonth = 10;
-
-            const monthApproved = prData.monthly.approved[currentMonth] || 0;
-
-            // Calculate POs issued (PRs with pr_to_po_days value)
-            const allPRs = prData.all_prs || prData.recent_prs || [];
-            const currentMonthPRs = allPRs.filter(pr => {
-                if (!pr.approved_date) return false;
-                const date = new Date(pr.approved_date);
-                return date.getMonth() === currentMonth && date.getFullYear() === 2025;
-            });
-
-            const posIssued = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined).length;
-            // Use 20 days for SLA compliance (not 30)
-            const within20 = currentMonthPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 20).length;
-            const after20 = posIssued - within20;
-
-            document.getElementById('po-kpi-received-month').textContent = monthApproved.toLocaleString();
-            document.getElementById('po-kpi-issued-month').textContent = posIssued.toLocaleString();
-            
-            // Update the correct element IDs (within20/after20)
-            const within20El = document.getElementById('po-kpi-within20');
-            const after20El = document.getElementById('po-kpi-after20');
-            const within20PctEl = document.getElementById('po-kpi-within20-pct');
-            const after20PctEl = document.getElementById('po-kpi-after20-pct');
-            
-            if (within20El) within20El.textContent = within20.toLocaleString();
-            if (after20El) after20El.textContent = after20.toLocaleString();
-
-            const within20Pct = posIssued > 0 ? ((within20 / posIssued) * 100).toFixed(1) : 0;
-            const after20Pct = posIssued > 0 ? ((after20 / posIssued) * 100).toFixed(1) : 0;
-            if (within20PctEl) within20PctEl.textContent = within20Pct + '%';
-            if (after20PctEl) after20PctEl.textContent = after20Pct + '%';
-
-        }
+        // NOTE: updatePOKPIs() has been REMOVED and merged into updateFilteredKPIs()
+        // All PO KPIs are now updated in the unified updateFilteredKPIs() function
+        // This ensures all KPIs respect the current filters
 
         // Update Vendor KPIs
         function updateVendorKPIs() {
@@ -2564,7 +2595,11 @@
             });
         }
 
-        // Calculate comprehensive stats from filtered PRs - uses NEW data structure with averages
+        // ==========================================
+        // COMPREHENSIVE STATS CALCULATION (SLA-COMPLIANT)
+        // Based on NIT-SCM-SLA-KSA-001 Requirements
+        // ==========================================
+        
         function calculateFilteredStats(filteredPRs) {
             const total = filteredPRs.length;
             const approved = filteredPRs.filter(pr => (pr.pr_status || pr.status) === 'APPROVED').length;
@@ -2573,24 +2608,116 @@
             const incomplete = filteredPRs.filter(pr => (pr.pr_status || pr.status) === 'INCOMPLETE').length;
             const inProcess = filteredPRs.filter(pr => (pr.pr_status || pr.status) === 'IN PROCESS').length;
 
-            // PRs with return_date (for within/after 2 days calculation)
-            const prsWithReturnDate = filteredPRs.filter(pr => pr.return_date);
-            const within2days = prsWithReturnDate.filter(pr => {
+            // ==========================================
+            // SLA 1: PR PROCESSING (≤2 business days)
+            // Measure: submission_date → approved_date
+            // Target: ≥95%
+            // ==========================================
+            const prsWithProcessingDates = filteredPRs.filter(pr => pr.submission_date && pr.approved_date);
+            let prProcessingWithin2 = 0;
+            let prProcessingAfter2 = 0;
+            
+            prsWithProcessingDates.forEach(pr => {
+                try {
+                    const submitted = new Date(pr.submission_date);
+                    const approved = new Date(pr.approved_date);
+                    const days = Math.floor((approved - submitted) / 86400000);
+                    if (days <= 2) {
+                        prProcessingWithin2++;
+                    } else {
+                        prProcessingAfter2++;
+                    }
+                } catch (e) {}
+            });
+            
+            const prProcessingSLARate = prsWithProcessingDates.length > 0 
+                ? ((prProcessingWithin2 / prsWithProcessingDates.length) * 100).toFixed(1) 
+                : 0;
+
+            // ==========================================
+            // PR RETURN Analysis (for Return Report tab)
+            // PRs with return_date - calculate days from approval to return
+            // ==========================================
+            const prsWithReturnDate = filteredPRs.filter(pr => pr.return_date && (pr.pr_status || pr.status) === 'RETURNED');
+            let returnedWithin2days = 0;
+            let returnedAfter2days = 0;
+            
+            prsWithReturnDate.forEach(pr => {
+                const baseDate = pr.submission_date || pr.approved_date;
+                if (!baseDate) return;
+                try {
+                    const base = new Date(baseDate);
+                    const returnDate = new Date(pr.return_date);
+                    const days = Math.floor((returnDate - base) / 86400000);
+                    if (days <= 2) {
+                        returnedWithin2days++;
+                    } else {
+                        returnedAfter2days++;
+                    }
+                } catch (e) {}
+            });
+
+            // ==========================================
+            // SLA 2: PO ISSUANCE (≤20 days for ≥500K, ≤15 days for <500K)
+            // Measure: approved_date → PO issued
+            // Target: ≥95%
+            // ==========================================
+            const prsWithPO = filteredPRs.filter(pr => 
+                pr.pr_to_po_days !== null && 
+                pr.pr_to_po_days !== undefined && 
+                !isNaN(parseFloat(pr.pr_to_po_days))
+            );
+            
+            const posIssued = prsWithPO.length;
+            
+            // Overall 20-day SLA
+            const within20days = prsWithPO.filter(pr => parseFloat(pr.pr_to_po_days) <= 20).length;
+            const after20days = posIssued - within20days;
+            const poSLA20Rate = posIssued > 0 ? ((within20days / posIssued) * 100).toFixed(1) : 0;
+            
+            // By Value Band (per SLA requirements)
+            const highValuePRs = prsWithPO.filter(pr => parseFloat(pr.pr_value || 0) >= 500000);
+            const lowValuePRs = prsWithPO.filter(pr => parseFloat(pr.pr_value || 0) < 500000 && parseFloat(pr.pr_value || 0) > 0);
+            
+            const highValueWithin20 = highValuePRs.filter(pr => parseFloat(pr.pr_to_po_days) <= 20).length;
+            const lowValueWithin15 = lowValuePRs.filter(pr => parseFloat(pr.pr_to_po_days) <= 15).length;
+            
+            const highValueSLARate = highValuePRs.length > 0 
+                ? ((highValueWithin20 / highValuePRs.length) * 100).toFixed(1) : 0;
+            const lowValueSLARate = lowValuePRs.length > 0 
+                ? ((lowValueWithin15 / lowValuePRs.length) * 100).toFixed(1) : 0;
+
+            // ==========================================
+            // CYCLE TIME ANALYSIS (P50/P90)
+            // ==========================================
+            const prToPoDays = prsWithPO.map(pr => parseFloat(pr.pr_to_po_days)).sort((a, b) => a - b);
+            const avgPrToPo = prToPoDays.length > 0 
+                ? (prToPoDays.reduce((a, b) => a + b, 0) / prToPoDays.length).toFixed(1) 
+                : 0;
+            const p50 = prToPoDays.length > 0 
+                ? Math.round(prToPoDays[Math.floor(prToPoDays.length * 0.5)]) 
+                : 0;
+            const p90 = prToPoDays.length > 0 
+                ? Math.round(prToPoDays[Math.floor(prToPoDays.length * 0.9)]) 
+                : 0;
+
+            // ==========================================
+            // APRs NOT CONVERTED TO PO >30 DAYS
+            // ==========================================
+            const today = new Date();
+            const approvedNoPO = filteredPRs.filter(pr => {
+                if ((pr.pr_status || pr.status) !== 'APPROVED') return false;
+                if (pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined) return false;
                 if (!pr.approved_date) return false;
-                const days = Math.floor((new Date(pr.return_date) - new Date(pr.approved_date)) / 86400000);
-                return days <= 2;
-            }).length;
-            const after2days = prsWithReturnDate.length - within2days;
+                
+                const approvedDate = new Date(pr.approved_date);
+                const daysSinceApproval = Math.floor((today - approvedDate) / 86400000);
+                return daysSinceApproval > 30;
+            });
 
-            const posIssued = filteredPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined).length;
-            const within30days = filteredPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days <= 30).length;
-            const after30days = posIssued - within30days;
-
-            // Calculate averages
-            const prToPoDays = filteredPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined).map(pr => pr.pr_to_po_days);
-            const avgPrToPo = prToPoDays.length > 0 ? (prToPoDays.reduce((a, b) => a + b, 0) / prToPoDays.length).toFixed(1) : 0;
-
-            // Calculate PR values
+            // ==========================================
+            // VALUE CALCULATIONS
+            // ==========================================
             const prValues = filteredPRs.filter(pr => pr.pr_value).map(pr => parseFloat(pr.pr_value) || 0);
             const totalPrValue = prValues.reduce((a, b) => a + b, 0);
 
@@ -2599,61 +2726,246 @@
 
             const savingValues = filteredPRs.filter(pr => pr.saving_amount).map(pr => parseFloat(pr.saving_amount) || 0);
             const totalSavings = savingValues.reduce((a, b) => a + b, 0);
+            
+            // Savings rate
+            const savingsRate = totalPrValue > 0 ? (((totalPrValue - totalPoValue) / totalPrValue) * 100).toFixed(1) : 0;
+
+            // Log for debugging
+            console.log('📊 Stats calculated:', {
+                total, approved, returned,
+                prProcessingSLA: prProcessingSLARate + '%',
+                poSLA20: poSLA20Rate + '%',
+                p50, p90,
+                approvedNoPO: approvedNoPO.length
+            });
 
             return {
+                // Basic counts
                 total, approved, returned, rejected, incomplete, inProcess,
-                within2days, after2days, posIssued, within30days, after30days,
-                avgPrToPo, totalPrValue, totalPoValue, totalSavings
+                
+                // PR Processing SLA
+                prProcessingTotal: prsWithProcessingDates.length,
+                prProcessingWithin2,
+                prProcessingAfter2,
+                prProcessingSLARate,
+                
+                // PR Return Analysis
+                returnedWithin2days,
+                returnedAfter2days,
+                
+                // PO Issuance SLA
+                posIssued,
+                within20days,
+                after20days,
+                poSLA20Rate,
+                
+                // By Value Band
+                highValueTotal: highValuePRs.length,
+                highValueWithin20,
+                highValueSLARate,
+                lowValueTotal: lowValuePRs.length,
+                lowValueWithin15,
+                lowValueSLARate,
+                
+                // Cycle Time
+                avgPrToPo,
+                p50,
+                p90,
+                
+                // APRs not converted
+                approvedNoPOCount: approvedNoPO.length,
+                approvedNoPOList: approvedNoPO,
+                
+                // Values
+                totalPrValue,
+                totalPoValue,
+                totalSavings,
+                savingsRate
             };
         }
 
-        // Update all KPIs based on filters
+        // ==========================================
+        // UNIFIED KPI UPDATE FUNCTION
+        // Updates ALL KPIs based on current filters
+        // ==========================================
+        
         function updateFilteredKPIs() {
             const filteredPRs = getFilteredPRs();
             const stats = calculateFilteredStats(filteredPRs);
+            
+            console.log('🔄 Updating KPIs with', filteredPRs.length, 'filtered PRs');
 
-            // PR Return KPIs (Top Row)
-            document.getElementById('kpi-approved').textContent = stats.approved.toLocaleString();
-            document.getElementById('kpi-returned').textContent = stats.returned.toLocaleString();
+            // ==========================================
+            // PR RETURN REPORT TAB KPIs
+            // ==========================================
+            
+            // Main KPI Cards
+            safeUpdate('kpi-approved', stats.approved.toLocaleString());
+            safeUpdate('kpi-returned', stats.returned.toLocaleString());
+            
             const returnRate = stats.approved > 0 ? ((stats.returned / stats.approved) * 100).toFixed(1) : 0;
-            document.getElementById('kpi-return-rate').textContent = returnRate + '%';
-            document.getElementById('kpi-within2').textContent = stats.within2days;
-            document.getElementById('kpi-after2').textContent = stats.after2days;
-            const within2Pct = stats.returned > 0 ? ((stats.within2days / stats.returned) * 100).toFixed(1) : 0;
-            const after2Pct = stats.returned > 0 ? ((stats.after2days / stats.returned) * 100).toFixed(1) : 0;
-            document.getElementById('kpi-within2-pct').textContent = within2Pct + '%';
-            document.getElementById('kpi-after2-pct').textContent = after2Pct + '%';
-
-            // Summary KPIs (Second Row - Dynamic)
-            document.getElementById('kpi-total-filtered').textContent = stats.total.toLocaleString();
-            document.getElementById('kpi-rejected').textContent = stats.rejected.toLocaleString();
-            document.getElementById('kpi-incomplete').textContent = stats.incomplete.toLocaleString();
-            document.getElementById('kpi-in-process').textContent = stats.inProcess.toLocaleString();
-            document.getElementById('kpi-avg-pr-to-po').textContent = stats.avgPrToPo;
-
-            // PR to PO KPIs (use 20-day SLA, not 30)
-            // Calculate within/after 20 days for SLA compliance
-            const within20days = filteredPRs.filter(pr => pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined && pr.pr_to_po_days <= 20).length;
-            const after20days = stats.posIssued - within20days;
+            safeUpdate('kpi-return-rate', returnRate + '%');
             
-            document.getElementById('po-kpi-received-month').textContent = stats.approved.toLocaleString();
-            document.getElementById('po-kpi-issued-month').textContent = stats.posIssued.toLocaleString();
+            // Returned within/after 2 days (for Return Analysis)
+            safeUpdate('kpi-within2', stats.returnedWithin2days);
+            safeUpdate('kpi-after2', stats.returnedAfter2days);
             
-            // Update correct element IDs (within20/after20)
-            const within20El = document.getElementById('po-kpi-within20');
-            const after20El = document.getElementById('po-kpi-after20');
-            if (within20El) within20El.textContent = within20days.toLocaleString();
-            if (after20El) after20El.textContent = after20days.toLocaleString();
-            
-            const within20Pct = stats.posIssued > 0 ? ((within20days / stats.posIssued) * 100).toFixed(1) : 0;
-            const after20Pct = stats.posIssued > 0 ? ((after20days / stats.posIssued) * 100).toFixed(1) : 0;
-            const within20PctEl = document.getElementById('po-kpi-within20-pct');
-            const after20PctEl = document.getElementById('po-kpi-after20-pct');
-            if (within20PctEl) within20PctEl.textContent = within20Pct + '%';
-            if (after20PctEl) after20PctEl.textContent = after20Pct + '%';
+            const returnedTotal = stats.returnedWithin2days + stats.returnedAfter2days;
+            const within2Pct = returnedTotal > 0 ? ((stats.returnedWithin2days / returnedTotal) * 100).toFixed(1) : 0;
+            const after2Pct = returnedTotal > 0 ? ((stats.returnedAfter2days / returnedTotal) * 100).toFixed(1) : 0;
+            safeUpdate('kpi-within2-pct', within2Pct + '%');
+            safeUpdate('kpi-after2-pct', after2Pct + '%');
 
-            // Update filter label to show what's filtered
+            // Summary KPIs
+            safeUpdate('kpi-total-filtered', stats.total.toLocaleString());
+            safeUpdate('kpi-rejected', stats.rejected.toLocaleString());
+            safeUpdate('kpi-incomplete', stats.incomplete.toLocaleString());
+            safeUpdate('kpi-in-process', stats.inProcess.toLocaleString());
+            safeUpdate('kpi-avg-pr-to-po', stats.avgPrToPo);
+
+            // ==========================================
+            // PR TO PO REPORT TAB KPIs
+            // ==========================================
+            
+            // Main PO KPIs
+            safeUpdate('po-kpi-received-month', stats.approved.toLocaleString());
+            safeUpdate('po-kpi-issued-month', stats.posIssued.toLocaleString());
+            safeUpdate('po-kpi-within20', stats.within20days.toLocaleString());
+            safeUpdate('po-kpi-after20', stats.after20days.toLocaleString());
+            safeUpdate('po-kpi-within20-pct', stats.poSLA20Rate + '%');
+            safeUpdate('po-kpi-after20-pct', (100 - parseFloat(stats.poSLA20Rate)).toFixed(1) + '%');
+            
+            // PO SLA Compliance Card
+            safeUpdate('po-sla-on-time', stats.within20days);
+            safeUpdate('po-sla-late', stats.after20days);
+            safeUpdate('po-sla-circle-value', stats.poSLA20Rate + '%');
+            
+            // Update SLA status icon
+            const slaIcon = parseFloat(stats.poSLA20Rate) >= 95 ? '🟢' : 
+                           parseFloat(stats.poSLA20Rate) >= 85 ? '🟡' : '🔴';
+            safeUpdate('po-sla-status-icon', slaIcon);
+            
+            // Update circle gradient
+            const circle = document.getElementById('po-sla-circle');
+            if (circle) {
+                const lateAngle = (100 - parseFloat(stats.poSLA20Rate)) * 3.6;
+                circle.style.background = `conic-gradient(#ef4444 0deg, #ef4444 ${lateAngle}deg, #22c55e ${lateAngle}deg, #22c55e 360deg)`;
+            }
+
+            // ==========================================
+            // SLA COMPLIANCE SECTION
+            // ==========================================
+            
+            // PR Processing SLA (≤2 days)
+            safeUpdate('sla-pr-rate', stats.prProcessingSLARate + '%');
+            updateSLACardStatus('sla-pr-processing', parseFloat(stats.prProcessingSLARate));
+            
+            // PO Issuance SLA (≤20 days)
+            safeUpdate('sla-po-rate', stats.poSLA20Rate + '%');
+            updateSLACardStatus('sla-po-issuance', parseFloat(stats.poSLA20Rate));
+            
+            // Cycle Time
+            safeUpdate('cycle-avg', stats.avgPrToPo);
+            safeUpdate('cycle-p50', stats.p50);
+            safeUpdate('cycle-p90', stats.p90);
+            
+            // Overall SLA
+            const overallSLA = ((parseFloat(stats.prProcessingSLARate) + parseFloat(stats.poSLA20Rate)) / 2).toFixed(1);
+            safeUpdate('sla-overall-rate', overallSLA + '%');
+            updateSLACardStatus('sla-overall', parseFloat(overallSLA));
+
+            // ==========================================
+            // AGING ANALYSIS
+            // ==========================================
+            updateAgingAnalysisFromStats(filteredPRs);
+
+            // ==========================================
+            // VALUE BAND SLA (if elements exist)
+            // ==========================================
+            safeUpdate('sla-high-value-rate', stats.highValueSLARate + '%');
+            safeUpdate('sla-high-value-count', `${stats.highValueWithin20}/${stats.highValueTotal}`);
+            safeUpdate('sla-low-value-rate', stats.lowValueSLARate + '%');
+            safeUpdate('sla-low-value-count', `${stats.lowValueWithin15}/${stats.lowValueTotal}`);
+            
+            // Update progress bars
+            const highValueBar = document.getElementById('sla-high-value-bar');
+            if (highValueBar) highValueBar.style.width = stats.highValueSLARate + '%';
+            
+            const lowValueBar = document.getElementById('sla-low-value-bar');
+            if (lowValueBar) lowValueBar.style.width = stats.lowValueSLARate + '%';
+            
+            // APRs not converted
+            safeUpdate('aprs-pending-count', stats.approvedNoPOCount);
+
+            // Update filter label
             updateFilterLabel();
+            
+            // Store stats globally for other functions
+            window.currentStats = stats;
+        }
+        
+        // Helper function for safe element updates
+        function safeUpdate(elementId, value) {
+            const el = document.getElementById(elementId);
+            if (el) el.textContent = value;
+        }
+        
+        // Helper function to update SLA card status
+        function updateSLACardStatus(cardId, rate) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            
+            card.classList.remove('sla-green', 'sla-yellow', 'sla-red');
+            const indicator = card.querySelector('.sla-indicator');
+            
+            if (rate >= 95) {
+                card.classList.add('sla-green');
+                if (indicator) indicator.textContent = '✓';
+            } else if (rate >= 85) {
+                card.classList.add('sla-yellow');
+                if (indicator) indicator.textContent = '!';
+            } else {
+                card.classList.add('sla-red');
+                if (indicator) indicator.textContent = '✗';
+            }
+        }
+        
+        // Aging Analysis based on filtered PRs
+        function updateAgingAnalysisFromStats(filteredPRs) {
+            const inProcessPRs = filteredPRs.filter(pr => {
+                const status = (pr.status || pr.pr_status || '').toUpperCase();
+                return status === 'IN PROCESS' || status === 'INCOMPLETE';
+            });
+            
+            const today = new Date();
+            const agingBuckets = { '0-5': 0, '6-10': 0, '11-20': 0, '20plus': 0 };
+            
+            inProcessPRs.forEach(pr => {
+                const dateField = pr.submission_date || pr.pending_since;
+                if (!dateField) return;
+                
+                const startDate = new Date(dateField);
+                const daysPending = Math.floor((today - startDate) / 86400000);
+                
+                if (daysPending <= 5) agingBuckets['0-5']++;
+                else if (daysPending <= 10) agingBuckets['6-10']++;
+                else if (daysPending <= 20) agingBuckets['11-20']++;
+                else agingBuckets['20plus']++;
+            });
+            
+            const total = inProcessPRs.length || 1;
+            safeUpdate('aging-total-count', inProcessPRs.length + ' items');
+            
+            ['0-5', '6-10', '11-20', '20plus'].forEach(id => {
+                const count = agingBuckets[id];
+                const pct = ((count / total) * 100).toFixed(0);
+                
+                safeUpdate(`aging-${id}-count`, count);
+                safeUpdate(`aging-${id}-pct`, pct + '%');
+                
+                const barEl = document.getElementById(`aging-${id}-bar`);
+                if (barEl) barEl.style.width = pct + '%';
+            });
         }
 
         function updateFilterLabel() {
@@ -4365,257 +4677,9 @@
         }
 
         // ==========================================
-        // SLA COMPLIANCE FUNCTIONS
+        // AGING DETAILS MODAL
+        // (Legacy SLA functions removed - now handled by unified updateFilteredKPIs)
         // ==========================================
-        
-        // Calculate SLA Compliance Metrics
-        function calculateSLAMetrics() {
-            const allPRs = getFilteredPRs();
-            
-            // PR Processing SLA (≤2 days for approval/feedback)
-            const prsWithApprovalDate = allPRs.filter(pr => pr.approved_date && pr.submission_date);
-            let prOnTime = 0;
-            prsWithApprovalDate.forEach(pr => {
-                try {
-                    const submitted = new Date(pr.submission_date);
-                    const approved = new Date(pr.approved_date);
-                    const days = Math.floor((approved - submitted) / 86400000);
-                    if (days <= 2) prOnTime++;
-                } catch (e) {
-                    console.error('Date parsing error:', e);
-                }
-            });
-            const prOnTimeRate = prsWithApprovalDate.length > 0 
-                ? (prOnTime / prsWithApprovalDate.length * 100).toFixed(1) 
-                : 0;
-            
-            // PO Issuance SLA (≤20 days) - ensure numeric comparison
-            const prsWithPO = allPRs.filter(pr => {
-                const days = pr.pr_to_po_days;
-                return days !== null && days !== undefined && !isNaN(parseFloat(days));
-            });
-            const poWithin20 = prsWithPO.filter(pr => parseFloat(pr.pr_to_po_days) <= 20).length;
-            const poAfter20 = prsWithPO.length - poWithin20;
-            const poOnTimeRate = prsWithPO.length > 0 
-                ? (poWithin20 / prsWithPO.length * 100).toFixed(1) 
-                : 0;
-            
-            // Cycle Time Analysis (P50, P90) - ensure numeric values
-            const prToPoDays = prsWithPO
-                .map(pr => parseFloat(pr.pr_to_po_days))
-                .filter(d => !isNaN(d))
-                .sort((a, b) => a - b);
-            const avgDays = prToPoDays.length > 0 
-                ? (prToPoDays.reduce((a, b) => a + b, 0) / prToPoDays.length).toFixed(1) 
-                : 0;
-            const p50 = prToPoDays.length > 0 
-                ? Math.round(prToPoDays[Math.floor(prToPoDays.length * 0.5)]) 
-                : 0;
-            const p90 = prToPoDays.length > 0 
-                ? Math.round(prToPoDays[Math.floor(prToPoDays.length * 0.9)]) 
-                : 0;
-            
-            // Overall Compliance
-            const overallRate = ((parseFloat(prOnTimeRate) + parseFloat(poOnTimeRate)) / 2).toFixed(1);
-            
-            console.log('SLA Calculation Results:', {
-                prTotal: prsWithApprovalDate.length,
-                prOnTime,
-                prOnTimeRate,
-                poTotal: prsWithPO.length,
-                poWithin20,
-                poAfter20,
-                poOnTimeRate,
-                avgDays,
-                p50,
-                p90,
-                overallRate
-            });
-            
-            return {
-                prOnTimeRate,
-                prOnTime,
-                prTotal: prsWithApprovalDate.length,
-                poOnTimeRate,
-                poWithin20,
-                poAfter20,
-                poTotal: prsWithPO.length,
-                avgDays,
-                p50,
-                p90,
-                overallRate
-            };
-        }
-        
-        // Update SLA Display
-        function updateSLADisplay() {
-            // Check if data is loaded
-            const allPRs = getFilteredPRs();
-            if (!allPRs || allPRs.length === 0) {
-                console.log('SLA Update: No data available yet');
-                return;
-            }
-            
-            console.log('SLA Update: Processing', allPRs.length, 'PRs');
-            const metrics = calculateSLAMetrics();
-            console.log('SLA Metrics:', metrics);
-            
-            // Update PR Processing SLA
-            const prCard = document.getElementById('sla-pr-processing');
-            const prRateEl = document.getElementById('sla-pr-rate');
-            if (prRateEl) {
-                const prRate = parseFloat(metrics.prOnTimeRate);
-                prRateEl.textContent = metrics.prOnTimeRate + '%';
-                updateSLACardClass(prCard, prRate);
-            }
-            
-            // Update PO Issuance SLA
-            const poCard = document.getElementById('sla-po-issuance');
-            const poRateEl = document.getElementById('sla-po-rate');
-            if (poRateEl) {
-                const poRate = parseFloat(metrics.poOnTimeRate);
-                poRateEl.textContent = metrics.poOnTimeRate + '%';
-                updateSLACardClass(poCard, poRate);
-            }
-            
-            // Update Cycle Time
-            const cycleAvgEl = document.getElementById('cycle-avg');
-            const cycleP50El = document.getElementById('cycle-p50');
-            const cycleP90El = document.getElementById('cycle-p90');
-            if (cycleAvgEl) cycleAvgEl.textContent = metrics.avgDays;
-            if (cycleP50El) cycleP50El.textContent = metrics.p50;
-            if (cycleP90El) cycleP90El.textContent = metrics.p90;
-            
-            // Update Overall
-            const overallCard = document.getElementById('sla-overall');
-            const overallRateEl = document.getElementById('sla-overall-rate');
-            if (overallRateEl) {
-                const overallRate = parseFloat(metrics.overallRate);
-                overallRateEl.textContent = metrics.overallRate + '%';
-                updateSLACardClass(overallCard, overallRate);
-            }
-            
-            // Update PO tab cards
-            const within20Pct = metrics.poTotal > 0 ? (metrics.poWithin20 / metrics.poTotal * 100).toFixed(1) : 0;
-            const after20Pct = metrics.poTotal > 0 ? (metrics.poAfter20 / metrics.poTotal * 100).toFixed(1) : 0;
-            
-            const poKpiWithin20 = document.getElementById('po-kpi-within20');
-            const poKpiAfter20 = document.getElementById('po-kpi-after20');
-            const poKpiWithin20Pct = document.getElementById('po-kpi-within20-pct');
-            const poKpiAfter20Pct = document.getElementById('po-kpi-after20-pct');
-            
-            if (poKpiWithin20) poKpiWithin20.textContent = metrics.poWithin20.toLocaleString();
-            if (poKpiAfter20) poKpiAfter20.textContent = metrics.poAfter20.toLocaleString();
-            if (poKpiWithin20Pct) poKpiWithin20Pct.textContent = within20Pct + '%';
-            if (poKpiAfter20Pct) poKpiAfter20Pct.textContent = after20Pct + '%';
-            
-            // Update PO SLA Compliance card
-            const poSlaOnTime = document.getElementById('po-sla-on-time');
-            const poSlaLate = document.getElementById('po-sla-late');
-            const poSlaCircleValue = document.getElementById('po-sla-circle-value');
-            const poSlaStatusIcon = document.getElementById('po-sla-status-icon');
-            
-            if (poSlaOnTime) poSlaOnTime.textContent = metrics.poWithin20;
-            if (poSlaLate) poSlaLate.textContent = metrics.poAfter20;
-            if (poSlaCircleValue) poSlaCircleValue.textContent = within20Pct + '%';
-            if (poSlaStatusIcon) poSlaStatusIcon.textContent = parseFloat(within20Pct) >= 95 ? '🟢' : parseFloat(within20Pct) >= 85 ? '🟡' : '🔴';
-            
-            // Update circle gradient
-            const circle = document.getElementById('po-sla-circle');
-            if (circle) {
-                const lateAngle = parseFloat(after20Pct) * 3.6;
-                circle.style.background = `conic-gradient(#ef4444 0deg, #ef4444 ${lateAngle}deg, #22c55e ${lateAngle}deg, #22c55e 360deg)`;
-            }
-            
-            // Update Aging Analysis
-            updateAgingAnalysis();
-            
-            // Update Cycle Time Distribution Chart
-            updateCycleTimeDistributionChart();
-            
-            console.log('SLA Display updated successfully');
-        }
-        
-        function updateSLACardClass(card, rate) {
-            if (!card) return;
-            card.classList.remove('sla-green', 'sla-yellow', 'sla-red');
-            const indicator = card.querySelector('.sla-indicator');
-            
-            if (rate >= 95) {
-                card.classList.add('sla-green');
-                if (indicator) indicator.textContent = '✓';
-            } else if (rate >= 85) {
-                card.classList.add('sla-yellow');
-                if (indicator) indicator.textContent = '!';
-            } else {
-                card.classList.add('sla-red');
-                if (indicator) indicator.textContent = '✗';
-            }
-        }
-        
-        // ==========================================
-        // AGING ANALYSIS FUNCTIONS
-        // ==========================================
-        
-        function updateAgingAnalysis() {
-            const allPRs = getFilteredPRs();
-            if (!allPRs || allPRs.length === 0) {
-                console.log('Aging Analysis: No data available');
-                return;
-            }
-            
-            const inProcessPRs = allPRs.filter(pr => {
-                const status = (pr.status || pr.pr_status || '').toUpperCase();
-                return status === 'IN PROCESS' || status === 'INCOMPLETE';
-            });
-            
-            console.log('Aging Analysis: Found', inProcessPRs.length, 'in-process PRs');
-            
-            const today = new Date();
-            const agingBuckets = {
-                '0-5': [],
-                '6-10': [],
-                '11-20': [],
-                '20plus': []
-            };
-            
-            inProcessPRs.forEach(pr => {
-                const dateField = pr.submission_date || pr.pending_since;
-                if (!dateField) return;
-                
-                const startDate = new Date(dateField);
-                const daysPending = Math.floor((today - startDate) / 86400000);
-                
-                if (daysPending <= 5) {
-                    agingBuckets['0-5'].push({ ...pr, daysPending });
-                } else if (daysPending <= 10) {
-                    agingBuckets['6-10'].push({ ...pr, daysPending });
-                } else if (daysPending <= 20) {
-                    agingBuckets['11-20'].push({ ...pr, daysPending });
-                } else {
-                    agingBuckets['20plus'].push({ ...pr, daysPending });
-                }
-            });
-            
-            const total = inProcessPRs.length || 1;
-            
-            // Update counts and percentages
-            document.getElementById('aging-total-count').textContent = inProcessPRs.length + ' items';
-            
-            const bucketIds = ['0-5', '6-10', '11-20', '20plus'];
-            bucketIds.forEach(id => {
-                const count = agingBuckets[id].length;
-                const pct = ((count / total) * 100).toFixed(0);
-                
-                const countEl = document.getElementById(`aging-${id}-count`);
-                const pctEl = document.getElementById(`aging-${id}-pct`);
-                const barEl = document.getElementById(`aging-${id}-bar`);
-                
-                if (countEl) countEl.textContent = count;
-                if (pctEl) pctEl.textContent = pct + '%';
-                if (barEl) barEl.style.width = pct + '%';
-            });
-        }
         
         function showAgingDetails(bucket) {
             const modal = document.getElementById('kpiModal');
@@ -5037,41 +5101,278 @@
         }
         
         // ==========================================
-        // CENTRAL REFRESH FUNCTION
+        // CENTRAL REFRESH FUNCTION (UNIFIED)
         // ==========================================
         
         function refreshAll() {
-            console.log('=== refreshAll() called ===');
+            console.log('=== refreshAll() v3.0 called ===');
             const allPRs = prData?.all_prs || [];
             console.log('Total PRs in data:', allPRs.length);
+            console.log('Current Filters:', currentFilters);
             
             if (allPRs.length === 0) {
                 console.warn('No PR data available for refresh');
                 return;
             }
             
-            // 1. Update filtered KPIs
+            // 1. Update ALL KPIs (unified function handles everything)
             updateFilteredKPIs();
             
-            // 2. Update SLA display
-            if (typeof updateSLADisplay === 'function') {
-                updateSLADisplay();
-            }
-            
-            // 3. Update PO KPIs
-            if (typeof updatePOKPIs === 'function') {
-                updatePOKPIs();
-            }
-            
-            // 4. Update charts with filtered data
+            // 2. Update all charts with filtered data
             updateChartsWithFilteredData();
             updatePOChartsWithFilteredData();
+            
+            // 3. Update Cycle Time Distribution Chart
+            if (typeof updateCycleTimeDistributionChart === 'function') {
+                updateCycleTimeDistributionChart();
+            }
             
             console.log('=== refreshAll() complete ===');
         }
         
-        // SLA functions are now directly integrated with filter functions above
-        console.log('Procurement Dashboard v2.2 - SLA Compliance Ready');
+        // ==========================================
+        // VALUE BAND SLA DETAILS
+        // ==========================================
+        
+        function showValueBandDetails(band) {
+            const modal = document.getElementById('kpiModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            const filteredPRs = getFilteredPRs();
+            const prsWithPO = filteredPRs.filter(pr => 
+                pr.pr_to_po_days !== null && 
+                pr.pr_to_po_days !== undefined
+            );
+            
+            let titleText = '';
+            let targetDays = 20;
+            let bandPRs = [];
+            
+            if (band === 'high') {
+                titleText = 'High Value PRs (≥500K SAR) - SLA ≤20 Days';
+                targetDays = 20;
+                bandPRs = prsWithPO.filter(pr => parseFloat(pr.pr_value || 0) >= 500000);
+            } else {
+                titleText = 'Standard PRs (<500K SAR) - SLA ≤15 Days';
+                targetDays = 15;
+                bandPRs = prsWithPO.filter(pr => parseFloat(pr.pr_value || 0) < 500000 && parseFloat(pr.pr_value || 0) > 0);
+            }
+            
+            const onTime = bandPRs.filter(pr => parseFloat(pr.pr_to_po_days) <= targetDays);
+            const late = bandPRs.filter(pr => parseFloat(pr.pr_to_po_days) > targetDays);
+            const slaRate = bandPRs.length > 0 ? ((onTime.length / bandPRs.length) * 100).toFixed(1) : 0;
+            
+            currentModalData = bandPRs;
+            
+            const summaryHTML = `
+                <div class="grid grid-cols-4 gap-4 mb-4">
+                    <div class="bg-blue-50 rounded-lg p-3 text-center border border-blue-200">
+                        <p class="text-2xl font-bold text-blue-600">${bandPRs.length}</p>
+                        <p class="text-xs text-blue-700">Total PRs</p>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-3 text-center border border-green-200">
+                        <p class="text-2xl font-bold text-green-600">${onTime.length}</p>
+                        <p class="text-xs text-green-700">On-Time (≤${targetDays}d)</p>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-3 text-center border border-red-200">
+                        <p class="text-2xl font-bold text-red-600">${late.length}</p>
+                        <p class="text-xs text-red-700">Late (>${targetDays}d)</p>
+                    </div>
+                    <div class="${parseFloat(slaRate) >= 95 ? 'bg-green-100 border-green-300' : 'bg-red-100 border-red-300'} rounded-lg p-3 text-center border">
+                        <p class="text-2xl font-bold ${parseFloat(slaRate) >= 95 ? 'text-green-600' : 'text-red-600'}">${slaRate}%</p>
+                        <p class="text-xs ${parseFloat(slaRate) >= 95 ? 'text-green-700' : 'text-red-700'}">SLA (Target: 95%)</p>
+                    </div>
+                </div>
+            `;
+            
+            const rows = bandPRs.slice(0, 100).map((pr, i) => {
+                const days = parseFloat(pr.pr_to_po_days);
+                const isOnTime = days <= targetDays;
+                const value = parseFloat(pr.pr_value || 0);
+                
+                return `
+                    <tr class="modal-row">
+                        <td class="text-center">${i + 1}</td>
+                        <td class="font-medium">${pr.pr_num || '-'}</td>
+                        <td class="max-w-[120px] truncate" title="${pr.project || ''}">${pr.project || '-'}</td>
+                        <td class="max-w-[100px] truncate">${pr.vendor || '-'}</td>
+                        <td class="text-right font-medium">${value.toLocaleString()} SAR</td>
+                        <td class="text-center">
+                            <span class="px-2 py-1 rounded text-xs font-medium ${isOnTime ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${days} days
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            ${isOnTime ? '<span class="text-green-600">✓</span>' : '<span class="text-red-600">✗</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            content.innerHTML = `
+                ${summaryHTML}
+                <div class="mb-4 flex justify-between items-center">
+                    <input type="text" id="modalSearch" placeholder="Search..." class="px-3 py-2 border rounded-lg text-sm w-48">
+                    <div class="flex gap-2">
+                        <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm">PDF</button>
+                        <button onclick="exportToCSV()" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm">CSV</button>
+                    </div>
+                </div>
+                <div class="scroll-container" style="max-height: 350px;">
+                    <table class="data-table text-sm w-full" id="modalTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>PR #</th>
+                                <th>Project</th>
+                                <th>Vendor</th>
+                                <th class="text-right">Value</th>
+                                <th class="text-center">PR→PO Days</th>
+                                <th class="text-center">SLA</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                ${bandPRs.length > 100 ? '<p class="text-xs text-gray-400 mt-2 text-center">Showing first 100 records</p>' : ''}
+            `;
+            
+            title.textContent = titleText;
+            modal.classList.add('show');
+            setupModalSearch();
+        }
+        
+        // ==========================================
+        // APRs NOT CONVERTED >30 DAYS
+        // ==========================================
+        
+        function showAPRsPendingDetails() {
+            const modal = document.getElementById('kpiModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            const filteredPRs = getFilteredPRs();
+            const today = new Date();
+            
+            const approvedNoPO = filteredPRs.filter(pr => {
+                if ((pr.pr_status || pr.status) !== 'APPROVED') return false;
+                if (pr.pr_to_po_days !== null && pr.pr_to_po_days !== undefined) return false;
+                if (!pr.approved_date) return false;
+                
+                const approvedDate = new Date(pr.approved_date);
+                const daysSinceApproval = Math.floor((today - approvedDate) / 86400000);
+                return daysSinceApproval > 30;
+            }).map(pr => {
+                const approvedDate = new Date(pr.approved_date);
+                const daysPending = Math.floor((today - approvedDate) / 86400000);
+                return { ...pr, daysPending };
+            }).sort((a, b) => b.daysPending - a.daysPending);
+            
+            currentModalData = approvedNoPO;
+            
+            // Calculate aging buckets
+            const aging31_60 = approvedNoPO.filter(pr => pr.daysPending <= 60).length;
+            const aging61_90 = approvedNoPO.filter(pr => pr.daysPending > 60 && pr.daysPending <= 90).length;
+            const aging90plus = approvedNoPO.filter(pr => pr.daysPending > 90).length;
+            
+            const totalValue = approvedNoPO.reduce((sum, pr) => sum + parseFloat(pr.pr_value || 0), 0);
+            
+            const summaryHTML = `
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-2xl">⚠️</span>
+                        <h4 class="font-bold text-amber-800">Approved PRs Pending PO Issuance >30 Days</h4>
+                    </div>
+                    <p class="text-sm text-amber-700 mb-4">These PRs were approved but PO has not been issued yet. Per SLA requirements, PO should be issued within 20 days of approval.</p>
+                    
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="bg-white rounded-lg p-3 text-center">
+                            <p class="text-2xl font-bold text-amber-600">${approvedNoPO.length}</p>
+                            <p class="text-xs text-gray-600">Total Pending</p>
+                        </div>
+                        <div class="bg-yellow-100 rounded-lg p-3 text-center">
+                            <p class="text-xl font-bold text-yellow-700">${aging31_60}</p>
+                            <p class="text-xs text-gray-600">31-60 Days</p>
+                        </div>
+                        <div class="bg-orange-100 rounded-lg p-3 text-center">
+                            <p class="text-xl font-bold text-orange-700">${aging61_90}</p>
+                            <p class="text-xs text-gray-600">61-90 Days</p>
+                        </div>
+                        <div class="bg-red-100 rounded-lg p-3 text-center">
+                            <p class="text-xl font-bold text-red-700">${aging90plus}</p>
+                            <p class="text-xs text-gray-600">>90 Days</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <p class="text-sm text-gray-600">Total Value at Risk: <span class="font-bold text-amber-700">${totalValue.toLocaleString()} SAR</span></p>
+                    </div>
+                </div>
+            `;
+            
+            const rows = approvedNoPO.slice(0, 100).map((pr, i) => {
+                const urgencyClass = pr.daysPending > 90 ? 'bg-red-100 text-red-800' : 
+                                    pr.daysPending > 60 ? 'bg-orange-100 text-orange-800' : 
+                                    'bg-yellow-100 text-yellow-800';
+                const value = parseFloat(pr.pr_value || 0);
+                
+                return `
+                    <tr class="modal-row">
+                        <td class="text-center">${i + 1}</td>
+                        <td class="font-medium">${pr.pr_num || '-'}</td>
+                        <td class="max-w-[120px] truncate" title="${pr.project || ''}">${pr.project || '-'}</td>
+                        <td class="max-w-[100px] truncate">${pr.vendor || '-'}</td>
+                        <td class="text-right">${value.toLocaleString()} SAR</td>
+                        <td>${pr.approved_date || '-'}</td>
+                        <td class="text-center">
+                            <span class="px-2 py-1 rounded text-xs font-medium ${urgencyClass}">
+                                ${pr.daysPending} days
+                            </span>
+                        </td>
+                        <td class="max-w-[100px] truncate text-orange-700">${pr.pending_with || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            content.innerHTML = `
+                ${summaryHTML}
+                <div class="mb-4 flex justify-between items-center">
+                    <input type="text" id="modalSearch" placeholder="Search..." class="px-3 py-2 border rounded-lg text-sm w-48">
+                    <div class="flex gap-2">
+                        <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm">PDF</button>
+                        <button onclick="exportToCSV()" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm">CSV</button>
+                    </div>
+                </div>
+                <div class="scroll-container" style="max-height: 300px;">
+                    <table class="data-table text-sm w-full" id="modalTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>PR #</th>
+                                <th>Project</th>
+                                <th>Vendor</th>
+                                <th class="text-right">Value</th>
+                                <th>Approved</th>
+                                <th class="text-center">Days Pending</th>
+                                <th>Pending With</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                ${approvedNoPO.length > 100 ? '<p class="text-xs text-gray-400 mt-2 text-center">Showing first 100 records</p>' : ''}
+            `;
+            
+            title.textContent = `APRs Pending PO >30 Days (${approvedNoPO.length} items)`;
+            modal.classList.add('show');
+            setupModalSearch();
+        }
+        
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        console.log('Procurement Dashboard v3.0 - Full SLA Compliance Ready');
+        console.log('SLA Requirements: PR Processing ≤2 days (95%), PO Issuance ≤20 days (95%)');
     </script>
 </body>
 </html>
