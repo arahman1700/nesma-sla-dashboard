@@ -825,6 +825,48 @@
                 </div>
             </div>
             
+            <!-- Scrap Filters -->
+            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Type</label>
+                        <select id="scrap-filter-type" onchange="applyScrapFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Types</option>
+                            <option value="Cable">Cable</option>
+                            <option value="Wood">Wood</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Status</label>
+                        <select id="scrap-filter-status" onchange="applyScrapFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Statuses</option>
+                            <option value="Completed">Completed</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Pickup Location</label>
+                        <select id="scrap-filter-pickup" onchange="applyScrapFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">From Date</label>
+                        <input type="date" id="scrap-filter-from" onchange="applyScrapFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">To Date</label>
+                        <input type="date" id="scrap-filter-to" onchange="applyScrapFilters()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="resetScrapFilters()" class="w-full px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 <!-- Total Jobs -->
                 <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl cursor-pointer hover:shadow-md transition-all" onclick="showScrapDetails('total')">
@@ -3007,12 +3049,17 @@
             }
         }
 
+        // Filtered Scrap Records (for use by cards and modals)
+        let filteredScrapRecords = [];
+
         // Load Scrap Data
         async function loadScrapData() {
             try {
                 const response = await fetch('data/scrap_removal_data.json');
                 if (response.ok) {
                     scrapData = await response.json();
+                    filteredScrapRecords = [...scrapData.records];
+                    populateScrapFilters();
                     updateScrapKPIs();
                 }
             } catch (error) {
@@ -3020,20 +3067,145 @@
             }
         }
 
-        // Update Scrap KPIs
-        function updateScrapKPIs() {
-            if (!scrapData || !scrapData.summary) return;
-
-            const s = scrapData.summary;
+        // Populate Scrap Filter Dropdowns
+        function populateScrapFilters() {
+            if (!scrapData || !scrapData.filters) return;
             
-            document.getElementById('scrap-total-jobs').textContent = s.total_jobs.toLocaleString();
-            document.getElementById('scrap-completed').textContent = s.completed.toLocaleString();
-            document.getElementById('scrap-cable-count').textContent = s.cable_jobs.toLocaleString();
-            document.getElementById('scrap-wood-count').textContent = s.wood_jobs.toLocaleString();
-            document.getElementById('scrap-cable-amount').textContent = (s.cable_amount / 1000).toFixed(0) + 'K SAR';
-            document.getElementById('scrap-wood-amount').textContent = (s.wood_amount / 1000).toFixed(0) + 'K SAR';
-            document.getElementById('scrap-total-amount').textContent = (s.total_amount / 1000000).toFixed(2) + 'M';
-            document.getElementById('scrap-sla-rate').textContent = s.sla_rate + '%';
+            const pickupSelect = document.getElementById('scrap-filter-pickup');
+            if (pickupSelect && scrapData.filters.pickup_locations) {
+                pickupSelect.innerHTML = '<option value="">All Locations</option>';
+                scrapData.filters.pickup_locations.forEach(loc => {
+                    if (loc) {
+                        pickupSelect.innerHTML += `<option value="${loc}">${loc}</option>`;
+                    }
+                });
+            }
+        }
+
+        // Apply Scrap Filters
+        function applyScrapFilters() {
+            if (!scrapData || !scrapData.records) return;
+            
+            const typeFilter = document.getElementById('scrap-filter-type')?.value || '';
+            const statusFilter = document.getElementById('scrap-filter-status')?.value || '';
+            const pickupFilter = document.getElementById('scrap-filter-pickup')?.value || '';
+            const fromDate = document.getElementById('scrap-filter-from')?.value || '';
+            const toDate = document.getElementById('scrap-filter-to')?.value || '';
+            
+            filteredScrapRecords = scrapData.records.filter(r => {
+                // Type filter
+                if (typeFilter && r.type !== typeFilter) return false;
+                
+                // Status filter
+                if (statusFilter && r.status !== statusFilter) return false;
+                
+                // Pickup location filter
+                if (pickupFilter && r.pickup_location !== pickupFilter) return false;
+                
+                // Date range filter
+                if (fromDate && r.request_date) {
+                    if (r.request_date < fromDate) return false;
+                }
+                if (toDate && r.request_date) {
+                    if (r.request_date > toDate) return false;
+                }
+                
+                return true;
+            });
+            
+            updateScrapKPIs();
+        }
+
+        // Reset Scrap Filters
+        function resetScrapFilters() {
+            document.getElementById('scrap-filter-type').value = '';
+            document.getElementById('scrap-filter-status').value = '';
+            document.getElementById('scrap-filter-pickup').value = '';
+            document.getElementById('scrap-filter-from').value = '';
+            document.getElementById('scrap-filter-to').value = '';
+            
+            filteredScrapRecords = [...scrapData.records];
+            updateScrapKPIs();
+        }
+
+        // Get Active Filter Info for display
+        function getActiveScrapFilterInfo() {
+            const filters = [];
+            
+            const typeFilter = document.getElementById('scrap-filter-type')?.value;
+            const statusFilter = document.getElementById('scrap-filter-status')?.value;
+            const pickupFilter = document.getElementById('scrap-filter-pickup')?.value;
+            const fromDate = document.getElementById('scrap-filter-from')?.value;
+            const toDate = document.getElementById('scrap-filter-to')?.value;
+            
+            if (typeFilter) filters.push(typeFilter);
+            if (statusFilter) filters.push(statusFilter);
+            if (pickupFilter) filters.push(pickupFilter.substring(0, 15) + '...');
+            if (fromDate) filters.push('From: ' + fromDate);
+            if (toDate) filters.push('To: ' + toDate);
+            
+            return filters.length > 0 ? filters.join(', ') : '';
+        }
+
+        // Update Scrap KPIs (now uses filtered data)
+        function updateScrapKPIs() {
+            if (!scrapData) return;
+            
+            // Use filtered records for calculations
+            const records = filteredScrapRecords;
+            
+            const totalJobs = records.length;
+            const completed = records.filter(r => r.status === 'Completed').length;
+            const cableRecords = records.filter(r => r.type === 'Cable');
+            const woodRecords = records.filter(r => r.type === 'Wood');
+            
+            const cableJobs = cableRecords.length;
+            const woodJobs = woodRecords.length;
+            const cableAmount = cableRecords.reduce((sum, r) => sum + (r.total_amount || 0), 0);
+            const woodAmount = woodRecords.reduce((sum, r) => sum + (r.total_amount || 0), 0);
+            const totalAmount = cableAmount + woodAmount;
+            
+            // Calculate SLA rate for filtered records
+            const completedRecords = records.filter(r => r.status === 'Completed');
+            let slaCompliant = 0;
+            completedRecords.forEach(r => {
+                const reqDate = r.request_date;
+                const compDate = r.complete_date;
+                if (reqDate && compDate) {
+                    const days = Math.ceil((new Date(compDate) - new Date(reqDate)) / (1000 * 60 * 60 * 24));
+                    if (days <= 3) slaCompliant++;
+                } else {
+                    slaCompliant++; // Assume compliant if no dates
+                }
+            });
+            const slaRate = completedRecords.length > 0 ? (slaCompliant / completedRecords.length * 100) : 0;
+            
+            // Update DOM
+            document.getElementById('scrap-total-jobs').textContent = totalJobs.toLocaleString();
+            document.getElementById('scrap-completed').textContent = completed.toLocaleString();
+            document.getElementById('scrap-cable-count').textContent = cableJobs.toLocaleString();
+            document.getElementById('scrap-wood-count').textContent = woodJobs.toLocaleString();
+            
+            // Format amounts
+            if (cableAmount >= 1000000) {
+                document.getElementById('scrap-cable-amount').textContent = (cableAmount / 1000000).toFixed(2) + 'M SAR';
+            } else {
+                document.getElementById('scrap-cable-amount').textContent = (cableAmount / 1000).toFixed(0) + 'K SAR';
+            }
+            
+            if (woodAmount >= 1000000) {
+                document.getElementById('scrap-wood-amount').textContent = (woodAmount / 1000000).toFixed(2) + 'M SAR';
+            } else {
+                document.getElementById('scrap-wood-amount').textContent = (woodAmount / 1000).toFixed(0) + 'K SAR';
+            }
+            
+            if (totalAmount >= 1000000) {
+                document.getElementById('scrap-total-amount').textContent = (totalAmount / 1000000).toFixed(2) + 'M';
+            } else {
+                document.getElementById('scrap-total-amount').textContent = (totalAmount / 1000).toFixed(0) + 'K';
+            }
+            
+            document.getElementById('scrap-sla-rate').textContent = slaRate.toFixed(1) + '%';
         }
 
         // Show SLA Info Modal
@@ -3217,11 +3389,12 @@
                 return;
             }
 
-            // Create a copy of records to avoid modifying original
-            let records = [...scrapData.records];
+            // Use filtered records as base (respects current filters)
+            let records = [...filteredScrapRecords];
             let titleText = 'Scrap Operations';
             let subtitleText = '';
             let totalAmount = 0;
+            let filterInfo = getActiveScrapFilterInfo();
 
             switch(type) {
                 case 'total':
@@ -3253,6 +3426,11 @@
                     subtitleText = 'Sorted by total amount (highest first)';
                     totalAmount = records.reduce((sum, r) => sum + (r.total_amount || 0), 0);
                     break;
+            }
+            
+            // Add filter info to subtitle if filters are active
+            if (filterInfo) {
+                subtitleText += ` | Filtered: ${filterInfo}`;
             }
             
             console.log(`Scrap Details - Type: ${type}, Records: ${records.length}, Amount: ${totalAmount}`);
