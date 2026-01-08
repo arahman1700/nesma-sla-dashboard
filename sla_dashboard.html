@@ -3217,41 +3217,50 @@
                 return;
             }
 
-            let records = scrapData.records;
+            // Create a copy of records to avoid modifying original
+            let records = [...scrapData.records];
             let titleText = 'Scrap Operations';
             let subtitleText = '';
+            let totalAmount = 0;
 
             switch(type) {
                 case 'total':
                     titleText = 'All Scrap Operations';
                     subtitleText = 'Complete list of all scrap removal jobs';
+                    totalAmount = records.reduce((sum, r) => sum + (r.total_amount || 0), 0);
                     break;
                 case 'completed':
                     titleText = 'Completed Operations';
                     records = records.filter(r => r.status === 'Completed');
                     subtitleText = 'All completed scrap removal jobs';
+                    totalAmount = records.reduce((sum, r) => sum + (r.total_amount || 0), 0);
                     break;
                 case 'cable':
                     titleText = 'Cable Scrap Operations';
                     records = records.filter(r => r.type === 'Cable');
                     subtitleText = 'Cable scrap removal jobs only';
+                    totalAmount = records.reduce((sum, r) => sum + (r.total_amount || 0), 0);
                     break;
                 case 'wood':
                     titleText = 'Wood Scrap Operations';
                     records = records.filter(r => r.type === 'Wood');
                     subtitleText = 'Wood scrap removal jobs only';
+                    totalAmount = records.reduce((sum, r) => sum + (r.total_amount || 0), 0);
                     break;
                 case 'amount':
                     titleText = 'Operations by Amount';
-                    records = records.sort((a, b) => b.total_amount - a.total_amount);
-                    subtitleText = 'Sorted by total amount';
+                    records = records.sort((a, b) => (b.total_amount || 0) - (a.total_amount || 0));
+                    subtitleText = 'Sorted by total amount (highest first)';
+                    totalAmount = records.reduce((sum, r) => sum + (r.total_amount || 0), 0);
                     break;
             }
+            
+            console.log(`Scrap Details - Type: ${type}, Records: ${records.length}, Amount: ${totalAmount}`);
 
             currentModalData = { type: 'scrap', records: records };
 
             document.getElementById('modalTitle').textContent = titleText;
-            document.getElementById('modalSubtitle').textContent = subtitleText + ` (${records.length} records)`;
+            document.getElementById('modalSubtitle').textContent = `${subtitleText} | ${records.length} records | ${totalAmount.toLocaleString()} SAR`;
             document.getElementById('modalBody').innerHTML = generateScrapTable(records);
             document.getElementById('detailModal').classList.add('active');
             document.body.style.overflow = 'hidden';
