@@ -1599,6 +1599,10 @@
         let filteredRecords = [];
         let charts = {};
         let currentFilters = { year: '2025', month: '', project: '', supplier: '', company: '', status: '' };
+        
+        // Scrap Data Variables (moved here for proper initialization)
+        let scrapData = null;
+        let filteredScrapRecords = [];
 
         // Chart.js Config
         Chart.defaults.font.family = 'Inter, sans-serif';
@@ -1736,7 +1740,9 @@
         document.addEventListener('DOMContentLoaded', async () => {
             loadSettings();
             await loadSLAData();
+            await loadScrapData();  // Load scrap data here
             applySettings();
+            console.log('Page initialized - Scrap records:', filteredScrapRecords?.length || 0);
         });
 
         // Load SLA Data from JSON
@@ -2924,9 +2930,6 @@
             }
         };
 
-        // Scrap Data Store
-        let scrapData = null;
-
         // ==========================================
         // SCRAP COLUMN DEFINITIONS
         // ==========================================
@@ -3048,9 +3051,6 @@
                 document.getElementById('modalBody').innerHTML = generateScrapTable(currentModalData.records);
             }
         }
-
-        // Filtered Scrap Records (for use by cards and modals)
-        let filteredScrapRecords = [];
 
         // Load Scrap Data
         async function loadScrapData() {
@@ -3641,10 +3641,6 @@
             doc.save(`NESMA_Scrap_Report_${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
-        // Load scrap data on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadScrapData();
-        });
     </script>
 </body>
 </html>
