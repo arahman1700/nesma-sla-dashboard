@@ -946,13 +946,16 @@
                     </div>
 
                     <!-- PR to PO KPIs - Current Month -->
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Current Month</h3>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Current Period Performance</h3>
                     <div id="po-kpi-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
                         <!-- PRs Received (Month) -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-[#2E3192] to-[#0E2841] text-white" onclick="showPOKPIDetails('prs-received-month')">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-[#2E3192] to-[#0E2841] text-white cursor-pointer hover:shadow-xl transition-all" onclick="showPOKPIDetails('prs-received-month')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-[#80D1E9] text-xs lg:text-sm mb-1">PRs Received</p>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="text-[#80D1E9] text-xs lg:text-sm">PRs Approved</p>
+                                        <button onclick="event.stopPropagation(); showSLARequirementInfo('approved')" class="text-white/70 hover:text-white text-sm" title="SLA Requirement">ℹ️</button>
+                                    </div>
                                     <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-received-month">242</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
@@ -962,16 +965,20 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-[#80D1E9]">
+                            <div class="text-xs text-[#80D1E9] flex items-center justify-between">
                                 <span>Click for details</span>
+                                <button onclick="event.stopPropagation(); showCalculationMethodInfo('approved')" class="text-white/70 hover:text-white" title="Calculation Method">📊</button>
                             </div>
                         </div>
 
                         <!-- POs Issued (Month) -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white" onclick="showPOKPIDetails('pos-issued-month')">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white cursor-pointer hover:shadow-xl transition-all" onclick="showPOKPIDetails('pos-issued-month')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-blue-100 text-xs lg:text-sm mb-1">POs Issued</p>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="text-blue-100 text-xs lg:text-sm">POs Issued</p>
+                                        <button onclick="event.stopPropagation(); showSLARequirementInfo('po-issuance')" class="text-white/70 hover:text-white text-sm" title="SLA Requirement">ℹ️</button>
+                                    </div>
                                     <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-issued-month">198</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
@@ -980,16 +987,20 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-blue-100">
+                            <div class="text-xs text-blue-100 flex items-center justify-between">
                                 <span>Click for details</span>
+                                <button onclick="event.stopPropagation(); showCalculationMethodInfo('po-issuance')" class="text-white/70 hover:text-white" title="Calculation Method">📊</button>
                             </div>
                         </div>
 
                         <!-- Within 20 Days (SLA Target) -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-green-500 to-green-600 text-white" onclick="showPOKPIDetails('within20days')">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-green-500 to-green-600 text-white cursor-pointer hover:shadow-xl transition-all" onclick="showPOKPIDetails('within20days')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-green-100 text-xs lg:text-sm mb-1">PO ≤20 Days (SLA)</p>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="text-green-100 text-xs lg:text-sm">PO ≤20 Days (SLA)</p>
+                                        <button onclick="event.stopPropagation(); showSLARequirementInfo('po-issuance')" class="text-white/70 hover:text-white text-sm" title="SLA Requirement">ℹ️</button>
+                                    </div>
                                     <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-within20">120</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
@@ -998,17 +1009,23 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-green-100">
-                                <span id="po-kpi-within20-pct">60.6%</span> <span>of issued</span>
-                                <span class="ml-2 px-2 py-0.5 rounded text-xs" id="po-sla-badge">Target: 95%</span>
+                            <div class="text-xs text-green-100 flex items-center justify-between">
+                                <div>
+                                    <span id="po-kpi-within20-pct">60.6%</span> <span>of issued</span>
+                                    <span class="ml-2 px-2 py-0.5 rounded bg-white/20" id="po-sla-badge">Target: 95%</span>
+                                </div>
+                                <button onclick="event.stopPropagation(); showCalculationMethodInfo('po-issuance')" class="text-white/70 hover:text-white" title="Calculation Method">📊</button>
                             </div>
                         </div>
 
                         <!-- After 20 Days (SLA Breach) -->
-                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-red-500 to-red-600 text-white" onclick="showPOKPIDetails('after20days')">
+                        <div class="card kpi-card p-4 lg:p-6 bg-gradient-to-br from-red-500 to-red-600 text-white cursor-pointer hover:shadow-xl transition-all" onclick="showPOKPIDetails('after20days')">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <p class="text-red-100 text-xs lg:text-sm mb-1">PO >20 Days ⚠️</p>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="text-red-100 text-xs lg:text-sm">PO >20 Days</p>
+                                        <button onclick="event.stopPropagation(); showSLARequirementInfo('po-issuance')" class="text-white/70 hover:text-white text-sm" title="SLA Breach Info">⚠️</button>
+                                    </div>
                                     <p class="text-2xl lg:text-3xl font-bold" id="po-kpi-after20">78</p>
                                 </div>
                                 <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
@@ -1017,14 +1034,15 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="text-xs text-red-100">
-                                <span id="po-kpi-after20-pct">39.4%</span> <span>SLA Breach</span>
+                            <div class="text-xs text-red-100 flex items-center justify-between">
+                                <div><span id="po-kpi-after20-pct">39.4%</span> <span>SLA Breach</span></div>
+                                <button onclick="event.stopPropagation(); showCalculationMethodInfo('po-issuance')" class="text-white/70 hover:text-white" title="Calculation Method">📊</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- PO SLA Compliance Card -->
-                    <div id="po-sla-compliance" class="card p-4 lg:p-6 mb-6" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac;">
+                    <div id="po-sla-compliance" class="card p-4 lg:p-6 mb-6 cursor-pointer hover:shadow-xl transition-all" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac;" onclick="showSLADetails('overall')">
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-4">
                                 <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold" id="po-sla-circle" style="background: conic-gradient(#ef4444 0deg, #ef4444 calc(39.4 * 3.6deg), #22c55e calc(39.4 * 3.6deg), #22c55e 360deg);">
@@ -1033,16 +1051,20 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <h4 class="text-lg font-bold text-gray-800">PO Issuance SLA Compliance</h4>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="text-lg font-bold text-gray-800">PO Issuance SLA Compliance</h4>
+                                        <button onclick="event.stopPropagation(); showSLARequirementInfo('po-issuance')" class="text-gray-500 hover:text-blue-600" title="SLA Requirement">ℹ️</button>
+                                        <button onclick="event.stopPropagation(); showCalculationMethodInfo('po-issuance')" class="text-gray-500 hover:text-blue-600" title="Calculation Method">📊</button>
+                                    </div>
                                     <p class="text-sm text-gray-600">Target: Issue PO within 20 business days (≥95%)</p>
                                 </div>
                             </div>
                             <div class="flex gap-6">
-                                <div class="text-center">
+                                <div class="text-center cursor-pointer hover:bg-green-100 p-2 rounded-lg transition-all" onclick="event.stopPropagation(); showPOKPIDetails('within20days')">
                                     <p class="text-2xl font-bold text-green-600" id="po-sla-on-time">120</p>
                                     <p class="text-xs text-gray-500">On-time</p>
                                 </div>
-                                <div class="text-center">
+                                <div class="text-center cursor-pointer hover:bg-red-100 p-2 rounded-lg transition-all" onclick="event.stopPropagation(); showPOKPIDetails('after20days')">
                                     <p class="text-2xl font-bold text-red-600" id="po-sla-late">78</p>
                                     <p class="text-xs text-gray-500">Late</p>
                                 </div>
@@ -1052,16 +1074,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="mt-3 text-center text-xs text-gray-500">Click for detailed SLA breakdown</div>
                     </div>
 
                     <!-- SLA by Value Band (Per NIT-SCM-SLA-KSA-001 Requirements) -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                         <!-- High Value SLA (≥500K SAR) -->
-                        <div class="card p-4 cursor-pointer hover:shadow-lg transition-all" onclick="showValueBandDetails('high')">
+                        <div class="card p-4 cursor-pointer hover:shadow-xl transition-all" onclick="showValueBandDetails('high')">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xl">💰</span>
                                     <span class="font-semibold text-gray-700">High Value (≥500K)</span>
+                                    <button onclick="event.stopPropagation(); showSLARequirementInfo('high-value')" class="text-gray-400 hover:text-blue-600 text-sm" title="SLA Requirement">ℹ️</button>
                                 </div>
                                 <span class="px-2 py-1 rounded text-xs font-bold bg-purple-100 text-purple-700">≤20 Days</span>
                             </div>
@@ -1073,6 +1097,7 @@
                                 <div class="text-right">
                                     <p class="text-sm font-medium text-gray-600" id="sla-high-value-count">0/0</p>
                                     <p class="text-xs text-gray-400">On-time/Total</p>
+                                    <button onclick="event.stopPropagation(); showCalculationMethodInfo('high-value')" class="text-gray-400 hover:text-blue-600 text-sm mt-1" title="Calculation Method">📊</button>
                                 </div>
                             </div>
                             <div class="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -1081,11 +1106,12 @@
                         </div>
 
                         <!-- Low Value SLA (<500K SAR) -->
-                        <div class="card p-4 cursor-pointer hover:shadow-lg transition-all" onclick="showValueBandDetails('low')">
+                        <div class="card p-4 cursor-pointer hover:shadow-xl transition-all" onclick="showValueBandDetails('low')">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xl">📋</span>
                                     <span class="font-semibold text-gray-700">Standard (<500K)</span>
+                                    <button onclick="event.stopPropagation(); showSLARequirementInfo('low-value')" class="text-gray-400 hover:text-blue-600 text-sm" title="SLA Requirement">ℹ️</button>
                                 </div>
                                 <span class="px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-700">≤15 Days</span>
                             </div>
@@ -1097,6 +1123,7 @@
                                 <div class="text-right">
                                     <p class="text-sm font-medium text-gray-600" id="sla-low-value-count">0/0</p>
                                     <p class="text-xs text-gray-400">On-time/Total</p>
+                                    <button onclick="event.stopPropagation(); showCalculationMethodInfo('low-value')" class="text-gray-400 hover:text-blue-600 text-sm mt-1" title="Calculation Method">📊</button>
                                 </div>
                             </div>
                             <div class="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -1105,11 +1132,12 @@
                         </div>
 
                         <!-- APRs Not Converted >30 Days -->
-                        <div class="card p-4 cursor-pointer hover:shadow-lg transition-all" onclick="showAPRsPendingDetails()" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b;">
+                        <div class="card p-4 cursor-pointer hover:shadow-xl transition-all" onclick="showAPRsPendingDetails()" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b;">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xl">⚠️</span>
                                     <span class="font-semibold text-amber-800">APRs Pending >30 Days</span>
+                                    <button onclick="event.stopPropagation(); showSLARequirementInfo('aprs-pending')" class="text-amber-600 hover:text-amber-800 text-sm" title="SLA Requirement">ℹ️</button>
                                 </div>
                                 <span class="px-2 py-1 rounded text-xs font-bold bg-amber-600 text-white">Action Required</span>
                             </div>
@@ -1121,6 +1149,7 @@
                                 <div class="text-right">
                                     <p class="text-sm font-medium text-amber-700">Click to view</p>
                                     <p class="text-xs text-amber-500">details & take action</p>
+                                    <button onclick="event.stopPropagation(); showCalculationMethodInfo('aprs-pending')" class="text-amber-600 hover:text-amber-800 text-sm mt-1" title="Calculation Method">📊</button>
                                 </div>
                             </div>
                         </div>
@@ -2024,32 +2053,45 @@
             }
         });
 
-        // Column definitions for tables
+        // Column definitions for tables - All available Smartsheet columns
         const columnDefinitions = {
             'pr-table': [
                 { id: 'pr_num', label: 'PR #' },
                 { id: 'project', label: 'Project' },
                 { id: 'description', label: 'Description' },
                 { id: 'vendor', label: 'Vendor' },
-                { id: 'pr_value', label: 'Value' },
+                { id: 'pr_value', label: 'PR Value' },
+                { id: 'po_value', label: 'PO Value' },
                 { id: 'status', label: 'Status' },
                 { id: 'submission_date', label: 'Submitted' },
                 { id: 'approved_date', label: 'Approved' },
                 { id: 'return_date', label: 'Returned' },
+                { id: 'reject_date', label: 'Rejected' },
+                { id: 'pr_to_po_days', label: 'PR→PO Days' },
                 { id: 'pending_with', label: 'Pending With' },
-                { id: 'pending_since', label: 'Since' },
-                { id: 'pr_note', label: 'Note' }
+                { id: 'pending_since', label: 'Pending Since' },
+                { id: 'agent', label: 'Agent' },
+                { id: 'pr_note', label: 'Note' },
+                { id: 'currency', label: 'Currency' },
+                { id: 'saving_amount', label: 'Savings' },
+                { id: 'po_status', label: 'PO Status' }
             ],
             'po-table': [
                 { id: 'pr_num', label: 'PR #' },
                 { id: 'project', label: 'Project' },
+                { id: 'description', label: 'Description' },
                 { id: 'po_num', label: 'PO #' },
                 { id: 'vendor', label: 'Vendor' },
                 { id: 'pr_value', label: 'PR Value' },
                 { id: 'po_value', label: 'PO Value' },
+                { id: 'saving_amount', label: 'Savings' },
                 { id: 'pr_to_po_days', label: 'PR→PO Days' },
                 { id: 'status', label: 'Status' },
-                { id: 'po_approved_date', label: 'PO Date' }
+                { id: 'submission_date', label: 'Submitted' },
+                { id: 'approved_date', label: 'Approved' },
+                { id: 'agent', label: 'Agent' },
+                { id: 'currency', label: 'Currency' },
+                { id: 'po_status', label: 'PO Status' }
             ],
             'vendor-table': [
                 { id: 'name', label: 'Vendor Name' },
@@ -2060,6 +2102,27 @@
                 { id: 'eval_date', label: 'Eval Date' },
                 { id: 'projects', label: 'Projects' },
                 { id: 'pr_count', label: 'PR Count' }
+            ],
+            'value-band-table': [
+                { id: 'pr_num', label: 'PR #' },
+                { id: 'project', label: 'Project' },
+                { id: 'vendor', label: 'Vendor' },
+                { id: 'pr_value', label: 'PR Value' },
+                { id: 'po_value', label: 'PO Value' },
+                { id: 'pr_to_po_days', label: 'PR→PO Days' },
+                { id: 'status', label: 'Status' },
+                { id: 'approved_date', label: 'Approved' },
+                { id: 'agent', label: 'Agent' }
+            ],
+            'aprs-pending-table': [
+                { id: 'pr_num', label: 'PR #' },
+                { id: 'project', label: 'Project' },
+                { id: 'vendor', label: 'Vendor' },
+                { id: 'pr_value', label: 'PR Value' },
+                { id: 'approved_date', label: 'Approved' },
+                { id: 'days_pending', label: 'Days Pending' },
+                { id: 'pending_with', label: 'Pending With' },
+                { id: 'agent', label: 'Agent' }
             ]
         };
 
@@ -4354,14 +4417,25 @@
         }
 
         // ==========================================
-        // Column Selector Popup
+        // Enhanced Column Selector with Drag & Drop
         // ==========================================
         let currentTableType = null;
+        let draggedItem = null;
 
         function openColumnSelector(tableType) {
             currentTableType = tableType;
             const columns = columnDefinitions[tableType];
-            const selectedCols = dashboardSettings.columns[tableType] || [];
+            let selectedCols = dashboardSettings.columns[tableType] || columns.map(c => c.id);
+            
+            // Sort columns: selected first (in order), then unselected
+            const sortedColumns = [...columns].sort((a, b) => {
+                const aIndex = selectedCols.indexOf(a.id);
+                const bIndex = selectedCols.indexOf(b.id);
+                if (aIndex === -1 && bIndex === -1) return 0;
+                if (aIndex === -1) return 1;
+                if (bIndex === -1) return -1;
+                return aIndex - bIndex;
+            });
 
             const popup = document.createElement('div');
             popup.id = 'columnSelectorPopup';
@@ -4369,38 +4443,106 @@
             popup.innerHTML = `
                 <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-gray-800">${'Select Columns'}</h3>
+                        <h3 class="text-lg font-bold text-gray-800">Select & Reorder Columns</h3>
                         <button onclick="closeColumnSelector()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                     </div>
-                    <div class="space-y-2 max-h-64 overflow-y-auto">
-                        ${columns.map(col => `
-                            <label class="flex items-center gap-3 p-2 rounded hover:bg-gray-100 cursor-pointer">
+                    <p class="text-xs text-gray-500 mb-3">Drag to reorder • Check to show/hide</p>
+                    <div id="columnList" class="space-y-1 max-h-80 overflow-y-auto border rounded-lg p-2">
+                        ${sortedColumns.map((col, idx) => `
+                            <div class="column-item flex items-center gap-3 p-2 rounded hover:bg-gray-100 cursor-move bg-white border border-gray-200" 
+                                 draggable="true" data-col="${col.id}" data-order="${idx}">
+                                <span class="text-gray-400 cursor-move">⋮⋮</span>
                                 <input type="checkbox" class="w-4 h-4 text-blue-600 rounded"
                                     data-col="${col.id}" ${selectedCols.includes(col.id) ? 'checked' : ''}>
-                                <span>${col.label}</span>
-                            </label>
+                                <span class="flex-1">${col.label}</span>
+                                <span class="text-xs text-gray-400">${col.id}</span>
+                            </div>
                         `).join('')}
                     </div>
                     <div class="flex gap-3 mt-4">
-                        <button onclick="applyColumnSelection()" class="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            ${'Apply'}
+                        <button onclick="applyColumnSelection()" class="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                            Apply
                         </button>
                         <button onclick="selectAllColumns()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                            ${'All'}
+                            All
                         </button>
-                        <button onclick="closeColumnSelector()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100">
-                            ${'Cancel'}
+                        <button onclick="deselectAllColumns()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                            None
+                        </button>
+                        <button onclick="resetColumnOrder()" class="px-4 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200">
+                            Reset
                         </button>
                     </div>
                 </div>
             `;
             popup.onclick = () => closeColumnSelector();
             document.body.appendChild(popup);
+            
+            // Setup drag and drop
+            setupDragAndDrop();
+        }
+
+        function setupDragAndDrop() {
+            const columnList = document.getElementById('columnList');
+            const items = columnList.querySelectorAll('.column-item');
+            
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragenter', handleDragEnter);
+                item.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('opacity-50', 'border-blue-500');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('opacity-50', 'border-blue-500');
+            document.querySelectorAll('.column-item').forEach(item => {
+                item.classList.remove('border-t-2', 'border-blue-500');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('border-t-2', 'border-blue-500');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('border-t-2', 'border-blue-500');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (this !== draggedItem) {
+                const columnList = document.getElementById('columnList');
+                const items = Array.from(columnList.querySelectorAll('.column-item'));
+                const draggedIndex = items.indexOf(draggedItem);
+                const targetIndex = items.indexOf(this);
+                
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedItem, this);
+                }
+            }
+            this.classList.remove('border-t-2', 'border-blue-500');
         }
 
         function closeColumnSelector() {
             const popup = document.getElementById('columnSelectorPopup');
             if (popup) popup.remove();
+            draggedItem = null;
         }
 
         function selectAllColumns() {
@@ -4408,9 +4550,31 @@
             checkboxes.forEach(cb => cb.checked = true);
         }
 
+        function deselectAllColumns() {
+            const checkboxes = document.querySelectorAll('#columnSelectorPopup input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+        }
+
+        function resetColumnOrder() {
+            const columns = columnDefinitions[currentTableType];
+            dashboardSettings.columns[currentTableType] = columns.map(c => c.id);
+            saveSettings();
+            closeColumnSelector();
+            openColumnSelector(currentTableType);
+        }
+
         function applyColumnSelection() {
-            const checkboxes = document.querySelectorAll('#columnSelectorPopup input[type="checkbox"]:checked');
-            const selectedCols = Array.from(checkboxes).map(cb => cb.dataset.col);
+            // Get columns in their current order
+            const columnList = document.getElementById('columnList');
+            const items = columnList.querySelectorAll('.column-item');
+            const selectedCols = [];
+            
+            items.forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (checkbox && checkbox.checked) {
+                    selectedCols.push(checkbox.dataset.col);
+                }
+            });
 
             if (selectedCols.length === 0) {
                 alert('Select at least one column');
@@ -4567,24 +4731,30 @@
             const countLabel = `Total: ${count} records`;
 
             if (count === 0) {
-                return `<p class="text-gray-500 text-center py-8">${'No data available'}</p>`;
+                return `<p class="text-gray-500 text-center py-8">No data available</p>`;
             }
 
             // Get selected columns from settings
             const selectedColumns = dashboardSettings.columns['po-table'] || ['pr_num', 'project', 'vendor', 'pr_value', 'po_value', 'pr_to_po_days', 'status'];
-            const isPOType = type.includes('pos-issued') || type.includes('30days') || type.includes('30-ytd');
+            const isPOType = type.includes('pos-issued') || type.includes('20days') || type.includes('30days') || type.includes('30-ytd');
 
             // All available columns with their definitions
             const allColumns = {
-                'pr_num': { label: 'PR #', getValue: (pr) => pr.pr_num || '-', class: 'font-medium' },
-                'project': { label: 'Project', getValue: (pr) => pr.project || '-', class: 'max-w-[100px] truncate' },
-                'po_num': { label: 'PO #', getValue: (pr) => pr.po_num || '-', class: 'font-medium text-blue-600' },
+                'pr_num': { label: 'PR #', getValue: (pr) => pr.pr_num || '-', class: 'font-medium whitespace-nowrap' },
+                'project': { label: 'Project', getValue: (pr) => pr.project || '-', class: 'max-w-[120px] truncate' },
+                'description': { label: 'Description', getValue: (pr) => pr.description || '-', class: 'max-w-[150px] truncate' },
+                'po_num': { label: 'PO #', getValue: (pr) => pr.po_num || '-', class: 'font-medium text-blue-600 whitespace-nowrap' },
                 'vendor': { label: 'Vendor', getValue: (pr) => pr.vendor || '-', class: 'max-w-[100px] truncate' },
-                'pr_value': { label: 'PR Value', getValue: (pr) => pr.pr_value ? Number(pr.pr_value).toLocaleString() + ' SAR' : '-' },
-                'po_value': { label: 'PO Value', getValue: (pr) => pr.po_value ? Number(pr.po_value).toLocaleString() + ' SAR' : '-' },
+                'pr_value': { label: 'PR Value', getValue: (pr) => pr.pr_value ? Number(pr.pr_value).toLocaleString() + ' SAR' : '-', class: 'text-right whitespace-nowrap' },
+                'po_value': { label: 'PO Value', getValue: (pr) => pr.po_value ? Number(pr.po_value).toLocaleString() + ' SAR' : '-', class: 'text-right whitespace-nowrap' },
+                'saving_amount': { label: 'Savings', getValue: (pr) => pr.saving_amount ? Number(pr.saving_amount).toLocaleString() + ' SAR' : '-', class: 'text-right text-green-600 whitespace-nowrap' },
                 'pr_to_po_days': { label: 'PR→PO Days', getValue: (pr) => pr.pr_to_po_days !== null ? pr.pr_to_po_days : '-', isDays: true },
-                'status': { label: 'Status', getValue: (pr) => pr.status || '-', isStatus: true },
-                'po_approved_date': { label: 'PO Approved', getValue: (pr) => pr.po_approved_date || '-' }
+                'status': { label: 'Status', getValue: (pr) => pr.status || pr.pr_status || '-', isStatus: true },
+                'submission_date': { label: 'Submitted', getValue: (pr) => pr.submission_date || '-', class: 'whitespace-nowrap' },
+                'approved_date': { label: 'Approved', getValue: (pr) => pr.approved_date || '-', class: 'whitespace-nowrap' },
+                'agent': { label: 'Agent', getValue: (pr) => pr.agent || '-', class: 'max-w-[100px] truncate' },
+                'currency': { label: 'Currency', getValue: (pr) => pr.currency || 'SAR', class: 'text-center' },
+                'po_status': { label: 'PO Status', getValue: (pr) => pr.po_status || '-', class: 'text-center' }
             };
 
             // If PO type, ensure PO columns are included
@@ -4593,14 +4763,17 @@
                 columnsToShow.push('pr_to_po_days');
             }
 
-            // Generate table headers
+            // Filter to only valid columns
+            columnsToShow = columnsToShow.filter(colId => allColumns[colId]);
+
+            // Generate table headers with sort capability
             const headers = columnsToShow.map(colId => {
                 const col = allColumns[colId];
-                return col ? `<th>${col.label}</th>` : '';
+                return col ? `<th class="cursor-pointer hover:bg-gray-100" onclick="sortModalTable('${colId}')">${col.label} <span class="text-xs text-gray-400">↕</span></th>` : '';
             }).join('');
 
             // Generate table rows
-            const rows = prs.map((pr, i) => {
+            const rows = prs.slice(0, 200).map((pr, i) => {
                 const cells = columnsToShow.map(colId => {
                     const col = allColumns[colId];
                     if (!col) return '';
@@ -4609,43 +4782,81 @@
                     const className = col.class || '';
 
                     if (col.isStatus) {
-                        return `<td><span class="px-2 py-1 rounded text-xs ${pr.status === 'APPROVED' ? 'bg-green-100 text-green-800' : pr.status === 'RETURNED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">${value}</span></td>`;
+                        const status = pr.status || pr.pr_status || '';
+                        const statusClass = status === 'APPROVED' ? 'bg-green-100 text-green-800' : 
+                                           status === 'RETURNED' ? 'bg-red-100 text-red-800' : 
+                                           status === 'IN PROCESS' ? 'bg-blue-100 text-blue-800' :
+                                           status === 'REJECTED' ? 'bg-red-200 text-red-900' :
+                                           'bg-gray-100 text-gray-800';
+                        return `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${statusClass}">${value}</span></td>`;
                     }
 
                     if (col.isDays) {
                         const days = pr.pr_to_po_days;
-                        const colorClass = days !== null && days <= 20 ? 'bg-green-100 text-green-800' : days !== null && days <= 30 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
-                        return `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${colorClass}">${days !== null ? days + ' days' : '-'}</span></td>`;
+                        const colorClass = days !== null && days <= 20 ? 'bg-green-100 text-green-800' : 
+                                          days !== null && days <= 30 ? 'bg-yellow-100 text-yellow-800' : 
+                                          days !== null ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-500';
+                        return `<td class="text-center"><span class="px-2 py-1 rounded text-xs font-medium ${colorClass}">${days !== null ? days + 'd' : '-'}</span></td>`;
                     }
 
-                    return `<td class="${className}" title="${value}">${value}</td>`;
+                    return `<td class="${className}" title="${String(value).replace(/"/g, '&quot;')}">${value}</td>`;
                 }).join('');
 
-                return `<tr class="modal-row"><td class="text-center text-gray-500">${i + 1}</td>${cells}</tr>`;
+                return `<tr class="modal-row hover:bg-blue-50"><td class="text-center text-gray-400 text-xs">${i + 1}</td>${cells}</tr>`;
             }).join('');
 
+            // Calculate summary stats
+            const totalPRValue = prs.reduce((sum, pr) => sum + (parseFloat(pr.pr_value) || 0), 0);
+            const totalPOValue = prs.reduce((sum, pr) => sum + (parseFloat(pr.po_value) || 0), 0);
+            const avgDays = prs.filter(pr => pr.pr_to_po_days !== null).reduce((sum, pr) => sum + parseFloat(pr.pr_to_po_days), 0) / prs.filter(pr => pr.pr_to_po_days !== null).length || 0;
+
             return `
-                <div class="mb-4 flex flex-wrap gap-3 items-center justify-between">
-                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">${countLabel}</span>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="modalSearch" placeholder="${'Search...'}"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
-                        <button onclick="openColumnSelector('po-table')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 flex items-center gap-1" title="${'Select Columns'}">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                        </button>
-                        <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 flex items-center gap-1">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm8-16l4 4h-4V2z"/></svg>
-                            PDF
-                        </button>
-                        <button onclick="exportPOToCSV('${type}')" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 flex items-center gap-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            CSV
-                        </button>
+                <div class="mb-4">
+                    <!-- Summary Stats -->
+                    <div class="grid grid-cols-4 gap-3 mb-4">
+                        <div class="bg-blue-50 rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-blue-700">${count}</p>
+                            <p class="text-xs text-blue-600">Records</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-purple-700">${totalPRValue.toLocaleString()}</p>
+                            <p class="text-xs text-purple-600">Total PR Value (SAR)</p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-green-700">${totalPOValue.toLocaleString()}</p>
+                            <p class="text-xs text-green-600">Total PO Value (SAR)</p>
+                        </div>
+                        <div class="bg-amber-50 rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-amber-700">${avgDays.toFixed(1)}</p>
+                            <p class="text-xs text-amber-600">Avg PR→PO Days</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Controls -->
+                    <div class="flex flex-wrap gap-3 items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="modalSearch" placeholder="Search..."
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 w-48">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openColumnSelector('po-table')" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 flex items-center gap-1" title="Select & Reorder Columns">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                Columns
+                            </button>
+                            <button onclick="exportModalToPDF()" class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm8-16l4 4h-4V2z"/></svg>
+                                PDF
+                            </button>
+                            <button onclick="exportPOToCSV('${type}')" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                CSV
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="scroll-container" style="max-height: 450px;">
+                <div class="scroll-container" style="max-height: 400px;">
                     <table class="data-table text-sm w-full" id="modalTable">
-                        <thead>
+                        <thead class="sticky top-0 bg-white">
                             <tr>
                                 <th class="text-center">#</th>
                                 ${headers}
@@ -4655,7 +4866,58 @@
                             ${rows}
                         </tbody>
                     </table>
-                </div>`;
+                </div>
+                ${prs.length > 200 ? `<p class="text-xs text-gray-400 mt-2 text-center">Showing first 200 of ${prs.length} records</p>` : ''}`;
+        }
+
+        // Sort modal table
+        let currentSortColumn = null;
+        let currentSortDirection = 'asc';
+        
+        function sortModalTable(columnId) {
+            if (!currentModalData || currentModalData.length === 0) return;
+            
+            // Toggle direction if same column
+            if (currentSortColumn === columnId) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = columnId;
+                currentSortDirection = 'asc';
+            }
+            
+            // Sort the data
+            currentModalData.sort((a, b) => {
+                let valA = a[columnId];
+                let valB = b[columnId];
+                
+                // Handle null/undefined
+                if (valA === null || valA === undefined) valA = '';
+                if (valB === null || valB === undefined) valB = '';
+                
+                // Handle numeric columns
+                const numericColumns = ['pr_value', 'po_value', 'saving_amount', 'pr_to_po_days'];
+                if (numericColumns.includes(columnId)) {
+                    valA = parseFloat(valA) || 0;
+                    valB = parseFloat(valB) || 0;
+                } else {
+                    valA = String(valA).toLowerCase();
+                    valB = String(valB).toLowerCase();
+                }
+                
+                let result = 0;
+                if (valA < valB) result = -1;
+                if (valA > valB) result = 1;
+                
+                return currentSortDirection === 'asc' ? result : -result;
+            });
+            
+            // Re-render the table
+            const content = document.getElementById('modalContent');
+            if (content) {
+                const currentType = content.dataset?.kpiType || 'pos-issued-month';
+                content.innerHTML = generateDetailedPOTable(currentModalData, currentType);
+                setupModalSearch();
+            }
         }
 
         function exportPOToCSV(type) {
