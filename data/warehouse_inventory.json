@@ -1,904 +1,284 @@
 {
   "metadata": {
-    "last_update": "2025-01-05T00:00:00",
-    "data_source": "Material Movement Excel Files",
-    "generated_date": "2026-01-08",
-    "total_files_processed": 12
+    "last_update": "2026-02-02T14:25:42.796401",
+    "data_source": "Inventory.ods, NON MOVING MATERIALS.xlsx, Shifting Material Report.ods",
+    "generated_date": "2026-02-02"
   },
   "summary": {
-    "total_warehouses": 12,
-    "total_items": 17648,
-    "total_received": 2773484.3839999996,
-    "total_issued": 826066.0348319999,
-    "total_balance": 1947418.349168,
-    "inventory_accuracy": 98.5,
-    "sla_compliance": 95.2
+    "total_warehouses": 15,
+    "total_items": 5926,
+    "total_non_moving": 496,
+    "total_transfers": 177,
+    "total_transfer_qty": 101165.0
   },
   "kpis": {
-    "inventory_turnover_rate": 29.8,
-    "stock_accuracy": 98.5,
-    "order_fulfillment_rate": 96.3,
-    "average_processing_time_hours": 4.2,
-    "pending_requests": 12
+    "inventory_health_rate": 91.6,
+    "non_moving_rate": 8.4,
+    "avg_monthly_transfers": 16.0,
+    "total_projects_served": 93,
+    "sla_target": "≤5% non-moving materials",
+    "sla_status": "Needs Attention"
   },
   "warehouses": [
     {
       "id": 1,
-      "name": "RUMAH Site Store",
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "city": "Riyadh",
-      "type": "Substation",
-      "total_items": 223,
-      "total_received": 417423.0,
-      "total_issued": 117136.0,
-      "balance": 300287.0,
-      "utilization_rate": 28.1,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "DB9ZU01ZN \\ 1X240 MM2  BARE COPPER CONDUCTOR",
-          "received": 1000.0,
-          "issued": 1000.0,
-          "balance": 0.0
-        },
-        {
-          "description": "DB9ZU01ZN \\ 1X240 MM2  BARE COPPER CONDUCTOR",
-          "received": 1000.0,
-          "issued": 1000.0,
-          "balance": 0.0
-        },
-        {
-          "description": "DB9ZU01ZN \\ 1X240 MM2  BARE COPPER CONDUCTOR",
-          "received": 1000.0,
-          "issued": 1000.0,
-          "balance": 0.0
-        },
-        {
-          "description": "DB9ZU01ZN \\ 1X240 MM2  BARE COPPER CONDUCTOR",
-          "received": 997.0,
-          "issued": 997.0,
-          "balance": 0.0
-        },
-        {
-          "description": "DB9ZU01ZN \\ 1X240 MM2  BARE COPPER CONDUCTOR",
-          "received": 1008.0,
-          "issued": 1008.0,
-          "balance": 0.0
-        }
-      ]
+      "name": "Asfan",
+      "total_items": 1620,
+      "total_projects": 22,
+      "status": "Active"
     },
     {
       "id": 2,
-      "name": "Wadi Dhahran Store",
-      "project": "WADI DHAHRAN",
-      "region": "Eastern Province",
-      "city": "Dhahran",
-      "type": "Substation",
-      "total_items": 305,
-      "total_received": 30753.0,
-      "total_issued": 1124.0,
-      "balance": 29629.0,
-      "utilization_rate": 3.7,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "CU/XLPE/CT/PVC-NFDR-BL CRS-FRO .6/ 1KV",
-          "received": 299.0,
-          "issued": 0,
-          "balance": 299.0
-        },
-        {
-          "description": "CU/XLPE/LPAD/PVC/ 0.06/1KV /",
-          "received": 520.0,
-          "issued": 0,
-          "balance": 520.0
-        },
-        {
-          "description": "CU/XLPE/CT/ PVC-NFR GREY CRS + NO",
-          "received": 448.0,
-          "issued": 425.0,
-          "balance": 23.0
-        },
-        {
-          "description": "CU/XLPE/CT/ PVC-NFR GREY CRS + NO",
-          "received": 1344.0,
-          "issued": 0,
-          "balance": 1344.0
-        },
-        {
-          "description": "CU/XLPE/SWA/PVC/ 0.6/1KV",
-          "received": 409.0,
-          "issued": 0,
-          "balance": 409.0
-        }
-      ]
+      "name": "Tuwaiq",
+      "total_items": 745,
+      "total_projects": 30,
+      "status": "Active"
     },
     {
       "id": 3,
-      "name": "Tuwaiq Main Warehouse",
-      "project": "Al Murjan S/S & Multiple",
-      "region": "Riyadh",
-      "city": "Riyadh",
-      "type": "Central Warehouse",
-      "total_items": 4997,
-      "total_received": 109418.0,
-      "total_issued": 10999.0,
-      "balance": 98419.0,
-      "utilization_rate": 10.1,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "Cable CU/XL/CW/LT/HPE- 1x1200/261mm2 132KV",
-          "received": 472.0,
-          "issued": 0.0,
-          "balance": 472.0
-        },
-        {
-          "description": "Cable CU/XL/CW/LT/HPE- 1x1200/261mm2 132KV",
-          "received": 532.0,
-          "issued": 0.0,
-          "balance": 532.0
-        },
-        {
-          "description": "Cable CU/XL/CW/LT/HPE- 1x1200/261mm2 132KV",
-          "received": 486.0,
-          "issued": 0.0,
-          "balance": 486.0
-        },
-        {
-          "description": "Cable CU/XL/CW/LT/HPE- 1x1200/261mm2 132KV",
-          "received": 532.0,
-          "issued": 0.0,
-          "balance": 532.0
-        },
-        {
-          "description": "Cable CU/XL/CW/LT/HPE- 1x1200/261mm2 132KV",
-          "received": 472.0,
-          "issued": 0.0,
-          "balance": 472.0
-        }
-      ]
+      "name": "Main Warehouse",
+      "total_items": 594,
+      "total_projects": 17,
+      "status": "Active"
     },
     {
       "id": 4,
-      "name": "NEOM LAYDON Store",
-      "project": "PSSA&PSSB OHTL NEOM",
-      "region": "Tabuk",
-      "city": "NEOM",
-      "type": "OHTL Project",
-      "total_items": 360,
-      "total_received": 820672.65,
-      "total_issued": 156599.03483199995,
-      "balance": 664073.615168,
-      "utilization_rate": 19.1,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "ACSR/AW CONDUCTORS 54 x 3.08 AL + 7 X3.08 ST) GR4 - RIYADH C",
-          "received": 3500.0,
-          "issued": 3500.0,
-          "balance": 0.0
-        },
-        {
-          "description": "ACSR/AW CONDUCTORS 54 x 3.08 AL + 7 X3.08 ST) GR4 - RIYADH C",
-          "received": 3500.0,
-          "issued": 3500.0,
-          "balance": 0.0
-        },
-        {
-          "description": "ACSR/AW CONDUCTORS 54 x 3.08 AL + 7 X3.08 ST) GR4 - RIYADH C",
-          "received": 3500.0,
-          "issued": 3500.0,
-          "balance": 0.0
-        },
-        {
-          "description": "ACSR/AW CONDUCTORS 54 x 3.08 AL + 7 X3.08 ST) GR4 - RIYADH C",
-          "received": 3500.0,
-          "issued": 3500.0,
-          "balance": 0.0
-        },
-        {
-          "description": "ACSR/AW CONDUCTORS 54 x 3.08 AL + 7 X3.08 ST) GR4 - RIYADH C",
-          "received": 3500.0,
-          "issued": 3500.0,
-          "balance": 0.0
-        }
-      ]
+      "name": "0",
+      "total_items": 593,
+      "total_projects": 3,
+      "status": "Active"
     },
     {
       "id": 5,
-      "name": "Diriyah 8242 Store",
-      "project": "DIRIYAH 8242 S.S",
-      "region": "Riyadh",
-      "city": "Riyadh",
-      "type": "Substation",
-      "total_items": 273,
-      "total_received": 245141.0,
-      "total_issued": 21566.0,
-      "balance": 223575.0,
-      "utilization_rate": 8.8,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "RMU-21006688977",
-          "received": 1.0,
-          "issued": 0.0,
-          "balance": 1.0
-        },
-        {
-          "description": "RMU-21006688978",
-          "received": 1.0,
-          "issued": 0.0,
-          "balance": 1.0
-        },
-        {
-          "description": "REACTOR COIL",
-          "received": 20.0,
-          "issued": 0.0,
-          "balance": 20.0
-        },
-        {
-          "description": "I-BEAM SUPPORT (4 X I-BEAMS + 2 X ANGLE SUPPORTS / SET) -01 ",
-          "received": 30.0,
-          "issued": 0.0,
-          "balance": 30.0
-        },
-        {
-          "description": "Transformer oil",
-          "received": 12.0,
-          "issued": 0.0,
-          "balance": 12.0
-        }
-      ]
+      "name": "Laydown",
+      "total_items": 561,
+      "total_projects": 2,
+      "status": "Active"
     },
     {
       "id": 6,
-      "name": "Diriyah 8171 Store",
-      "project": "DIRIYAH 8171 S.S",
-      "region": "Riyadh",
-      "city": "Riyadh",
-      "type": "Substation",
-      "total_items": 142,
-      "total_received": 20544.0,
-      "total_issued": 8158.0,
-      "balance": 12386.0,
-      "utilization_rate": 39.7,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "1 X50 MM2 CU/XLPE/PVC (NT/YG) FR 0.6/1 kV",
-          "received": 85.0,
-          "issued": 50.0,
-          "balance": 35.0
-        },
-        {
-          "description": "1 X 95 MM2 CU / XLPE I PVC -0.611 kV",
-          "received": 205.0,
-          "issued": 125.0,
-          "balance": 80.0
-        },
-        {
-          "description": "1X120MM2 CU/XLPE/PVC (NTIYG) FR 0.611 kV",
-          "received": 200.0,
-          "issued": 15.0,
-          "balance": 185.0
-        },
-        {
-          "description": "1X240MM2 CU/XLPE/ PVC-0.6I1KV-(NT-YIG}-SS",
-          "received": 400.0,
-          "issued": 212.0,
-          "balance": 188.0
-        },
-        {
-          "description": "Single Receptacle, 20A, 250V, S/G Ivory PN 5851-1 Mfr: Legra",
-          "received": 73.0,
-          "issued": 0.0,
-          "balance": 73.0
-        }
-      ]
+      "name": "Yard",
+      "total_items": 235,
+      "total_projects": 4,
+      "status": "Active"
     },
     {
       "id": 7,
-      "name": "Hafar Al Batin Store",
-      "project": "Modon Hafar Al Batin",
-      "region": "Eastern Province",
-      "city": "Hafar Al Batin",
-      "type": "Industrial",
-      "total_items": 192,
-      "total_received": 73394.15,
-      "total_issued": 25078.0,
-      "balance": 48316.149999999994,
-      "utilization_rate": 34.2,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "2*6 cu\\xlp\\pvc 1kv",
-          "received": 1114.0,
-          "issued": 1114.0,
-          "balance": 0.0
-        },
-        {
-          "description": "2*6 cu\\xlp\\pvc 1kv",
-          "received": 1020.0,
-          "issued": 1020.0,
-          "balance": 0.0
-        },
-        {
-          "description": "1*150 cu\\xlp\\pvc 1kv",
-          "received": 255.0,
-          "issued": 0.0,
-          "balance": 255.0
-        },
-        {
-          "description": "4*25 cu\\xlp\\pvc 1kv",
-          "received": 599.0,
-          "issued": 0.0,
-          "balance": 599.0
-        },
-        {
-          "description": "1*400 cu\\xlp\\pvc 1kv",
-          "received": 279.0,
-          "issued": 0.0,
-          "balance": 279.0
-        }
-      ]
+      "name": "C-1",
+      "total_items": 204,
+      "total_projects": 1,
+      "status": "Active"
     },
     {
       "id": 8,
-      "name": "Tuwaiq WH - Diriyah",
-      "project": "DIRIYAH 8171",
-      "region": "Riyadh",
-      "city": "Riyadh",
-      "type": "Substation",
-      "total_items": 132,
-      "total_received": 15601.0,
-      "total_issued": 5506.0,
-      "balance": 10095.0,
-      "utilization_rate": 35.3,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "1 X50 MM2 CU/XLPE/PVC (NT/YG) FR 0.6/1 kV",
-          "received": 98.0,
-          "issued": 70.0,
-          "balance": 28.0
-        },
-        {
-          "description": "1 X 95 MM2 CU / XLPE I PVC -0.611 kV",
-          "received": 205.0,
-          "issued": 205.0,
-          "balance": 0.0
-        },
-        {
-          "description": "1X120MM2 CU/XLPE/PVC (NTIYG) FR 0.611 kV",
-          "received": 200.0,
-          "issued": 15.0,
-          "balance": 185.0
-        },
-        {
-          "description": "1X240MM2 CU/XLPE/ PVC-0.6I1KV-(NT-YIG}-SS",
-          "received": 377.0,
-          "issued": 30.0,
-          "balance": 347.0
-        },
-        {
-          "description": "Single Receptacle, 20A, 250V, S/G Ivory PN 5851-1 Mfr: Legra",
-          "received": 73.0,
-          "issued": 0.0,
-          "balance": 73.0
-        }
-      ]
+      "name": "JOHEMA",
+      "total_items": 204,
+      "total_projects": 1,
+      "status": "Active"
     },
     {
       "id": 9,
-      "name": "ISP & OSP Warehouse",
-      "project": "Tarshid",
-      "region": "Riyadh",
-      "city": "Riyadh",
-      "type": "LED/Lighting",
-      "total_items": 4997,
-      "total_received": 151291.584,
-      "total_issued": 100453.0,
-      "balance": 50838.584,
-      "utilization_rate": 66.4,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "N183",
-          "received": 98.0,
-          "issued": 0.0,
-          "balance": 98.0
-        },
-        {
-          "description": "N135",
-          "received": 95.0,
-          "issued": 0.0,
-          "balance": 95.0
-        },
-        {
-          "description": "N132",
-          "received": 53.0,
-          "issued": 4.0,
-          "balance": 49.0
-        },
-        {
-          "description": "N153",
-          "received": 96.0,
-          "issued": 5.0,
-          "balance": 91.0
-        },
-        {
-          "description": "N204",
-          "received": 26.0,
-          "issued": 26.0,
-          "balance": 0.0
-        }
-      ]
+      "name": "New WH",
+      "total_items": 157,
+      "total_projects": 1,
+      "status": "Active"
     },
     {
       "id": 10,
-      "name": "Farasan Island Store",
-      "project": "FARASAN ISLAND 132/33KV",
-      "region": "Jazan",
-      "city": "Farasan Island",
-      "type": "Substation",
-      "total_items": 964,
-      "total_received": 394071.0,
-      "total_issued": 211193.0,
-      "balance": 182878.0,
-      "utilization_rate": 53.6,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "Transformer Accessories- Instrument Case",
-          "received": 6.0,
-          "issued": 6.0,
-          "balance": 0.0
-        },
-        {
-          "description": "Transformer Accessories- Hv Bushing",
-          "received": 6.0,
-          "issued": 6.0,
-          "balance": 0.0
-        },
-        {
-          "description": "Transformer Accessories- Lv N Bushing",
-          "received": 5.0,
-          "issued": 5.0,
-          "balance": 0.0
-        },
-        {
-          "description": "Transformer Accessories-Cooling Fan 20 Nos In 1 Case",
-          "received": 5.0,
-          "issued": 5.0,
-          "balance": 0.0
-        },
-        {
-          "description": "Transformer Accessories- Commissioing Spares",
-          "received": 7.0,
-          "issued": 7.0,
-          "balance": 0.0
-        }
-      ]
+      "name": "NIC EV2",
+      "total_items": 137,
+      "total_projects": 1,
+      "status": "Active"
     },
     {
       "id": 11,
-      "name": "Dammam Main Warehouse",
-      "project": "DEFAA & SENAYA-2",
-      "region": "Eastern Province",
-      "city": "Dammam",
-      "type": "Central Warehouse",
-      "total_items": 4997,
-      "total_received": 494825.0,
-      "total_issued": 168254.0,
-      "balance": 326571.0,
-      "utilization_rate": 34.0,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "LV cable 2CX4 Sq.mm 0.6/1 KV, CU/ XLPE/ SWA PVC",
-          "received": 990.0,
-          "issued": 0.0,
-          "balance": 990.0
-        },
-        {
-          "description": "LV cable 2CX4 Sq.mm 0.6/1 KV, CU/ XLPE/ SWA PVC",
-          "received": 990.0,
-          "issued": 0.0,
-          "balance": 990.0
-        },
-        {
-          "description": "LV cable 2CX4 Sq.mm 0.6/1 KV, CU/ XLPE/ SWA PVC",
-          "received": 975.0,
-          "issued": 0.0,
-          "balance": 975.0
-        },
-        {
-          "description": "LV cable 2CX4 Sq.mm 0.6/1 KV, CU/ XLPE/ SWA PVC",
-          "received": 975.0,
-          "issued": 0.0,
-          "balance": 975.0
-        },
-        {
-          "description": "LV cable 2CX4 Sq.mm 0.6/1 KV, CU/ XLPE/ SWA PVC",
-          "received": 1017.0,
-          "issued": 0.0,
-          "balance": 1017.0
-        }
-      ]
+      "name": "ISP W/H",
+      "total_items": 117,
+      "total_projects": 3,
+      "status": "Active"
     },
     {
       "id": 12,
-      "name": "Asir Container Store",
-      "project": "Asir Modon-2",
-      "region": "Asir",
-      "city": "Asir",
-      "type": "Tools Storage",
-      "total_items": 66,
-      "total_received": 350.0,
-      "total_issued": 0,
-      "balance": 350.0,
-      "utilization_rate": 0.0,
-      "status": "Active",
-      "last_activity": "2025-01-05",
-      "sample_items": [
-        {
-          "description": "Fish Tape",
-          "received": 9.0,
-          "issued": 0,
-          "balance": 9.0
-        },
-        {
-          "description": "16 Pieces Hole Saw Set",
-          "received": 9.0,
-          "issued": 0,
-          "balance": 9.0
-        },
-        {
-          "description": "Grinder",
-          "received": 6.0,
-          "issued": 0,
-          "balance": 6.0
-        },
-        {
-          "description": "Drill Bit set",
-          "received": 4.0,
-          "issued": 0,
-          "balance": 4.0
-        },
-        {
-          "description": "Combination Spiner",
-          "received": 121.0,
-          "issued": 0,
-          "balance": 121.0
-        }
-      ]
+      "name": "Store",
+      "total_items": 115,
+      "total_projects": 1,
+      "status": "Active"
+    },
+    {
+      "id": 13,
+      "name": "RUMAH WAREHOUSE",
+      "total_items": 102,
+      "total_projects": 1,
+      "status": "Active"
+    },
+    {
+      "id": 14,
+      "name": "OSP W/H",
+      "total_items": 92,
+      "total_projects": 4,
+      "status": "Active"
+    },
+    {
+      "id": 15,
+      "name": "WH",
+      "total_items": 86,
+      "total_projects": 2,
+      "status": "Active"
     }
   ],
-  "by_region": {
-    "Riyadh": {
-      "warehouses": 6,
-      "items": 10764,
-      "balance": 695600.584
-    },
-    "Eastern Province": {
-      "warehouses": 3,
-      "items": 5494,
-      "balance": 404516.15
-    },
-    "Tabuk": {
-      "warehouses": 1,
-      "items": 360,
-      "balance": 664073.615168
-    },
-    "Jazan": {
-      "warehouses": 1,
-      "items": 964,
-      "balance": 182878.0
-    },
-    "Asir": {
-      "warehouses": 1,
-      "items": 66,
-      "balance": 350.0
+  "non_moving_summary": {
+    "total": 496,
+    "total_qty": 125702.0,
+    "by_warehouse": {
+      "Asfan": {
+        "count": 151,
+        "qty": 19013.0
+      },
+      "Jafurah": {
+        "count": 345,
+        "qty": 106689.0
+      }
     }
   },
-  "by_project_type": {
-    "Substation": {
-      "count": 6,
-      "items": 2039
-    },
-    "Central Warehouse": {
-      "count": 2,
-      "items": 9994
-    },
-    "OHTL Project": {
-      "count": 1,
-      "items": 360
-    },
-    "Industrial": {
-      "count": 1,
-      "items": 192
-    },
-    "LED/Lighting": {
-      "count": 1,
-      "items": 4997
-    },
-    "Tools Storage": {
-      "count": 1,
-      "items": 66
+  "transfers_summary": {
+    "total": 177,
+    "total_qty": 101165.0,
+    "by_month": {
+      "2025-09": {
+        "count": 19,
+        "qty": 8788.0
+      },
+      "2026-10": {
+        "count": 2,
+        "qty": 357.0
+      },
+      "2025-11": {
+        "count": 21,
+        "qty": 16500.0
+      },
+      "2026-11": {
+        "count": 13,
+        "qty": 12246.0
+      },
+      "2025-12": {
+        "count": 40,
+        "qty": 20908.0
+      },
+      "2026-01": {
+        "count": 38,
+        "qty": 34920.0
+      },
+      "2026-06": {
+        "count": 4,
+        "qty": 306.0
+      },
+      "2025-02": {
+        "count": 4,
+        "qty": 414.0
+      },
+      "2025-08": {
+        "count": 3,
+        "qty": 18.0
+      },
+      "2025-05": {
+        "count": 3,
+        "qty": 1207.0
+      },
+      "2025-10": {
+        "count": 30,
+        "qty": 5501.0
+      }
     }
   },
-  "inventory_items": [],
-  "low_stock_alerts": [
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "INTERLOCKED SWITCH SOCKET 125A 3P+N+E 380-415 ,WIT",
-      "balance": 3.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "PLUG 125A 3P+N+E 380-415 V, IP67",
-      "balance": 3.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "AC ISOLATED SWITCH WITH BOX IP65 3P IN 40A RED YEL",
-      "balance": 3.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "AC ISOLATED SWITCH WITH BOX IP65 4P IN 200A EXTERN",
-      "balance": 4.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "AC ISOLATED SWITCH WITH BOX IP65 4P IN 300A EXTERN",
-      "balance": 4.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "THHN WIRE 8  AWG 600V PVC INSUL 19-STRANDS Cu 500F",
-      "balance": 6.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "THHN WIRE 8  AWG 600V PVC INSUL 19-STRANDS Cu 500F",
-      "balance": 6.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "THHN WIRE 8  AWG 600V PVC INSUL 19-STRANDS Cu 500F",
-      "balance": 6.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "AC ISOLATED SWITCH WITH BOX IP65 4P IN 160A EXTERN",
-      "balance": 6.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "AC ISOLATED SWITCH WITH BOX IP65 3P IN 80A   EXTER",
-      "balance": 6.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "250 Volt, NEMA 6-20R, 2P, 3W, Narrow Body Single R",
-      "balance": 8.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "RECEPTACLE 3P+N+E, 300 A,380-440V, MECHANICALLY LO",
-      "balance": 15.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "PLUG HEAV DUTY 3P+N+E 300A,380-440V IP6T",
-      "balance": 15.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "INTERLOCKED SWITCHED SOCKET 380-415V,40A, 3p+N+E, ",
-      "balance": 19.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "PLUG 380-415V, 40A,3P+N+E, IP67",
-      "balance": 19.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "High"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "THHN WIRE 10 AWG 600V PVC INSUL 19-STRANDS Cu 500F",
-      "balance": 25.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "Medium"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "INTERLOCKED SWITCH SOCKET 63A 3P+N+E 346-415 V, IP",
-      "balance": 28.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "Medium"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "THHN WIRE 10 AWG 600V PVC INSUL 19-STRANDS Cu 500F",
-      "balance": 30.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "Medium"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "INTERLOCKED SWITCH SOCKET 63A 3P+N+E 346-415 V,IP6",
-      "balance": 32.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "Medium"
-    },
-    {
-      "warehouse": "RUMAH Site Store",
-      "item": "THHN WIRE 10 AWG 600V PVC INSUL 19-STRANDS Cu 500F",
-      "balance": 44.0,
-      "project": "RUMAH 380 KV 9077 S.S",
-      "region": "Riyadh",
-      "priority": "Medium"
-    }
-  ],
-  "recent_movements": [
-    {
-      "date": "2025-01-05",
-      "warehouse": "Dammam Main Warehouse",
-      "type": "Received",
-      "items": 45,
-      "project": "DEFAA"
-    },
-    {
-      "date": "2025-01-04",
-      "warehouse": "Tuwaiq Main Warehouse",
-      "type": "Issued",
-      "items": 120,
-      "project": "Al Murjan S/S"
-    },
-    {
-      "date": "2025-01-03",
-      "warehouse": "NEOM LAYDON Store",
-      "type": "Received",
-      "items": 85,
-      "project": "PSSA&PSSB OHTL"
-    },
-    {
-      "date": "2025-01-02",
-      "warehouse": "Farasan Island Store",
-      "type": "Issued",
-      "items": 32,
-      "project": "FARASAN 132/33KV"
-    },
-    {
-      "date": "2025-01-01",
-      "warehouse": "Diriyah 8242 Store",
-      "type": "Received",
-      "items": 67,
-      "project": "DIRIYAH 8242"
-    },
-    {
-      "date": "2024-12-31",
-      "warehouse": "Wadi Dhahran Store",
-      "type": "Issued",
-      "items": 28,
-      "project": "WADI DHAHRAN"
-    },
-    {
-      "date": "2024-12-30",
-      "warehouse": "Hafar Al Batin Store",
-      "type": "Received",
-      "items": 54,
-      "project": "Modon Hafar Al Batin"
-    },
-    {
-      "date": "2024-12-29",
-      "warehouse": "ISP & OSP Warehouse",
-      "type": "Issued",
-      "items": 15,
-      "project": "Tarshid"
-    }
-  ],
   "filters": {
-    "regions": [
-      "Asir",
-      "Eastern Province",
-      "Jazan",
-      "Riyadh",
-      "Tabuk"
-    ],
-    "cities": [
-      "Asir",
-      "Dammam",
-      "Dhahran",
-      "Farasan Island",
-      "Hafar Al Batin",
-      "NEOM",
-      "Riyadh"
-    ],
-    "project_types": [
-      "Central Warehouse",
-      "Industrial",
-      "LED/Lighting",
-      "OHTL Project",
-      "Substation",
-      "Tools Storage"
-    ],
     "warehouses": [
-      "Asir Container Store",
-      "Dammam Main Warehouse",
-      "Diriyah 8171 Store",
-      "Diriyah 8242 Store",
-      "Farasan Island Store",
-      "Hafar Al Batin Store",
-      "ISP & OSP Warehouse",
-      "NEOM LAYDON Store",
-      "RUMAH Site Store",
-      "Tuwaiq Main Warehouse",
-      "Tuwaiq WH - Diriyah",
-      "Wadi Dhahran Store"
+      "#REF!",
+      "0",
+      "Asfan",
+      "BEING USED",
+      "C-1",
+      "C-2",
+      "C-3",
+      "C-4",
+      "DMAMM WARE HOUSE",
+      "Dammam Wherehouse",
+      "EV2",
+      "ISP W/H",
+      "Inside the project warehouse",
+      "JOHEMA",
+      "Jazan Warehouse",
+      "Laydown",
+      "MIN WH",
+      "Main Warehouse",
+      "NIC EV2",
+      "New WH",
+      "OSP W/H",
+      "OSP Warehouse-Tabuk",
+      "OY",
+      "RUMAH WAREHOUSE",
+      "STOORE",
+      "STORE",
+      "Store",
+      "TUWAIQ WAREHOUSE",
+      "Tuwaiq",
+      "W12115 -BLU",
+      "W12254 -BLU",
+      "WH",
+      "YARD",
+      "Yard",
+      "office"
+    ],
+    "projects": [
+      "#REF!",
+      "8724 AL MURJAN",
+      "AL- BAHAR",
+      "Al Hadda 8246 S/S",
+      "Al Murjan S/S",
+      "BUHAIYREAT",
+      "DEFAA",
+      "EV2",
+      "EV2 &North",
+      "FARASAN ISLAND",
+      "FARASAN ISLAND 132/33KV SS",
+      "JIZAN MEDICAL CITY",
+      "Jizan Warehouse",
+      "KPS-8389 S/S",
+      "KSP S/S 8388",
+      "KSP S/S 8389",
+      "KSP S/S 8390",
+      "KSP S/S 8391",
+      "KSP S/S 8392",
+      "KSP S/S 8393",
+      "KSP S/S 8394",
+      "KSP S/S 8395",
+      "KSP S/S 8396",
+      "KSP S/S 8397",
+      "KSP S/S 8398",
+      "KSP S/S 8399",
+      "KSP S/S 8400",
+      "KSP S/S 8401",
+      "KSP S/S 8402",
+      "KSP S/S 8403",
+      "KSP S/S 8404",
+      "MURJAN 8274",
+      "NEOM FLN",
+      "NEOM PSSA & PSSB",
+      "NIC EV2 S/S",
+      "NIC North S/S",
+      "NIC Project",
+      "New Air force S/S Jed.",
+      "PREVIOUS",
+      "PSSA &PSSB",
+      "PSSA&PSSB OHTL NEOM",
+      "Project not confirm",
+      "QALAH 115 KV SUB",
+      "QUIZAUMA AIRPORT",
+      "RUMAH 9077 S/S",
+      "SHERAA",
+      "Shrafiyah 8386 S/S",
+      "Tarshid",
+      "VILLAGE",
+      "WADI DHAHRAN"
     ]
   }
 }

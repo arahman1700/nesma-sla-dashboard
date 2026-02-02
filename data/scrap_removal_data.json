@@ -1,24 +1,22 @@
 {
   "metadata": {
-    "last_update": "2026-01-08T11:32:28.836997",
-    "source": "Smartsheet - Cable & Wood Scrap Removal",
+    "last_update": "2026-02-02T14:20:40.487259",
+    "source": "Cable_Scrap_Removal.xlsx + Wood Records",
     "sla_document": "NIT-SCM-SLA-KSA-001",
     "sla_standard": "≤3 Business Days",
     "sla_target": "≥95%"
   },
   "summary": {
-    "total_jobs": 322,
-    "completed": 322,
+    "total_jobs": 341,
+    "completed": 341,
     "in_progress": 0,
     "pending": 0,
     "completion_rate": 100.0,
-    "total_amount": 1121470.0,
-    "cable_jobs": 172,
-    "cable_amount": 714250.0,
+    "total_amount": 1165090.0,
+    "cable_jobs": 191,
+    "cable_amount": 757870.0,
     "wood_jobs": 150,
-    "wood_amount": 407220.0,
-    "sla_rate": 98.4,
-    "sla_note": "Based on ≤3 business days target"
+    "wood_amount": 407220.0
   },
   "monthly": {
     "2025-04": {
@@ -68,18 +66,6 @@
       "amount": 67440.0,
       "cable": 17,
       "wood": 9
-    },
-    "2025-12": {
-      "count": 4,
-      "amount": 8040.0,
-      "cable": 4,
-      "wood": 0
-    },
-    "2026-12": {
-      "count": 12,
-      "amount": 33070.0,
-      "cable": 12,
-      "wood": 0
     }
   },
   "filters": {
@@ -88,9 +74,7 @@
       "Wood"
     ],
     "statuses": [
-      "Completed",
-      "In Progress",
-      "Pending"
+      "Completed"
     ],
     "pickup_locations": [
       "15/04 1st Dayna (Alhada + DEFAA to Jeddah)",
@@ -126,6 +110,7 @@
       "BAYOUNIAH SUBSTATION",
       "Bayounia",
       "Bayouniah",
+      "Bayouniah SS",
       "Buhairat",
       "Buhaiyrat SS",
       "Buhaiyrat SS (labor for load and offload)",
@@ -152,9 +137,11 @@
       "Farasan Jazan Cable + Mix Scrap",
       "Farasan to Jazan Cable + Mix Scrap",
       "Hada 2",
+      "Hada2",
       "Handaniya",
       "Jeddah",
       "KSP",
+      "KSP 88,89 & 90",
       "Khobar Corniche",
       "Khobar Corniche SS",
       "Khobar North",
@@ -190,6 +177,7 @@
       "Seneya 2",
       "Seneyah 2",
       "Shera + Khober Corniche",
+      "Sheraa",
       "Sheraa SS",
       "THUQBAH",
       "Tabuk OSP to ISP",
@@ -203,6 +191,7 @@
       "Uruba S/S",
       "Uruba to Jeddah, Qasim & Dammam Warehouse",
       "Urubah",
+      "WHD-3 S/S",
       "Wadi Dahran",
       "Wadi Dahran 19-08",
       "Wadi Dhahran",
@@ -215,6 +204,7 @@
       "DMM WH",
       "Jazan Warehouse",
       "Jeddah",
+      "Jeddah WH",
       "NiT Store",
       "NiT Store Cable Drums and Cables",
       "Riyadh WH",
@@ -1716,7 +1706,7 @@
       "pickup_location": "AlMurjan to Asfan",
       "drop_location": "Jeddah",
       "status": "Completed",
-      "equipment_name": null,
+      "equipment_name": "",
       "equipment_price": 3300.0,
       "equipment_qty": 3,
       "labour_price": 320.0,
@@ -2564,7 +2554,532 @@
       "total_amount": 1860.0
     },
     {
-      "id": 1,
+      "id": 157,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Revised J.O for KSP 88,89 & 90",
+      "pickup_location": "KSP 88,89 & 90",
+      "drop_location": "Riyadh WH",
+      "status": "Completed",
+      "equipment_name": "FSR Lorry",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 9,
+      "total_amount": 5580.0
+    },
+    {
+      "id": 158,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Al Hada 2 -Job Order-0019_Arrangement for Scrap Collector to Remove Cable and Metal Scrap",
+      "pickup_location": "Hada 2",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 159,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Uruba & Abuman Cable and Wood scrap",
+      "pickup_location": "Uruba",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 2500.0
+    },
+    {
+      "id": 160,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Uruba & Abuman Cable and Wood scrap",
+      "pickup_location": "Uruba",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 4,
+      "total_amount": 2180.0
+    },
+    {
+      "id": 161,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JOB ORDER FOR REMOVAL OF CABLE SCRAP FROM AL BAHAR S/S",
+      "pickup_location": "AL BAHAR",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 4,
+      "total_amount": 2180.0
+    },
+    {
+      "id": 162,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Scrap Materilas - Sheraa SS Project",
+      "pickup_location": "Sheraa",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 163,
+      "type": "Cable",
+      "request_date": "",
+      "description": "8274 - job order for shifting Scrap material from Al Murjan",
+      "pickup_location": "Al Murjan",
+      "drop_location": "Riyadh WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1960.0
+    },
+    {
+      "id": 164,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Request for removal of Cable and Wooden Scrap at Bayouniah SS",
+      "pickup_location": "Bayouniah",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 4,
+      "total_amount": 2180.0
+    },
+    {
+      "id": 165,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Job order-Scrap Cables from OSP Warehouse to ISP Warehouse",
+      "pickup_location": "Tabuk OSP to ISP",
+      "drop_location": "Tabuk OSP to ISP",
+      "status": "Completed",
+      "equipment_name": "Trailer",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 2460.0
+    },
+    {
+      "id": 166,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Remove Scrape/North thoquba ss",
+      "pickup_location": "North thoquba",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 167,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Scrap Material",
+      "pickup_location": "Dana 2",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 2,
+      "total_amount": 1540.0
+    },
+    {
+      "id": 168,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Al Hada 2 -Job Order-0021_Arrangement for Scrap Collector to Remove Cable, wood and Metal Scrap",
+      "pickup_location": "Hada 2",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 4,
+      "total_amount": 2180.0
+    },
+    {
+      "id": 169,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Request for removal of Cable and Wooden Scrap at Bayouniah SS",
+      "pickup_location": "Bayounia",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 4,
+      "total_amount": 2180.0
+    },
+    {
+      "id": 170,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Removal of Carton and Wood and metal Scrap from Diriyah Project - SS 8242",
+      "pickup_location": "Dereyah",
+      "drop_location": "Riyadh WH",
+      "status": "Completed",
+      "equipment_name": "FSR",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 3250.0
+    },
+    {
+      "id": 171,
+      "type": "Cable",
+      "request_date": "",
+      "description": "MV Cable and Metal Scrap Removal - Job Order and Photos Attached",
+      "pickup_location": "Wadi Dahran",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 4,
+      "total_amount": 2180.0
+    },
+    {
+      "id": 172,
+      "type": "Cable",
+      "request_date": "",
+      "description": "PULL-OUT OF LV SCRAP CABLE AND EMPTY CABLE DRUMS FOR SHERAA SS",
+      "pickup_location": "SHERAA SS",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 6,
+      "total_amount": 2820.0
+    },
+    {
+      "id": 173,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Cable scrap removal - Job Order and Photos Attached",
+      "pickup_location": "Wadi Dahran",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 2500.0
+    },
+    {
+      "id": 174,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Cable scrap removal from Bayouniyah SS- Job Order and Photos Attached",
+      "pickup_location": "Bayounia",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 2500.0
+    },
+    {
+      "id": 175,
+      "type": "Cable",
+      "request_date": "",
+      "description": "J.O for remove Cable Scrap& cable tray scrap -North Khobar",
+      "pickup_location": "North Khobar",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 9,
+      "total_amount": 4680.0
+    },
+    {
+      "id": 176,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JOB ORDER FOR REMOVAL OF CABLE SCRAP FROM AL BAHAR S/S",
+      "pickup_location": "AL BAHAR S/S",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 6,
+      "total_amount": 3720.0
+    },
+    {
+      "id": 177,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Removal of Carton and Wood and metal Scrap from Diriyah Project - SS 8242",
+      "pickup_location": "Diriyah",
+      "drop_location": "Riyadh WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 2600.0
+    },
+    {
+      "id": 178,
+      "type": "Cable",
+      "request_date": "",
+      "description": "scrap",
+      "pickup_location": "Murjan",
+      "drop_location": "Riyadh WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 2600.0
+    },
+    {
+      "id": 179,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Cable scrap removal - Job Order and Photos Attached",
+      "pickup_location": "Wadi Dahran",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 180,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JOB ORDER REQUEST FOR REMOVAL OF STEEL AND MV CABLE SCRAPS (SENAEYA-2 SS)",
+      "pickup_location": "Seneya 2",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Boom Truck",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 0.0,
+      "labour_qty": 0,
+      "total_amount": 1800.0
+    },
+    {
+      "id": 181,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JOB ORDER REQUEST FOR REMOVAL OF STEEL AND MV CABLE SCRAPS (SENAEYA-2 SS)",
+      "pickup_location": "Seneya 2",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 6,
+      "total_amount": 3720.0
+    },
+    {
+      "id": 182,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JOB ORDER FOR SCRAP MAETAL AND WOODEN REMOVAL FROM AL BAHAR S/S",
+      "pickup_location": "AL BAHAR S/S",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 183,
+      "type": "Cable",
+      "request_date": "",
+      "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451 10-6-2025",
+      "pickup_location": "Khobar Corniche",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 184,
+      "type": "Cable",
+      "request_date": "",
+      "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Dana-2 SS)-4400019456 12-31-2025",
+      "pickup_location": "Dana 2",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 2500.0
+    },
+    {
+      "id": 185,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JOB ORDER FOR SCRAP MATERIALS Bayounieh SS",
+      "pickup_location": "Bayouniah SS",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 4,
+      "total_amount": 2180.0
+    },
+    {
+      "id": 186,
+      "type": "Cable",
+      "request_date": "",
+      "description": "J.O for remove empty Cable drums Scrap& wood scrap -North Khobar",
+      "pickup_location": "North Khobar",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Boom Truck",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 0,
+      "total_amount": 900.0
+    },
+    {
+      "id": 187,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Job Order Request- 10T boom truck",
+      "pickup_location": "WHD-3 S/S",
+      "drop_location": "Jeddah WH",
+      "status": "Completed",
+      "equipment_name": "Boom Truck 10T",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 0,
+      "total_amount": 2600.0
+    },
+    {
+      "id": 188,
+      "type": "Cable",
+      "request_date": "",
+      "description": "Hada 2 job order for scrap",
+      "pickup_location": "Hada2",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 189,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JO for remove empty Cable drums Scrap& wood scrap -North Khobar",
+      "pickup_location": "North Khobar",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 5,
+      "total_amount": 2500.0
+    },
+    {
+      "id": 190,
+      "type": "Cable",
+      "request_date": "",
+      "description": "request for scrap removal from URUBA S\\S.",
+      "pickup_location": "Abumaan",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 191,
+      "type": "Cable",
+      "request_date": "",
+      "description": "JOB ORDER FOR SCRAP MAETAL AND WOODEN REMOVAL FROM AL BAHAR S/S",
+      "pickup_location": "AL BAHAR",
+      "drop_location": "DMM WH",
+      "status": "Completed",
+      "equipment_name": "Dyna",
+      "equipment_price": 0.0,
+      "equipment_qty": 0,
+      "labour_price": 320.0,
+      "labour_qty": 3,
+      "total_amount": 1860.0
+    },
+    {
+      "id": 192,
       "type": "Wood",
       "request_date": "2025-04-27",
       "description": "Wood scrap transfer",
@@ -2580,7 +3095,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 2,
+      "id": 193,
       "type": "Wood",
       "request_date": "2025-04-27",
       "description": "Wood scrap transfer",
@@ -2596,7 +3111,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 3,
+      "id": 194,
       "type": "Wood",
       "request_date": "2025-04-28",
       "description": "Wood scrap transfer",
@@ -2612,7 +3127,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 4,
+      "id": 195,
       "type": "Wood",
       "request_date": "2025-04-28",
       "description": "Wood scrap transfer",
@@ -2628,7 +3143,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 5,
+      "id": 196,
       "type": "Wood",
       "request_date": "2025-04-28",
       "description": "Wood scrap transfer",
@@ -2644,7 +3159,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 6,
+      "id": 197,
       "type": "Wood",
       "request_date": "2025-04-28",
       "description": "Wood scrap transfer",
@@ -2660,7 +3175,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 7,
+      "id": 198,
       "type": "Wood",
       "request_date": "2025-04-29",
       "description": "Wood scrap transfer",
@@ -2676,7 +3191,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 8,
+      "id": 199,
       "type": "Wood",
       "request_date": "2025-04-29",
       "description": "Wood scrap transfer",
@@ -2692,7 +3207,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 9,
+      "id": 200,
       "type": "Wood",
       "request_date": "2025-04-29",
       "description": "Wood scrap transfer",
@@ -2708,7 +3223,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 10,
+      "id": 201,
       "type": "Wood",
       "request_date": "2025-04-29",
       "description": "Wood scrap transfer",
@@ -2724,7 +3239,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 11,
+      "id": 202,
       "type": "Wood",
       "request_date": "2025-05-01",
       "description": "Wood scrap transfer",
@@ -2740,7 +3255,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 12,
+      "id": 203,
       "type": "Wood",
       "request_date": "2025-05-02",
       "description": "Wood scrap transfer",
@@ -2756,7 +3271,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 13,
+      "id": 204,
       "type": "Wood",
       "request_date": "2025-05-02",
       "description": "Wood scrap transfer",
@@ -2772,7 +3287,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 14,
+      "id": 205,
       "type": "Wood",
       "request_date": "2025-05-03",
       "description": "Wood scrap transfer",
@@ -2788,7 +3303,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 15,
+      "id": 206,
       "type": "Wood",
       "request_date": "2025-05-04",
       "description": "Wood scrap transfer",
@@ -2804,7 +3319,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 16,
+      "id": 207,
       "type": "Wood",
       "request_date": "2025-05-04",
       "description": "Wood scrap transfer",
@@ -2820,7 +3335,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 17,
+      "id": 208,
       "type": "Wood",
       "request_date": "2025-05-05",
       "description": "Wood scrap transfer",
@@ -2836,7 +3351,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 18,
+      "id": 209,
       "type": "Wood",
       "request_date": "2025-05-05",
       "description": "Wood scrap transfer",
@@ -2852,7 +3367,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 19,
+      "id": 210,
       "type": "Wood",
       "request_date": "2025-05-07",
       "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451",
@@ -2868,7 +3383,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 20,
+      "id": 211,
       "type": "Wood",
       "request_date": "2025-05-10",
       "description": "Wood scrap transfer",
@@ -2884,7 +3399,7 @@
       "order_received_from": "Samer"
     },
     {
-      "id": 21,
+      "id": 212,
       "type": "Wood",
       "request_date": "2025-05-11",
       "description": "Job Order Request for Removing Wood Scrap in Senaeya 2 SS",
@@ -2900,7 +3415,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 22,
+      "id": 213,
       "type": "Wood",
       "request_date": "2025-05-11",
       "description": "JOB ORDER FOR SCRAP WOODEN BOX REMOVAL FROM AL BAHAR S/S",
@@ -2916,7 +3431,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 23,
+      "id": 214,
       "type": "Wood",
       "request_date": "2025-05-18",
       "description": "SCRAP MATERIAL_SHIFTING_FORM (Al Bahar- S S)",
@@ -2932,7 +3447,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 24,
+      "id": 215,
       "type": "Wood",
       "request_date": "2025-05-18",
       "description": "Scrap Materials- Defaa Project",
@@ -2948,7 +3463,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 25,
+      "id": 216,
       "type": "Wood",
       "request_date": "2025-05-19",
       "description": "Scrap (Wood & Cable) Removal from Dana-2 SS",
@@ -2964,7 +3479,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 26,
+      "id": 217,
       "type": "Wood",
       "request_date": "2025-05-20",
       "description": "Removal of wooden, cable drum and cable scrap from Abumaan Ss",
@@ -2980,7 +3495,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 27,
+      "id": 218,
       "type": "Wood",
       "request_date": "2025-05-21",
       "description": "NCN- 09, Scrap Accumulation (North Khobar SS)",
@@ -2996,7 +3511,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 28,
+      "id": 219,
       "type": "Wood",
       "request_date": "2025-05-22",
       "description": "Scrap Removal ( wooden and Cable Scraps) from Wadi Dhahran",
@@ -3012,7 +3527,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 29,
+      "id": 220,
       "type": "Wood",
       "request_date": "2025-05-25",
       "description": "Request for Support in Removing Scrap Waste Accumulation",
@@ -3028,7 +3543,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 30,
+      "id": 221,
       "type": "Wood",
       "request_date": "2025-05-26",
       "description": "Remove Scrap Material From URUBA S.S",
@@ -3044,7 +3559,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 31,
+      "id": 222,
       "type": "Wood",
       "request_date": "2025-05-26",
       "description": "Scrap (Wood & Cable) Removal from Dana-2 SS",
@@ -3060,7 +3575,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 32,
+      "id": 223,
       "type": "Wood",
       "request_date": "2025-05-27",
       "description": "Al Hada 2 -Job Order-005_Arrangement for Scrap Collector to Remove Wooden Scrap",
@@ -3076,7 +3591,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 33,
+      "id": 224,
       "type": "Wood",
       "request_date": "2025-06-03",
       "description": "Scrap Removal - Dana-2",
@@ -3092,7 +3607,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 34,
+      "id": 225,
       "type": "Wood",
       "request_date": "2025-06-10",
       "description": "JO-Riyadhia (Cable Scrap and Wood removal) / waiting Ibrahim",
@@ -3108,7 +3623,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 35,
+      "id": 226,
       "type": "Wood",
       "request_date": "2025-06-11",
       "description": "Scrap Removal from Dana-2 S/S",
@@ -3124,7 +3639,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 36,
+      "id": 227,
       "type": "Wood",
       "request_date": "2025-06-11",
       "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451 10-6-2025",
@@ -3140,7 +3655,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 37,
+      "id": 228,
       "type": "Wood",
       "request_date": "2025-06-12",
       "description": "Removal of wooden cable drum and wooden scrap box from Abumaan S/S",
@@ -3156,7 +3671,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 38,
+      "id": 229,
       "type": "Wood",
       "request_date": "2025-06-15",
       "description": "Removal of cable scrap from Abumaan S/S",
@@ -3172,7 +3687,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 39,
+      "id": 230,
       "type": "Wood",
       "request_date": "2025-06-15",
       "description": "Job Order for Scarp Removing -Riyadhia SS",
@@ -3188,7 +3703,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 40,
+      "id": 231,
       "type": "Wood",
       "request_date": "2025-06-16",
       "description": "Removal of Scrap from Dana-2 S/S",
@@ -3204,7 +3719,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 41,
+      "id": 232,
       "type": "Wood",
       "request_date": "2025-06-16",
       "description": "Job Order for Scarp Removing -Riyadhia SS",
@@ -3220,7 +3735,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 42,
+      "id": 233,
       "type": "Wood",
       "request_date": "2025-06-17",
       "description": "Buhaiyrat SS - Collection / Removal of Empty Transformer Oil Drums and Scrap Materials",
@@ -3236,7 +3751,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 43,
+      "id": 234,
       "type": "Wood",
       "request_date": "2025-06-17",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP AT BAYOUNIAH SUBSTATION",
@@ -3252,7 +3767,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 44,
+      "id": 235,
       "type": "Wood",
       "request_date": "2025-06-18",
       "description": "Scarp Taiba west",
@@ -3268,7 +3783,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 45,
+      "id": 236,
       "type": "Wood",
       "request_date": "2025-06-18",
       "description": "Scarp Taiba west",
@@ -3284,7 +3799,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 46,
+      "id": 237,
       "type": "Wood",
       "request_date": "2025-06-18",
       "description": "J.O for scrap wood -North Khober",
@@ -3300,7 +3815,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 47,
+      "id": 238,
       "type": "Wood",
       "request_date": "2025-06-18",
       "description": "Empty Cable Drums (Senaeya2 SS)",
@@ -3316,7 +3831,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 48,
+      "id": 239,
       "type": "Wood",
       "request_date": "2025-06-18",
       "description": "Al Hada 2 -Job Order-008_Arrangement for Scrap Collector to Remove Cable Scrap",
@@ -3332,7 +3847,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 49,
+      "id": 240,
       "type": "Wood",
       "request_date": "2025-06-18",
       "description": "Scrap work Abuman 18-06-2025",
@@ -3348,7 +3863,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 50,
+      "id": 241,
       "type": "Wood",
       "request_date": "2025-06-19",
       "description": "Remove Wood from Jeddah Warehouse",
@@ -3364,7 +3879,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 51,
+      "id": 242,
       "type": "Wood",
       "request_date": "2025-06-22",
       "description": "J.O for scrap wood -North Khobar",
@@ -3380,7 +3895,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 52,
+      "id": 243,
       "type": "Wood",
       "request_date": "2025-06-22",
       "description": "Remove Scrape/North thoquba",
@@ -3396,7 +3911,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 53,
+      "id": 244,
       "type": "Wood",
       "request_date": "2025-06-22",
       "description": "JOB ORDER FOR SCRAP WOODEN BOX REMOVAL FROM AL BAHAR S/S",
@@ -3412,7 +3927,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 54,
+      "id": 245,
       "type": "Wood",
       "request_date": "2025-06-22",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP AT BAYOUNIAH SUBSTATION",
@@ -3428,7 +3943,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 55,
+      "id": 246,
       "type": "Wood",
       "request_date": "2025-06-22",
       "description": "Removal of Wooden Scrap from Dana-2 S/S",
@@ -3444,7 +3959,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 56,
+      "id": 247,
       "type": "Wood",
       "request_date": "2025-06-24",
       "description": "J.O for scrap wood -North Khobar",
@@ -3460,7 +3975,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 57,
+      "id": 248,
       "type": "Wood",
       "request_date": "2025-06-25",
       "description": "J.O for scrap wood -North Khobar",
@@ -3476,7 +3991,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 58,
+      "id": 249,
       "type": "Wood",
       "request_date": "2025-06-26",
       "description": "J.O for scrap wood -North Khobar",
@@ -3492,7 +4007,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 59,
+      "id": 250,
       "type": "Wood",
       "request_date": "2025-06-26",
       "description": "Empty Cable Drums (Senaeya2 SS)",
@@ -3508,7 +4023,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 60,
+      "id": 251,
       "type": "Wood",
       "request_date": "2025-06-26",
       "description": "Scrap Removal Cable Scraps from Wadi Dhahran - urgent",
@@ -3524,7 +4039,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 61,
+      "id": 252,
       "type": "Wood",
       "request_date": "2025-06-29",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP AT BAYOUNIAH SUBSTATION",
@@ -3540,7 +4055,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 62,
+      "id": 253,
       "type": "Wood",
       "request_date": "2025-06-29",
       "description": "Wood & Cable Scrap removal from Dana-2 S/S",
@@ -3556,7 +4071,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 63,
+      "id": 254,
       "type": "Wood",
       "request_date": "2025-06-29",
       "description": "JOB ORDER FOR SCRAP WOODEN BOX REMOVAL FROM AL BAHAR S/S",
@@ -3572,7 +4087,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 64,
+      "id": 255,
       "type": "Wood",
       "request_date": "2025-06-29",
       "description": "J.O for scrap wood -North Khobar",
@@ -3588,7 +4103,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 65,
+      "id": 256,
       "type": "Wood",
       "request_date": "2025-07-02",
       "description": "Al Hada 2 -Job Order-009_Arrangement for Scrap Collector to Remove Wooden Scrap",
@@ -3604,7 +4119,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 66,
+      "id": 257,
       "type": "Wood",
       "request_date": "2025-07-05",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP AT BAYOUNIAH SUBSTATION",
@@ -3620,7 +4135,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 67,
+      "id": 258,
       "type": "Wood",
       "request_date": "2025-07-05",
       "description": "North Khobar - Wood Scrap 06July",
@@ -3636,7 +4151,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 68,
+      "id": 259,
       "type": "Wood",
       "request_date": "2025-07-06",
       "description": "Empty Cable Drums (Senaeya2 SS)",
@@ -3652,7 +4167,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 69,
+      "id": 260,
       "type": "Wood",
       "request_date": "2025-07-06",
       "description": "Removing of Wooden Scrap _ Sheraa SS",
@@ -3668,7 +4183,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 70,
+      "id": 261,
       "type": "Wood",
       "request_date": "2025-07-07",
       "description": "Scrap JO",
@@ -3684,7 +4199,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 71,
+      "id": 262,
       "type": "Wood",
       "request_date": "2025-07-07",
       "description": "Scrap JO",
@@ -3700,7 +4215,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 72,
+      "id": 263,
       "type": "Wood",
       "request_date": "2025-07-07",
       "description": "Scrap JO",
@@ -3716,7 +4231,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 73,
+      "id": 264,
       "type": "Wood",
       "request_date": "2025-07-07",
       "description": "Scrap JO",
@@ -3732,7 +4247,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 74,
+      "id": 265,
       "type": "Wood",
       "request_date": "2025-07-07",
       "description": "Scrap JO",
@@ -3748,7 +4263,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 75,
+      "id": 266,
       "type": "Wood",
       "request_date": "2025-07-09",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP AT BAYOUNIAH SUBSTATION",
@@ -3764,7 +4279,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 76,
+      "id": 267,
       "type": "Wood",
       "request_date": "2025-07-12",
       "description": "scrape remove /north thoquba s.s",
@@ -3780,7 +4295,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 77,
+      "id": 268,
       "type": "Wood",
       "request_date": "2025-07-14",
       "description": "Scrap Materials- Defaa Project",
@@ -3796,7 +4311,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 78,
+      "id": 269,
       "type": "Wood",
       "request_date": "2025-07-16",
       "description": "Al Hada 2 -Job Order-011_Arrangement for Scrap Collector to Remove Wooden Scrap",
@@ -3812,7 +4327,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 79,
+      "id": 270,
       "type": "Wood",
       "request_date": "2025-07-19",
       "description": "AlBahar Wood Scrap 19-07-2025",
@@ -3828,7 +4343,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 80,
+      "id": 271,
       "type": "Wood",
       "request_date": "2025-07-20",
       "description": "scrape remove /north thoquba s.s",
@@ -3844,7 +4359,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 81,
+      "id": 272,
       "type": "Wood",
       "request_date": "2025-07-20",
       "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451 10-6-2025",
@@ -3860,7 +4375,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 82,
+      "id": 273,
       "type": "Wood",
       "request_date": "2025-07-20",
       "description": "JO for Scrap Removal at Dana-2 SS",
@@ -3876,7 +4391,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 83,
+      "id": 274,
       "type": "Wood",
       "request_date": "2025-07-22",
       "description": "J.O for remove empety Oil drum & Cable drum Scrap -North Khobar",
@@ -3892,7 +4407,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 84,
+      "id": 275,
       "type": "Wood",
       "request_date": "2025-07-24",
       "description": "Scrap Materials- Defaa Project",
@@ -3908,7 +4423,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 85,
+      "id": 276,
       "type": "Wood",
       "request_date": "2025-07-24",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP AT BAYOUNIAH SUBSTATION",
@@ -3924,7 +4439,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 86,
+      "id": 277,
       "type": "Wood",
       "request_date": "2025-07-29",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP AT BAYOUNIAH SUBSTATION",
@@ -3940,7 +4455,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 87,
+      "id": 278,
       "type": "Wood",
       "request_date": "2025-07-29",
       "description": "North Khobar - Wood Scrap 29 July",
@@ -3956,7 +4471,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 88,
+      "id": 279,
       "type": "Wood",
       "request_date": "2025-07-30",
       "description": "Job Order for Scarp Removing -Riyadhia SS",
@@ -3972,7 +4487,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 89,
+      "id": 280,
       "type": "Wood",
       "request_date": "2025-07-30",
       "description": "REQUEST FOR THE REMOVAL OF WOODEN SCRAP",
@@ -3988,7 +4503,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 90,
+      "id": 281,
       "type": "Wood",
       "request_date": "2025-07-31",
       "description": "REQUEST FOR THE REMOVAL OF WOODEN SCRAP",
@@ -4004,7 +4519,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 91,
+      "id": 282,
       "type": "Wood",
       "request_date": "2025-07-31",
       "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451 10-6-2025",
@@ -4020,7 +4535,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 92,
+      "id": 283,
       "type": "Wood",
       "request_date": "2025-07-28",
       "description": "Handaniya Scrap",
@@ -4036,7 +4551,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 93,
+      "id": 284,
       "type": "Wood",
       "request_date": "2025-08-02",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4052,7 +4567,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 94,
+      "id": 285,
       "type": "Wood",
       "request_date": "2025-08-03",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4068,7 +4583,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 95,
+      "id": 286,
       "type": "Wood",
       "request_date": "2025-08-03",
       "description": "Scrap Removal Cable Drums Scraps from Dana 2 Ss - urgent",
@@ -4084,7 +4599,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 96,
+      "id": 287,
       "type": "Wood",
       "request_date": "2025-08-04",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4100,7 +4615,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 97,
+      "id": 288,
       "type": "Wood",
       "request_date": "2025-08-05",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4116,7 +4631,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 98,
+      "id": 289,
       "type": "Wood",
       "request_date": "2025-08-06",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4132,7 +4647,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 99,
+      "id": 290,
       "type": "Wood",
       "request_date": "2025-08-06",
       "description": "Scrap Removal:- Wooden Scrapes from Dana 2 Ss - urgent",
@@ -4148,7 +4663,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 100,
+      "id": 291,
       "type": "Wood",
       "request_date": "2025-08-07",
       "description": "JOB ORDER FOR SCRAP WOODEN REMOVAL FROM AL BAHAR S/S",
@@ -4164,7 +4679,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 101,
+      "id": 292,
       "type": "Wood",
       "request_date": "2025-08-09",
       "description": "North Khobar - 09 Aug",
@@ -4180,7 +4695,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 102,
+      "id": 293,
       "type": "Wood",
       "request_date": "2025-08-10",
       "description": "Empty Box and Empty Cable Drums (Senaeya2 SS)",
@@ -4196,7 +4711,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 103,
+      "id": 294,
       "type": "Wood",
       "request_date": "2025-08-10",
       "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451 10-6-2025",
@@ -4212,7 +4727,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 104,
+      "id": 295,
       "type": "Wood",
       "request_date": "2025-08-10",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4228,7 +4743,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 105,
+      "id": 296,
       "type": "Wood",
       "request_date": "2025-08-13",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4244,7 +4759,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 106,
+      "id": 297,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "JOB ORDER FOR SCRAP WOODEN REMOVAL FROM AL BAHAR S/S",
@@ -4260,7 +4775,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 107,
+      "id": 298,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4276,7 +4791,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 108,
+      "id": 299,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "Al Hada 2 -Job Order-014_Arrangement for Scrap Collector to Remove Wooden Scrap",
@@ -4292,7 +4807,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 109,
+      "id": 300,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "Remove Wooden Scrap from URUBA S/S",
@@ -4308,7 +4823,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 110,
+      "id": 301,
       "type": "Wood",
       "request_date": "2025-08-18",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4324,7 +4839,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 111,
+      "id": 302,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4340,7 +4855,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 112,
+      "id": 303,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4356,7 +4871,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 113,
+      "id": 304,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4372,7 +4887,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 114,
+      "id": 305,
       "type": "Wood",
       "request_date": "2025-08-17",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4388,7 +4903,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 115,
+      "id": 306,
       "type": "Wood",
       "request_date": "2025-08-24",
       "description": "Uruba wood scrap 24 Aug 2025",
@@ -4404,7 +4919,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 116,
+      "id": 307,
       "type": "Wood",
       "request_date": "2025-08-25",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4420,7 +4935,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 117,
+      "id": 308,
       "type": "Wood",
       "request_date": "2025-08-25",
       "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451 10-6-2025",
@@ -4436,7 +4951,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 118,
+      "id": 309,
       "type": "Wood",
       "request_date": "2025-08-31",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4452,7 +4967,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 119,
+      "id": 310,
       "type": "Wood",
       "request_date": "2025-09-03",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4468,7 +4983,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 120,
+      "id": 311,
       "type": "Wood",
       "request_date": "2025-09-03",
       "description": "Wooden scrape shifting to scrape yard from Wadi Dhahran SS",
@@ -4484,7 +4999,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 121,
+      "id": 312,
       "type": "Wood",
       "request_date": "2025-09-04",
       "description": "cable scrap shifting ( al-ryadhiyah ss )",
@@ -4500,7 +5015,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 122,
+      "id": 313,
       "type": "Wood",
       "request_date": "2025-09-04",
       "description": "J.O for remove Cable drum Scrap& -North Khobar",
@@ -4516,7 +5031,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 123,
+      "id": 314,
       "type": "Wood",
       "request_date": "2025-09-04",
       "description": "Remove Scrap/North Thouquba s.s",
@@ -4532,7 +5047,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 124,
+      "id": 315,
       "type": "Wood",
       "request_date": "2025-09-07",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4548,7 +5063,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 125,
+      "id": 316,
       "type": "Wood",
       "request_date": "2025-09-08",
       "description": "REQUEST FOR REMOVAL OF WOODEN SCRAP",
@@ -4564,7 +5079,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 126,
+      "id": 317,
       "type": "Wood",
       "request_date": "2025-09-08",
       "description": "Scrap Accumulation@ WOA & SOA projects",
@@ -4580,7 +5095,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 127,
+      "id": 318,
       "type": "Wood",
       "request_date": "2025-09-21",
       "description": "REMOVAL OF WOODEN SCRAP AND METAL CABLE DRUM",
@@ -4596,7 +5111,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 128,
+      "id": 319,
       "type": "Wood",
       "request_date": "2025-09-21",
       "description": "Wooden scrape shifting to scrap and emptyn cable drums yard from Wadi Dhahran SS",
@@ -4612,7 +5127,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 129,
+      "id": 320,
       "type": "Wood",
       "request_date": "2025-10-02",
       "description": "Job order for cable drums at DANA2 Project",
@@ -4628,7 +5143,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 130,
+      "id": 321,
       "type": "Wood",
       "request_date": "2025-10-13",
       "description": "J.O for remove Cable drum Scrap -North Khobar",
@@ -4644,7 +5159,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 131,
+      "id": 322,
       "type": "Wood",
       "request_date": "2025-10-21",
       "description": "Remove Wooden drums& Steel drums and M.V cable scrap from URUBA S/S",
@@ -4660,7 +5175,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 132,
+      "id": 323,
       "type": "Wood",
       "request_date": "2025-10-20",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4676,7 +5191,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 133,
+      "id": 324,
       "type": "Wood",
       "request_date": "2025-10-20",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4692,7 +5207,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 134,
+      "id": 325,
       "type": "Wood",
       "request_date": "2025-10-20",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4708,7 +5223,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 135,
+      "id": 326,
       "type": "Wood",
       "request_date": "2025-10-20",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4724,7 +5239,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 136,
+      "id": 327,
       "type": "Wood",
       "request_date": "2025-10-27",
       "description": "WoodScrap No email",
@@ -4740,7 +5255,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 137,
+      "id": 328,
       "type": "Wood",
       "request_date": "2025-10-26",
       "description": "SCRAP_AND_MATERIAL_SHIFTING_FORM (Khobar Corniche SS)-4400019451 10-6-2025",
@@ -4756,7 +5271,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 138,
+      "id": 329,
       "type": "Wood",
       "request_date": "2025-10-28",
       "description": "JO for Scrap Removal – From 3 Madinah Projects to MED WH (Top Urgent)",
@@ -4772,7 +5287,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 139,
+      "id": 330,
       "type": "Wood",
       "request_date": "2025-10-28",
       "description": "JO for Scrap Removal – From 3 Madinah Projects to MED WH (Top Urgent)",
@@ -4788,7 +5303,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 140,
+      "id": 331,
       "type": "Wood",
       "request_date": "2025-10-28",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4804,7 +5319,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 141,
+      "id": 332,
       "type": "Wood",
       "request_date": "2025-10-28",
       "description": "Status of Scrap Accumulation@ Dammam Projects",
@@ -4820,7 +5335,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 142,
+      "id": 333,
       "type": "Wood",
       "request_date": "2025-11-03",
       "description": "Scrap Materials- Defaa Project",
@@ -4836,7 +5351,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 143,
+      "id": 334,
       "type": "Wood",
       "request_date": "2025-11-04",
       "description": "REMOVAL OF WOODEN SCRAP AND WOODEN CABLE DRUM",
@@ -4852,7 +5367,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 144,
+      "id": 335,
       "type": "Wood",
       "request_date": "2025-11-08",
       "description": "Scrap collection and delivery to Dammam WH",
@@ -4868,7 +5383,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 145,
+      "id": 336,
       "type": "Wood",
       "request_date": "2025-11-08",
       "description": "Scrap collection and delivery to Dammam WH",
@@ -4884,7 +5399,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 146,
+      "id": 337,
       "type": "Wood",
       "request_date": "2025-11-10",
       "description": "wooden Scrap at Qatif Shati SS",
@@ -4900,7 +5415,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 147,
+      "id": 338,
       "type": "Wood",
       "request_date": "2025-11-10",
       "description": "Scrap removal",
@@ -4916,7 +5431,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 148,
+      "id": 339,
       "type": "Wood",
       "request_date": "2025-11-12",
       "description": "Request for removal of Cable and Wooden Scrap at Bayouniah SS",
@@ -4932,7 +5447,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 149,
+      "id": 340,
       "type": "Wood",
       "request_date": "2025-11-12",
       "description": "NIC EV2 - Wooden Scrap request",
@@ -4948,7 +5463,7 @@
       "order_received_from": "Job Order"
     },
     {
-      "id": 150,
+      "id": 341,
       "type": "Wood",
       "request_date": "2025-11-15",
       "description": "8274 - job order - shifting Scrap material from Al Murjan",
@@ -4962,294 +5477,6 @@
       "labour_qty": 9,
       "total_amount": 5580.0,
       "order_received_from": "Job Order"
-    },
-    {
-      "id": 157,
-      "type": "Cable",
-      "request_date": "2025-12-01",
-      "complete_date": "2025-12-02",
-      "description": "Request for removal of Cable and Wooden Scrap at Bayouniah SS",
-      "pickup_location": "Bayouniah",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "2 Dec Bayouniah Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 4,
-      "total_amount": 2180.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 158,
-      "type": "Cable",
-      "request_date": "2025-12-01",
-      "complete_date": "2025-12-03",
-      "description": "Job order-Scrap Cables from OSP Warehouse to ISP Warehouse",
-      "pickup_location": "Tabuk OSP to ISP",
-      "drop_location": "Tabuk OSP to ISP",
-      "status": "Completed",
-      "delivery_note": "3 Dec Tabuk (OSP to ISP) Cable Scrap",
-      "equipment_name": "Trailer",
-      "equipment_price": 1500.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 3,
-      "total_amount": 2460.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 159,
-      "type": "Cable",
-      "request_date": "2025-12-02",
-      "complete_date": "2025-12-03",
-      "description": "Remove Scrape/North thoquba ss",
-      "pickup_location": "North thoquba",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "3 Dec North Tuqba Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 3,
-      "total_amount": 1860.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 160,
-      "type": "Cable",
-      "request_date": "2025-12-04",
-      "complete_date": "2025-12-07",
-      "description": "Scrap Material",
-      "pickup_location": "Dana 2",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "7 Dec Dana 2 Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 2,
-      "total_amount": 1540.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 161,
-      "type": "Cable",
-      "request_date": "2026-12-07",
-      "complete_date": "2026-12-09",
-      "description": "Al Hada 2 -Job Order-0021_Arrangement for Scrap Collector to Remove Cable, wood and Metal Scrap",
-      "pickup_location": "Hada 2",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "8 Dec Hada 2 Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 4,
-      "total_amount": 2180.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 162,
-      "type": "Cable",
-      "request_date": "2026-12-08",
-      "complete_date": "2026-12-09",
-      "description": "Request for removal of Cable and Wooden Scrap at Bayouniah SS",
-      "pickup_location": "Bayounia",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "9 Dec Bayounia Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 4,
-      "total_amount": 2180.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 163,
-      "type": "Cable",
-      "request_date": "2026-12-08",
-      "complete_date": "2026-12-11",
-      "description": "Removal of Carton and Wood and metal Scrap from Diriyah Project - SS 8242",
-      "pickup_location": "Dereyah",
-      "drop_location": "Riyadh WH",
-      "status": "Completed",
-      "delivery_note": "10 Dec Deriyah Oil Drums",
-      "equipment_name": "FSR",
-      "equipment_price": 1650.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 5,
-      "total_amount": 3250.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 164,
-      "type": "Cable",
-      "request_date": "2026-12-09",
-      "complete_date": "2026-12-10",
-      "description": "MV Cable and Metal Scrap Removal - Job Order and Photos Attached",
-      "pickup_location": "Wadi Dahran",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "10 Dec Wadi Dahran Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 4,
-      "total_amount": 2180.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 165,
-      "type": "Cable",
-      "request_date": "2026-12-11",
-      "complete_date": "2026-12-18",
-      "description": "PULL-OUT OF LV SCRAP CABLE AND EMPTY CABLE DRUMS FOR SHERAA SS",
-      "pickup_location": "SHERAA SS",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "15 Dec 2025 Sheraa Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 6,
-      "total_amount": 2820.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 166,
-      "type": "Cable",
-      "request_date": "2026-12-15",
-      "complete_date": "2026-12-18",
-      "description": "Cable scrap removal - Job Order and Photos Attached",
-      "pickup_location": "Wadi Dahran",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "18 Dec Wadi Dahran Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 5,
-      "total_amount": 2500.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 167,
-      "type": "Cable",
-      "request_date": "2026-12-15",
-      "complete_date": "2026-12-22",
-      "description": "Cable scrap removal from Bayouniyah SS- Job Order and Photos Attached",
-      "pickup_location": "Bayounia",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "18 Dec Bayounia Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 5,
-      "total_amount": 2500.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 168,
-      "type": "Cable",
-      "request_date": "2026-12-15",
-      "complete_date": "2026-12-22",
-      "description": "J.O for remove Cable Scrap& cable tray scrap -North Khobar",
-      "pickup_location": "North Khobar",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "20 Dec Khobar North Cable and Metal Scrap\n22 Dec 2025 North Khobar Metal Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 2,
-      "labour_price": 320.0,
-      "labour_qty": 9,
-      "total_amount": 4680.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 169,
-      "type": "Cable",
-      "request_date": "2026-12-16",
-      "complete_date": "2026-12-22",
-      "description": "JOB ORDER FOR REMOVAL OF CABLE SCRAP FROM AL BAHAR S/S",
-      "pickup_location": "AL BAHAR S/S",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "22 Dec 2025 AlBahar Cable Drums\n22 Dec 2025 AlBahar Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 2,
-      "labour_price": 320.0,
-      "labour_qty": 6,
-      "total_amount": 3720.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 170,
-      "type": "Cable",
-      "request_date": "2026-12-22",
-      "complete_date": "2026-12-27",
-      "description": "Removal of Carton and Wood and metal Scrap from Diriyah Project - SS 8242",
-      "pickup_location": "Diriyah",
-      "drop_location": "Riyadh WH",
-      "status": "Completed",
-      "delivery_note": "25 Dec 2025 Deriyah Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 1000.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 5,
-      "total_amount": 2600.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 171,
-      "type": "Cable",
-      "request_date": "2026-12-22",
-      "complete_date": "2026-12-24",
-      "description": "scrap",
-      "pickup_location": "Murjan",
-      "drop_location": "Riyadh WH",
-      "status": "Completed",
-      "delivery_note": "24 Dec 2025 Murjan Cable Scrap",
-      "equipment_name": "Dyna",
-      "equipment_price": 1000.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 5,
-      "total_amount": 2600.0,
-      "source": "Dec 2025 Report"
-    },
-    {
-      "id": 172,
-      "type": "Cable",
-      "request_date": "2026-12-28",
-      "complete_date": "2026-12-30",
-      "description": "Cable scrap removal - Job Order and Photos Attached",
-      "pickup_location": "Wadi Dahran",
-      "drop_location": "DMM WH",
-      "status": "Completed",
-      "delivery_note": "30 Dec 2025 Wadi Dahran Cable Scrap to DMM WH",
-      "equipment_name": "Dyna",
-      "equipment_price": 900.0,
-      "equipment_qty": 1,
-      "labour_price": 320.0,
-      "labour_qty": 3,
-      "total_amount": 1860.0,
-      "source": "Dec 2025 Report"
     }
   ]
 }
