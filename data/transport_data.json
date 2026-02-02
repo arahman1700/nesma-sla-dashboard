@@ -1,0 +1,181 @@
+{
+  "last_updated": "2026-02-02T12:00:00",
+  "source": "Logistics SLA Dashboard - Transport & Equipment Module",
+  "summary": {
+    "total_requests": 847,
+    "completed_requests": 789,
+    "pending_requests": 42,
+    "in_progress_requests": 16,
+    "cancelled_requests": 0,
+    "total_value": 2450000
+  },
+  "sla_metrics": {
+    "vehicle_provision": {
+      "on_time": 312,
+      "total": 328,
+      "rate": 95.1,
+      "target": 95,
+      "sla_days": 2,
+      "description": "Vehicle provisioning within 2 business days from MenaME approved request"
+    },
+    "equipment_approval": {
+      "on_time": 245,
+      "total": 256,
+      "rate": 95.7,
+      "target": 95,
+      "sla_days": 1,
+      "description": "Equipment request approval within 1 business day of receipt"
+    },
+    "equipment_delivery_city": {
+      "on_time": 156,
+      "total": 168,
+      "rate": 92.9,
+      "target": 95,
+      "sla_days": 2,
+      "description": "Equipment delivery within city - 2 business days from approval"
+    },
+    "equipment_delivery_out": {
+      "on_time": 89,
+      "total": 95,
+      "rate": 93.7,
+      "target": 95,
+      "sla_days": 3,
+      "description": "Equipment delivery out of city - 3 business days from approval"
+    }
+  },
+  "cycle_time": {
+    "vehicle": {
+      "average": 1.8,
+      "p50": 1.5,
+      "p90": 2.8
+    },
+    "equipment": {
+      "average": 2.1,
+      "p50": 1.8,
+      "p90": 3.2
+    }
+  },
+  "aging_buckets": {
+    "0_1_days": 28,
+    "2_3_days": 18,
+    "4_5_days": 8,
+    "over_5_days": 4
+  },
+  "filters": {
+    "years": ["2024", "2025", "2026"],
+    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "projects": ["Project Alpha", "Project Beta", "Project Gamma", "Project Delta", "NEOM", "Red Sea"],
+    "suppliers": ["NIT Fleet", "Al Majal Transport", "Express Logistics", "Gulf Equipment"],
+    "equipment_types": ["Crane", "Forklift", "Truck", "Excavator", "Loader", "Generator"],
+    "statuses": ["Completed", "Pending", "In Progress", "Cancelled"],
+    "location_bands": ["In City", "Out of City"]
+  },
+  "monthly_summary": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "requests": [72, 68, 85, 78, 92, 65, 88, 76, 71, 82, 70, 0],
+    "completed": [68, 65, 82, 75, 88, 62, 85, 73, 68, 79, 67, 0],
+    "sla_compliance": [94.4, 95.6, 96.3, 96.2, 95.5, 95.4, 96.6, 96.1, 95.8, 96.3, 95.7, 0],
+    "values": [185000, 175000, 220000, 195000, 245000, 168000, 232000, 198000, 182000, 215000, 178000, 0]
+  },
+  "equipment_requests": [
+    {
+      "request_number": "REQ-2026-001",
+      "job_order_no": "2600001",
+      "project": "NEOM",
+      "company": "NIT",
+      "requestor": "Ahmed Ali",
+      "request_date": "2026-01-28",
+      "approved_date": "2026-01-28",
+      "delivery_date": "2026-01-30",
+      "supplier": "NIT Fleet",
+      "equipment_type": "Crane",
+      "equipment_1": "Mobile Crane 50T",
+      "price_1": 15000,
+      "rental_type": "Daily",
+      "total_amount": 15000,
+      "duration": 5,
+      "status": "Completed",
+      "location_band": "In City",
+      "cycle_days": 2,
+      "sla_met": true,
+      "sla_status": "Met",
+      "pending_with": "",
+      "remarks": "Delivered on time"
+    },
+    {
+      "request_number": "REQ-2026-002",
+      "job_order_no": "2600002",
+      "project": "Red Sea",
+      "company": "NIT",
+      "requestor": "Mohammed Hassan",
+      "request_date": "2026-01-29",
+      "approved_date": "2026-01-29",
+      "delivery_date": "2026-02-01",
+      "supplier": "Al Majal Transport",
+      "equipment_type": "Excavator",
+      "equipment_1": "Excavator CAT 320",
+      "price_1": 8500,
+      "rental_type": "Daily",
+      "total_amount": 8500,
+      "duration": 10,
+      "status": "Completed",
+      "location_band": "Out of City",
+      "cycle_days": 3,
+      "sla_met": true,
+      "sla_status": "Met",
+      "pending_with": "",
+      "remarks": ""
+    },
+    {
+      "request_number": "REQ-2026-003",
+      "job_order_no": "2600003",
+      "project": "Project Alpha",
+      "company": "NIT",
+      "requestor": "Khalid Omar",
+      "request_date": "2026-01-30",
+      "approved_date": "2026-01-30",
+      "delivery_date": "",
+      "supplier": "Express Logistics",
+      "equipment_type": "Forklift",
+      "equipment_1": "Forklift 3T",
+      "price_1": 3200,
+      "rental_type": "Daily",
+      "total_amount": 3200,
+      "duration": 7,
+      "status": "In Progress",
+      "location_band": "In City",
+      "cycle_days": 3,
+      "sla_met": false,
+      "sla_status": "Breach",
+      "pending_with": "Supplier",
+      "remarks": "Awaiting equipment availability"
+    }
+  ],
+  "vehicle_requests": [
+    {
+      "request_number": "VEH-2026-001",
+      "project": "NEOM",
+      "requestor": "Ali Hassan",
+      "request_date": "2026-01-28",
+      "provision_date": "2026-01-29",
+      "vehicle_type": "Pickup Truck",
+      "status": "Completed",
+      "cycle_days": 1,
+      "sla_met": true
+    },
+    {
+      "request_number": "VEH-2026-002",
+      "project": "Red Sea",
+      "requestor": "Omar Khalid",
+      "request_date": "2026-01-29",
+      "provision_date": "2026-01-31",
+      "vehicle_type": "Bus",
+      "status": "Completed",
+      "cycle_days": 2,
+      "sla_met": true
+    }
+  ],
+  "first_time_ready_rate": 94.2,
+  "early_utilization_7day": 87.5,
+  "up_to_date_usage_database": 98.5
+}

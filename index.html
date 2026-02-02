@@ -11,9 +11,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/nesma-theme.css">
     <style>
+        :root {
+            --nesma-primary: #2E3192;
+            --nesma-secondary: #80D1E9;
+            --nesma-navy: #0E2841;
+            --nesma-dark-blue: #203366;
+        }
+
         body {
             background: linear-gradient(135deg, #0E2841 0%, #203366 50%, #0E2841 100%);
             min-height: 100vh;
+            font-family: 'Inter', sans-serif;
         }
 
         .hero-gradient {
@@ -21,6 +29,7 @@
                         radial-gradient(ellipse at bottom right, rgba(46, 49, 146, 0.25) 0%, transparent 70%);
         }
 
+        /* Glass Card Design */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
@@ -58,9 +67,11 @@
             min-height: 320px;
         }
 
-        .glow-text { text-shadow: 0 0 40px rgba(128, 209, 233, 0.5); }
+        .glow-text {
+            text-shadow: 0 0 40px rgba(128, 209, 233, 0.5);
+        }
 
-
+        /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -71,7 +82,9 @@
         .stagger-2 { animation-delay: 0.2s; }
         .stagger-3 { animation-delay: 0.3s; }
         .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
 
+        /* Particles */
         .particles {
             position: fixed;
             top: 0;
@@ -100,6 +113,7 @@
             100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
 
+        /* Icon Box */
         .icon-box {
             width: 80px;
             height: 80px;
@@ -110,10 +124,21 @@
             margin-bottom: 24px;
         }
 
+        .icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        /* Icon Gradients */
         .logistics-gradient { background: linear-gradient(135deg, #2E3192 0%, #0E2841 100%); }
         .procurement-gradient { background: linear-gradient(135deg, #2E3192 0%, #0E2841 100%); }
         .warehouse-gradient { background: linear-gradient(135deg, #10B981 0%, #0E2841 100%); }
+        .facility-gradient { background: linear-gradient(135deg, #6366F1 0%, #0E2841 100%); }
+        .disabled-gradient { background: linear-gradient(135deg, #6B7280 0%, #374151 100%); }
 
+        /* Status Badges */
         .status-badge {
             font-size: 11px;
             padding: 6px 14px;
@@ -124,6 +149,7 @@
         .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
         .badge-coming { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
 
+        /* Feature Tags */
         .feature-tag {
             font-size: 11px;
             padding: 4px 10px;
@@ -131,6 +157,140 @@
             background: rgba(255, 255, 255, 0.1);
             color: rgba(255, 255, 255, 0.7);
         }
+
+        /* Enter Button */
+        .enter-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #80D1E9;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .enter-btn svg {
+            transition: transform 0.2s ease;
+        }
+
+        .glass-card:hover .enter-btn svg {
+            transform: translateX(4px);
+        }
+
+        /* Disabled Card */
+        .card-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card-disabled:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: none;
+        }
+
+        .card-disabled::before {
+            display: none;
+        }
+
+        /* Enhanced Glowing Logo Styles */
+        .logo-glow-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo-glow {
+            filter: drop-shadow(0 0 25px rgba(128, 209, 233, 0.8))
+                    drop-shadow(0 0 50px rgba(128, 209, 233, 0.6))
+                    drop-shadow(0 0 80px rgba(128, 209, 233, 0.4))
+                    drop-shadow(0 0 120px rgba(46, 49, 146, 0.3));
+            animation: logoGlow 3s ease-in-out infinite alternate, logoFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0% {
+                filter: drop-shadow(0 0 25px rgba(128, 209, 233, 0.6))
+                        drop-shadow(0 0 50px rgba(128, 209, 233, 0.4))
+                        drop-shadow(0 0 80px rgba(128, 209, 233, 0.2))
+                        drop-shadow(0 0 120px rgba(46, 49, 146, 0.2));
+            }
+            100% {
+                filter: drop-shadow(0 0 40px rgba(128, 209, 233, 1))
+                        drop-shadow(0 0 80px rgba(128, 209, 233, 0.7))
+                        drop-shadow(0 0 120px rgba(128, 209, 233, 0.5))
+                        drop-shadow(0 0 160px rgba(46, 49, 146, 0.4));
+            }
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Outer glow ring */
+        .logo-glow-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(ellipse, rgba(128, 209, 233, 0.2) 0%, rgba(46, 49, 146, 0.1) 40%, transparent 70%);
+            animation: pulseGlow 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        /* Inner shine effect */
+        .logo-glow-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 110%;
+            height: 110%;
+            background: radial-gradient(ellipse at 30% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+            animation: shineRotate 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+        }
+
+        @keyframes shineRotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Sparkle effects around logo */
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(128, 209, 233, 1), 0 0 20px rgba(128, 209, 233, 0.8);
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .sparkle:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { top: 5%; right: 10%; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { bottom: 15%; left: 10%; animation-delay: 1s; }
+        .sparkle:nth-child(4) { bottom: 10%; right: 5%; animation-delay: 1.5s; }
+        .sparkle:nth-child(5) { top: 50%; left: -5%; animation-delay: 0.3s; }
+        .sparkle:nth-child(6) { top: 50%; right: -5%; animation-delay: 0.8s; }
     </style>
 </head>
 <body class="text-white">
@@ -153,11 +313,27 @@
             </nav>
         </header>
 
-        <!-- Hero -->
-        <section class="container mx-auto px-6 py-16 text-center">
-            <div class="fade-in-up stagger-1">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 glow-text">Supply Chain Management Portal</h1>
-                <p class="text-xl text-gray-400 mb-2">Integrated Operations Management System</p>
+        <!-- Hero with Logo -->
+        <section class="container mx-auto px-4 md:px-6 py-12 md:py-16 text-center">
+            <!-- Glowing Logo Section -->
+            <div class="fade-in-up stagger-1 mb-10">
+                <div class="logo-glow-container inline-block relative" style="padding: 30px;">
+                    <!-- Sparkle effects -->
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <!-- Main Logo -->
+                    <img src="assets/nit-supply-chain-logo.png" alt="NIT Supply Chain" class="mx-auto logo-glow h-32 md:h-44 lg:h-56 xl:h-64" onerror="this.style.display='none'; document.getElementById('fallback-title').style.display='block';">
+                    <div id="fallback-title" style="display:none;">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 glow-text">Supply Chain Management</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in-up stagger-2">
+                <p class="text-xl text-gray-300 mb-2">Integrated Operations Management System</p>
                 <p class="text-sm text-cyan-400/70">Select a department to access dashboards</p>
             </div>
         </section>
@@ -167,26 +343,28 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
                 <!-- Logistics -->
-                <div class="glass-card department-card p-8 fade-in-up stagger-2 block text-center opacity-60 cursor-not-allowed">
+                <a href="transport_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-2 block text-center">
                     <div class="flex justify-center">
-                        <div class="icon-box p-0 rounded-2xl overflow-hidden" style="width: 90px; height: 90px;">
-                            <img src="assets/nit-logistics.png" alt="NIT Logistics" class="w-full h-full object-cover">
+                        <div class="icon-box p-0 overflow-hidden" style="width: 90px; height: 90px;">
+                            <img src="assets/nit-logistics.png" alt="NIT Logistics">
                         </div>
                     </div>
-                    <span class="status-badge badge-coming mb-4 inline-block">Coming Soon</span>
+                    <span class="status-badge badge-active mb-4 inline-block">Active</span>
                     <h3 class="text-2xl font-bold mb-3">Logistics</h3>
-                    <p class="text-gray-400 text-sm mb-6">Transportation, equipment, shipments & performance tracking</p>
+                    <p class="text-gray-400 text-sm mb-6">Transportation & equipment provisioning</p>
 
                     <div class="flex flex-wrap justify-center gap-2 mb-6">
                         <span class="feature-tag">Transport</span>
-                        <span class="feature-tag">Payments</span>
-                        <span class="feature-tag">SLA</span>
+                        <span class="feature-tag">Equipment</span>
                     </div>
 
-                    <div class="flex items-center justify-center text-gray-500 text-sm font-semibold">
-                        <span>Under Development</span>
+                    <div class="enter-btn">
+                        <span>Enter</span>
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </div>
-                </div>
+                </a>
 
                 <!-- Procurement -->
                 <a href="procurement_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-3 block text-center">
@@ -199,14 +377,14 @@
                     </div>
                     <span class="status-badge badge-active mb-4 inline-block">Active</span>
                     <h3 class="text-2xl font-bold mb-3">Procurement</h3>
-                    <p class="text-gray-400 text-sm mb-6">PR Analysis & Vendor Evaluation</p>
+                    <p class="text-gray-400 text-sm mb-6">PR Analysis & vendor evaluation</p>
 
                     <div class="flex flex-wrap justify-center gap-2 mb-6">
                         <span class="feature-tag">PR Analysis</span>
-                        <span class="feature-tag">Vendor Eval</span>
+                        <span class="feature-tag">Vendors</span>
                     </div>
 
-                    <div class="flex items-center justify-center text-cyan-400 text-sm font-semibold">
+                    <div class="enter-btn">
                         <span>Enter</span>
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -215,54 +393,78 @@
                 </a>
 
                 <!-- Warehouse -->
-                <div class="glass-card department-card p-8 fade-in-up stagger-4 block text-center opacity-60 cursor-not-allowed">
+                <a href="warehouse_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-4 block text-center">
                     <div class="flex justify-center">
-                        <div class="icon-box" style="background: linear-gradient(135deg, #10B981 0%, #0E2841 100%);">
+                        <div class="icon-box warehouse-gradient">
                             <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
                                 <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                     </div>
-                    <span class="status-badge badge-coming mb-4 inline-block">Coming Soon</span>
+                    <span class="status-badge badge-active mb-4 inline-block">Active</span>
                     <h3 class="text-2xl font-bold mb-3">Warehouse</h3>
-                    <p class="text-gray-400 text-sm mb-6">Inventory, Materials & Stock Management</p>
+                    <p class="text-gray-400 text-sm mb-6">Inventory & materials management</p>
 
                     <div class="flex flex-wrap justify-center gap-2 mb-6">
                         <span class="feature-tag">Inventory</span>
                         <span class="feature-tag">Transfers</span>
-                        <span class="feature-tag">Stock</span>
                     </div>
 
-                    <div class="flex items-center justify-center text-gray-500 text-sm font-semibold">
-                        <span>Under Development</span>
+                    <div class="enter-btn">
+                        <span>Enter</span>
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </div>
-                </div>
+                </a>
 
                 <!-- Facility Management -->
-                <div class="glass-card department-card p-8 fade-in-up stagger-4 block text-center opacity-60 cursor-not-allowed">
+                <div class="glass-card card-disabled department-card p-8 fade-in-up stagger-5 block text-center">
                     <div class="flex justify-center">
-                        <div class="icon-box" style="background: linear-gradient(135deg, #6366F1 0%, #0E2841 100%);">
+                        <div class="icon-box disabled-gradient">
                             <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                     </div>
                     <span class="status-badge badge-coming mb-4 inline-block">Coming Soon</span>
-                    <h3 class="text-2xl font-bold mb-3">Facility Management</h3>
-                    <p class="text-gray-400 text-sm mb-6">Fleet, Maintenance & Operations</p>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-400">Facility</h3>
+                    <p class="text-gray-500 text-sm mb-6">Fleet & vehicle management</p>
 
                     <div class="flex flex-wrap justify-center gap-2 mb-6">
-                        <span class="feature-tag">Fleet</span>
-                        <span class="feature-tag">Maintenance</span>
+                        <span class="feature-tag opacity-50">Fleet</span>
+                        <span class="feature-tag opacity-50">Vehicles</span>
                     </div>
 
-                    <div class="flex items-center justify-center text-gray-500 text-sm font-semibold">
-                        <span>Under Development</span>
+                    <div class="text-gray-500 text-sm font-medium">
+                        Under Development
                     </div>
                 </div>
 
             </div>
+        </section>
+
+        <!-- SLA Documentation Link -->
+        <section class="container mx-auto px-6 py-8">
+            <a href="sla_requirements.html" class="block glass-card p-6 fade-in-up stagger-5 hover:border-cyan-400/50 transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-white mb-1">SLA Requirements Documentation</h3>
+                        <p class="text-sm text-gray-400">Service Level Agreement standards, KPIs, and compliance targets</p>
+                    </div>
+                    <div class="text-cyan-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </a>
         </section>
 
         <!-- Footer -->
@@ -270,14 +472,11 @@
             <div class="border-t border-gray-800 pt-6">
                 <p class="text-gray-500 text-sm mb-2">NESMA Infrastructure & Technology</p>
                 <p class="text-gray-600 text-xs">Supply Chain Management</p>
-                <p class="text-gray-700 text-xs mt-3">Version 2.1.0 | January 2026 | Brand Identity Update</p>
             </div>
         </footer>
     </div>
 
     <script>
-        const currentLang = 'en'; // Fixed to English
-
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 25; i++) {
@@ -292,10 +491,15 @@
 
         function updateTime() {
             const now = new Date();
-            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'Asia/Riyadh' };
+            const options = {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+                timeZone: 'Asia/Riyadh'
+            };
             document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', options);
         }
-
 
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();

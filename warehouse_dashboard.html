@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>NESMA | Warehouse & Material Handling Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/nesma-theme.css">
+    <style>
+        :root {
+            /* Nesma Brand Colors - Official */
+            --nesma-primary: #2E3192;
+            --nesma-cyan: #80D1E9;
+            --nesma-navy: #0E2841;
+            --nesma-dark-blue: #203366;
+            --nesma-light-gray: #E8E8E8;
+            --nesma-gray: #B3B3B3;
+
+            /* Functional Colors */
+            --success: #059669;
+            --warning: #D97706;
+            --danger: #DC2626;
+            --info: #0284C7;
+        }
+
+        * { font-family: 'Inter', 'Cairo', sans-serif; }
+
+        body {
+            background: #F8FAFC;
+            min-height: 100vh;
+        }
+
+        /* Header - Solid Primary with subtle accent line */
+        .nesma-header {
+            background: var(--nesma-primary);
+            box-shadow: 0 2px 8px rgba(46, 49, 146, 0.15);
+            position: relative;
+        }
+        .nesma-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 120px;
+            height: 3px;
+            background: var(--nesma-cyan);
+        }
+
+        /* Cards - Clean white with subtle shadow */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(14, 40, 65, 0.08);
+            transition: all 0.2s ease;
+            border: 1px solid var(--nesma-light-gray);
+        }
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(14, 40, 65, 0.1);
+        }
+
+        /* KPI Cards - Clean solid backgrounds */
+        .kpi-card {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 12px;
+            border: none;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(14, 40, 65, 0.12);
+        }
+        .kpi-card-primary { background: var(--nesma-primary); }
+        .kpi-card-navy { background: var(--nesma-navy); }
+        .kpi-card-dark { background: var(--nesma-dark-blue); }
+        .kpi-card-accent { background: var(--nesma-navy); border-left: 4px solid var(--nesma-cyan); }
+
+        /* Tab Navigation - Clean underline style */
+        .tab-btn {
+            transition: all 0.2s ease;
+            position: relative;
+            font-weight: 500;
+            color: var(--nesma-gray);
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: var(--nesma-primary);
+            border-bottom-color: var(--nesma-primary);
+            background: transparent;
+        }
+        .tab-btn:hover:not(.active) {
+            color: var(--nesma-dark-blue);
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .chart-container { position: relative; height: 300px; }
+
+        /* Data Tables - Solid header */
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table th {
+            background: var(--nesma-primary);
+            padding: 12px 16px;
+            font-weight: 600;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+        }
+        .data-table th:first-child { border-radius: 8px 0 0 0; }
+        .data-table th:last-child { border-radius: 0 8px 0 0; }
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--nesma-light-gray);
+            font-size: 0.875rem;
+        }
+        .data-table tr:hover td {
+            background: rgba(128, 209, 233, 0.08);
+        }
+
+        /* Scroll Container */
+        .scroll-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+        .scroll-container::-webkit-scrollbar { width: 4px; }
+        .scroll-container::-webkit-scrollbar-track { background: var(--nesma-light-gray); }
+        .scroll-container::-webkit-scrollbar-thumb { background: var(--nesma-cyan); border-radius: 4px; }
+
+        /* SLA Compliance Section - Light background */
+        .sla-compliance-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--nesma-light-gray);
+        }
+
+        /* SLA Cards - Clean with top accent */
+        .sla-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid var(--nesma-light-gray);
+        }
+        .sla-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .sla-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 10px 10px 0 0;
+        }
+        .sla-green::before { background: var(--success); }
+        .sla-yellow::before { background: var(--warning); }
+        .sla-red::before { background: var(--danger); }
+
+        .sla-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        .sla-green .sla-value { color: var(--success); }
+        .sla-yellow .sla-value { color: var(--warning); }
+        .sla-red .sla-value { color: var(--danger); }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--nesma-light-gray);
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--nesma-light-gray);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 140px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--nesma-primary);
+        }
+
+        /* Warehouse Cards */
+        .warehouse-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid var(--nesma-light-gray);
+            transition: all 0.2s ease;
+        }
+        .warehouse-card:hover {
+            border-color: var(--nesma-cyan);
+            box-shadow: 0 4px 12px rgba(46, 49, 146, 0.08);
+        }
+
+        /* Capacity Bar */
+        .capacity-bar {
+            height: 8px;
+            background: var(--nesma-light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .capacity-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--nesma-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background: var(--nesma-dark-blue);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--nesma-primary);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            border: 1px solid var(--nesma-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(46, 49, 146, 0.05);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--nesma-navy);
+        }
+
+        /* Stat Cards - Clean minimal */
+        .annex-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        .annex-stat:hover { background: rgba(46, 49, 146, 0.03); }
+        .annex-stat-default { background: #FAFAFA; border-left-color: var(--nesma-gray); }
+        .annex-stat-blue { background: rgba(46, 49, 146, 0.04); border-left-color: var(--nesma-primary); }
+        .annex-stat-green { background: rgba(5, 150, 105, 0.04); border-left-color: var(--success); }
+        .annex-stat-yellow { background: rgba(217, 119, 6, 0.04); border-left-color: var(--warning); }
+        .annex-stat-red { background: rgba(220, 38, 38, 0.04); border-left-color: var(--danger); }
+        .annex-stat-orange { background: rgba(234, 88, 12, 0.04); border-left-color: #EA580C; }
+
+        /* Cycle Cards */
+        .cycle-card {
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid var(--nesma-light-gray);
+        }
+        .cycle-card-blue { background: rgba(46, 49, 146, 0.03); border-left: 3px solid var(--nesma-primary); }
+        .cycle-card-green { background: rgba(5, 150, 105, 0.03); border-left: 3px solid var(--success); }
+        .cycle-card-amber { background: rgba(217, 119, 6, 0.03); border-left: 3px solid var(--warning); }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="nesma-header text-white sticky top-0 z-50 no-print">
+        <div class="container mx-auto px-4 lg:px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2 text-white/70 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        <span class="text-sm hidden sm:inline">Home</span>
+                    </a>
+                    <div class="h-6 w-px bg-white/30 hidden sm:block"></div>
+                    <img src="assets/logo-white.svg" alt="NESMA" class="h-8 lg:h-10">
+                    <div class="hidden md:block border-l border-white/30 h-8 mx-2"></div>
+                    <div class="hidden md:block">
+                        <h1 class="text-lg font-bold">Warehouse & Material Handling Dashboard</h1>
+                        <p class="text-xs text-blue-100 opacity-80">Stock Confirmation, Transfers & Storage Compliance</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 lg:gap-6">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs text-blue-100 opacity-80">Last Update</p>
+                        <p class="text-sm font-semibold" id="lastUpdateDate">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
+        <!-- Tab Navigation -->
+        <div class="card mb-6 lg:mb-8">
+            <div class="border-b border-gray-200 no-print">
+                <div class="flex overflow-x-auto">
+                    <button class="tab-btn active px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('overview')">
+                        Overview
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('sc')">
+                        Stock Confirmation
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('transfers')">
+                        Material Movement
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('annexa')">
+                        Annex A Reports
+                    </button>
+                    <button class="tab-btn px-4 lg:px-6 py-3 lg:py-4 font-semibold text-gray-600 whitespace-nowrap text-sm lg:text-base" onclick="switchTab('nonmoving')" style="position: relative;">
+                        Non-Moving Materials
+                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 lg:p-6">
+                <!-- Overview Tab -->
+                <div id="tab-overview" class="tab-content active">
+                    <!-- SLA Compliance Section -->
+                    <div class="sla-compliance-section mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <svg class="w-5 h-5" style="color: #2E3192;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+                                    <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Material Handling SLA Dashboard
+                            </h3>
+                        </div>
+
+                        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- Storage Compliance -->
+                            <div class="sla-gradient-card sla-green" id="sla-storage">
+                                <div class="sla-indicator">✓</div>
+                                <p class="text-xs text-gray-600 font-medium">Storage Compliance</p>
+                                <p class="text-xs text-gray-400">Audit Pass Rate</p>
+                                <p class="sla-value" id="storage-rate">98.5%</p>
+                                <p class="text-xs text-gray-500 mt-1">Target: 98%</p>
+                            </div>
+
+                            <!-- Stock Confirmation -->
+                            <div class="sla-gradient-card sla-green" id="sla-sc">
+                                <div class="sla-indicator">✓</div>
+                                <p class="text-xs text-gray-600 font-medium">Stock Confirmation</p>
+                                <p class="text-xs text-gray-400">≤1 Business Day</p>
+                                <p class="sla-value" id="sc-rate">95.3%</p>
+                                <p class="text-xs text-gray-500 mt-1">Target: 95%</p>
+                            </div>
+
+                            <!-- Material Movement -->
+                            <div class="sla-gradient-card sla-green" id="sla-transfer">
+                                <div class="sla-indicator">✓</div>
+                                <p class="text-xs text-gray-600 font-medium">Material Movement</p>
+                                <p class="text-xs text-gray-400">≤2 Business Days</p>
+                                <p class="sla-value" id="transfer-rate">95.3%</p>
+                                <p class="text-xs text-gray-500 mt-1">Target: 95%</p>
+                            </div>
+
+                            <!-- Incident Reporting -->
+                            <div class="sla-gradient-card sla-green" id="sla-incident">
+                                <div class="sla-indicator">✓</div>
+                                <p class="text-xs text-gray-600 font-medium">Incident Reporting</p>
+                                <p class="text-xs text-gray-400">Same Day</p>
+                                <p class="sla-value" id="incident-rate">100%</p>
+                                <p class="text-xs text-gray-500 mt-1">Target: 100%</p>
+                            </div>
+
+                            <!-- Scrap Removal -->
+                            <div class="sla-gradient-card sla-yellow" id="sla-scrap">
+                                <div class="sla-indicator">!</div>
+                                <p class="text-xs text-gray-600 font-medium">Scrap Removal</p>
+                                <p class="text-xs text-gray-400">≤3 Business Days</p>
+                                <p class="sla-value" id="scrap-rate">94.6%</p>
+                                <p class="text-xs text-gray-500 mt-1">Target: 95%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards with Gradient Design -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+                        <div class="gradient-card gradient-card-primary">
+                            <div class="gradient-card-icon">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+                                    <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <p class="gradient-card-label">Total Items</p>
+                            <p class="gradient-card-value" id="kpi-items">12,456</p>
+                            <p class="gradient-card-subtitle">Across <span id="kpi-warehouses">8</span> warehouses</p>
+                        </div>
+
+                        <div class="gradient-card gradient-card-navy">
+                            <div class="gradient-card-icon">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <p class="gradient-card-label">SC Requests</p>
+                            <p class="gradient-card-value" id="kpi-sc">1,245</p>
+                            <p class="gradient-card-subtitle"><span id="kpi-sc-pending">32</span> pending</p>
+                        </div>
+
+                        <div class="gradient-card gradient-card-success">
+                            <div class="gradient-card-icon">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8z"/>
+                                    <path d="M12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/>
+                                </svg>
+                            </div>
+                            <p class="gradient-card-label">Transfers</p>
+                            <p class="gradient-card-value" id="kpi-transfers">567</p>
+                            <p class="gradient-card-subtitle"><span id="kpi-transfer-pending">18</span> pending</p>
+                        </div>
+
+                        <div class="gradient-card gradient-card-warning">
+                            <div class="gradient-card-icon">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <p class="gradient-card-label">Low Stock Items</p>
+                            <p class="gradient-card-value" id="kpi-lowstock">45</p>
+                            <p class="gradient-card-subtitle">Require attention</p>
+                        </div>
+                    </div>
+
+                    <!-- Cycle Time Cards -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="card p-4" style="background: linear-gradient(135deg, #EFF6FF, #DBEAFE);">
+                            <p class="text-sm text-gray-600 font-medium mb-3">SC Cycle Time (Days)</p>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <p class="text-2xl font-bold text-blue-600" id="sc-avg">0.8</p>
+                                    <p class="text-xs text-gray-500">Avg</p>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-green-600" id="sc-p50">0.5</p>
+                                    <p class="text-xs text-gray-500">P50</p>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-orange-600" id="sc-p90">1.2</p>
+                                    <p class="text-xs text-gray-500">P90</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-4" style="background: linear-gradient(135deg, #F0FDF4, #DCFCE7);">
+                            <p class="text-sm text-gray-600 font-medium mb-3">Transfer Cycle Time (Days)</p>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <p class="text-2xl font-bold text-blue-600" id="transfer-avg">1.6</p>
+                                    <p class="text-xs text-gray-500">Avg</p>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-green-600" id="transfer-p50">1.2</p>
+                                    <p class="text-xs text-gray-500">P50</p>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-orange-600" id="transfer-p90">2.5</p>
+                                    <p class="text-xs text-gray-500">P90</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-4" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A);">
+                            <p class="text-sm text-gray-600 font-medium mb-3">Supporting KPIs</p>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                    <p class="text-2xl font-bold text-green-600" id="internal-otif">95.3%</p>
+                                    <p class="text-xs text-gray-500">Internal OTIF</p>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-blue-600" id="damage-rate">0.12%</p>
+                                    <p class="text-xs text-gray-500">Damage Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Monthly SLA Compliance</h3>
+                            <div class="chart-container">
+                                <canvas id="slaChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Request Volume</h3>
+                            <div class="chart-container">
+                                <canvas id="volumeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Warehouses -->
+                    <div class="card p-4 lg:p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Warehouse Status</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="warehouseGrid">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Confirmation Tab -->
+                <div id="tab-sc" class="tab-content">
+                    <div class="filter-section mb-6">
+                        <div class="flex flex-wrap gap-3 items-center">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Project</label>
+                                <select id="filterSCProject" class="filter-select">
+                                    <option value="">All Projects</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Warehouse</label>
+                                <select id="filterSCWarehouse" class="filter-select">
+                                    <option value="">All Warehouses</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Status</label>
+                                <select id="filterSCStatus" class="filter-select">
+                                    <option value="">All</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <button onclick="resetSCFilters()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="card p-4 lg:p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Stock Confirmation Requests</h3>
+                        <div class="scroll-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SC Number</th>
+                                        <th>Project</th>
+                                        <th>Item</th>
+                                        <th>Qty Requested</th>
+                                        <th>Qty Confirmed</th>
+                                        <th>Warehouse</th>
+                                        <th>Request Date</th>
+                                        <th>Days</th>
+                                        <th>Status</th>
+                                        <th>SLA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Material Movement Tab -->
+                <div id="tab-transfers" class="tab-content">
+                    <div class="card p-4 lg:p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Material Movements</h3>
+                        <div class="scroll-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction ID</th>
+                                        <th>Item</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Project</th>
+                                        <th>Qty</th>
+                                        <th>Request Date</th>
+                                        <th>Delivery Date</th>
+                                        <th>Days</th>
+                                        <th>SLA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transferTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Annex A Reports Tab -->
+                <div id="tab-annexa" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="section-title mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" style="color: var(--nesma-primary);" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                Material Days in Custody
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="annex-stat annex-stat-blue">
+                                    <span class="text-gray-600 font-medium">Average Days</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-primary);" id="annex-avg-days">45</span>
+                                </div>
+                                <div class="annex-stat annex-stat-yellow">
+                                    <span class="text-gray-600 font-medium">Items >90 Days</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-warning);" id="annex-over90">234</span>
+                                </div>
+                                <div class="annex-stat annex-stat-red">
+                                    <span class="text-gray-600 font-medium">Items >180 Days</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-danger);" id="annex-over180">67</span>
+                                </div>
+                                <div class="annex-stat annex-stat-orange">
+                                    <span class="text-gray-600 font-medium">Value >90 Days (SAR)</span>
+                                    <span class="font-bold text-lg" style="color: #EA580C;" id="annex-value90">1,250,000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="section-title mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" style="color: var(--nesma-primary);" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Theft/Damage Cases
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="annex-stat annex-stat-default">
+                                    <span class="text-gray-600 font-medium">Total Cases</span>
+                                    <span class="font-bold text-lg text-gray-800" id="annex-cases">12</span>
+                                </div>
+                                <div class="annex-stat annex-stat-red">
+                                    <span class="text-gray-600 font-medium">Total Value (SAR)</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-danger);" id="annex-case-value">45,000</span>
+                                </div>
+                                <div class="annex-stat annex-stat-green">
+                                    <span class="text-gray-600 font-medium">Resolved</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-success);" id="annex-resolved">10</span>
+                                </div>
+                                <div class="annex-stat annex-stat-yellow">
+                                    <span class="text-gray-600 font-medium">Pending</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-warning);" id="annex-pending">2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="section-title mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" style="color: var(--nesma-primary);" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Cycle Count Variance
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="annex-stat annex-stat-default">
+                                    <span class="text-gray-600 font-medium">Last Quarter</span>
+                                    <span class="font-bold text-lg" id="annex-quarter">Q4-2025</span>
+                                </div>
+                                <div class="annex-stat annex-stat-blue">
+                                    <span class="text-gray-600 font-medium">Items Counted</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-primary);" id="annex-counted">8,500</span>
+                                </div>
+                                <div class="annex-stat annex-stat-orange">
+                                    <span class="text-gray-600 font-medium">Variance Rate</span>
+                                    <span class="font-bold text-lg" style="color: #EA580C;" id="annex-variance">2.3%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="section-title mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" style="color: var(--nesma-primary);" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                                </svg>
+                                Scrap Summary
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="annex-stat annex-stat-default">
+                                    <span class="text-gray-600 font-medium">Total Scrap Value (SAR)</span>
+                                    <span class="font-bold text-lg" id="annex-scrap-total">125,000</span>
+                                </div>
+                                <div class="annex-stat annex-stat-green">
+                                    <span class="text-gray-600 font-medium">Recovered Value (SAR)</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-success);" id="annex-recovered">98,000</span>
+                                </div>
+                                <div class="annex-stat annex-stat-blue">
+                                    <span class="text-gray-600 font-medium">Recovery Rate</span>
+                                    <span class="font-bold text-lg" style="color: var(--nesma-primary);" id="annex-recovery-rate">78.4%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Non-Moving Materials Tab -->
+                <div id="tab-nonmoving" class="tab-content">
+                    <!-- Critical Alert Banner -->
+                    <div class="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl p-4 mb-6 shadow-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white/20 p-3 rounded-full">
+                                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">CRITICAL: Non-Moving Materials Alert</h3>
+                                <p class="text-red-100" id="nm-alert-message">These materials haven't moved in 4+ years - immediate review required</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+                        <div class="card kpi-card p-4 lg:p-6 text-white rounded-xl shadow-lg" style="background: linear-gradient(135deg, #DC2626 0%, #0E2841 100%);">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-red-100 text-xs lg:text-sm mb-1">Total Non-Moving Items</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="nm-total-items">496</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+                                        <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-red-100">Critical - Requires Review</div>
+                        </div>
+
+                        <div class="card kpi-card p-4 lg:p-6 text-white rounded-xl shadow-lg" style="background: linear-gradient(135deg, #D97706 0%, #203366 100%);">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-orange-100 text-xs lg:text-sm mb-1">Total Quantity</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="nm-total-qty">125,702</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-orange-100">Units in storage</div>
+                        </div>
+
+                        <div class="card kpi-card p-4 lg:p-6 text-white rounded-xl shadow-lg" style="background: linear-gradient(135deg, #2E3192 0%, #0E2841 100%);">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-blue-100 text-xs lg:text-sm mb-1">Warehouses Affected</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="nm-warehouses">2</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-blue-100">Asfan & Jafurah</div>
+                        </div>
+
+                        <div class="card kpi-card p-4 lg:p-6 text-white rounded-xl shadow-lg" style="background: linear-gradient(135deg, #203366 0%, #0E2841 100%);">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <p class="text-cyan-100 text-xs lg:text-sm mb-1">Age of Materials</p>
+                                    <p class="text-2xl lg:text-3xl font-bold" id="nm-age">4+ Years</p>
+                                </div>
+                                <div class="bg-white/20 p-2 lg:p-3 rounded-xl">
+                                    <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-xs text-cyan-100">SLA Target: ≤90 days</div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Section -->
+                    <div class="filter-section mb-6">
+                        <div class="flex flex-wrap gap-3 items-center">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Warehouse</label>
+                                <select id="filterNMWarehouse" class="filter-select" onchange="filterNonMovingTable()">
+                                    <option value="">All Warehouses</option>
+                                    <option value="Asfan">Asfan</option>
+                                    <option value="Jafurah">Jafurah</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Project</label>
+                                <select id="filterNMProject" class="filter-select" onchange="filterNonMovingTable()">
+                                    <option value="">All Projects</option>
+                                    <option value="Project Materials">Project Materials</option>
+                                    <option value="old stock">Old Stock</option>
+                                    <option value="Project Tools">Project Tools</option>
+                                    <option value="Optern materials">Optern Materials</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Category</label>
+                                <select id="filterNMCategory" class="filter-select" onchange="filterNonMovingTable()">
+                                    <option value="">All Categories</option>
+                                    <option value="Other Materials">Other Materials</option>
+                                    <option value="Cables & Wiring">Cables & Wiring</option>
+                                    <option value="Insulation Materials">Insulation Materials</option>
+                                    <option value="Hardware & Mounting">Hardware & Mounting</option>
+                                    <option value="Joints & Connectors">Joints & Connectors</option>
+                                    <option value="Tools & Equipment">Tools & Equipment</option>
+                                    <option value="Electrical Components">Electrical Components</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <button onclick="resetNMFilters()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium">Reset</button>
+                            <button onclick="exportNonMovingData()" class="px-4 py-2 text-white rounded-lg text-sm font-medium flex items-center gap-2" style="background: linear-gradient(135deg, #2E3192 0%, #203366 100%);">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Distribution by Warehouse</h3>
+                            <div class="chart-container" style="height: 280px;">
+                                <canvas id="nmWarehouseChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Distribution by Project</h3>
+                            <div class="chart-container" style="height: 280px;">
+                                <canvas id="nmProjectChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Category Breakdown (Items)</h3>
+                            <div class="chart-container" style="height: 280px;">
+                                <canvas id="nmCategoryChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card p-4 lg:p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Quantity by Category</h3>
+                            <div class="chart-container" style="height: 280px;">
+                                <canvas id="nmCategoryQtyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Section -->
+                    <div class="card p-4 lg:p-6 mb-6" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A); border-left: 4px solid #F59E0B;">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            Recommended Actions
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="nm-recommendations">
+                            <div class="bg-white/60 p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">Immediate inventory review required</p>
+                            </div>
+                            <div class="bg-white/60 p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">Assess materials for project reuse potential</p>
+                            </div>
+                            <div class="bg-white/60 p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">Identify items for disposal/scrap</p>
+                            </div>
+                            <div class="bg-white/60 p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">Update procurement planning</p>
+                            </div>
+                            <div class="bg-white/60 p-3 rounded-lg">
+                                <p class="text-sm text-gray-700">Consider transfer to active projects</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="card p-4 lg:p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">Non-Moving Materials Detail</h3>
+                            <span class="text-sm text-gray-500">Showing <span id="nm-showing-count">50</span> of <span id="nm-total-count">496</span> items</span>
+                        </div>
+                        <div class="scroll-container" style="max-height: 500px;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Warehouse</th>
+                                        <th>Material Description</th>
+                                        <th>Unit</th>
+                                        <th>Location</th>
+                                        <th>Qty</th>
+                                        <th>Project</th>
+                                        <th>Category</th>
+                                        <th>Age</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="nmTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center py-6 text-gray-500 text-sm">
+            <p class="mb-2">Warehouse & Material Handling - NESMA Infrastructure & Technology</p>
+            <p class="text-xs">Version 1.0 | February 2026 | Based on NIT-SCM-SLA-KSA-11/10/2025-000-v1.0A</p>
+        </footer>
+    </main>
+
+    <script>
+        let warehouseData = null;
+        let charts = {};
+
+        async function loadData() {
+            try {
+                const response = await fetch('data/warehouse_data.json?' + Date.now());
+                warehouseData = await response.json();
+                updateDashboard();
+                initCharts();
+                populateTables();
+                populateWarehouses();
+                populateNonMovingMaterials();
+                initNonMovingCharts();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function updateDashboard() {
+            if (!warehouseData) return;
+
+            const lastUpdated = new Date(warehouseData.last_updated);
+            document.getElementById('lastUpdateDate').textContent = lastUpdated.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            // SLA Cards
+            const sla = warehouseData.sla_metrics;
+            document.getElementById('storage-rate').textContent = sla.storage_compliance.pass_rate + '%';
+            document.getElementById('sc-rate').textContent = sla.stock_confirmation.rate + '%';
+            document.getElementById('transfer-rate').textContent = sla.material_movement.rate + '%';
+            document.getElementById('incident-rate').textContent = sla.incident_reporting.rate + '%';
+            document.getElementById('scrap-rate').textContent = sla.scrap_removal.rate + '%';
+
+            updateSLACardStatus('sla-storage', sla.storage_compliance.pass_rate, sla.storage_compliance.target);
+            updateSLACardStatus('sla-sc', sla.stock_confirmation.rate, sla.stock_confirmation.target);
+            updateSLACardStatus('sla-transfer', sla.material_movement.rate, sla.material_movement.target);
+            updateSLACardStatus('sla-incident', sla.incident_reporting.rate, sla.incident_reporting.target);
+            updateSLACardStatus('sla-scrap', sla.scrap_removal.rate, sla.scrap_removal.target);
+
+            // KPIs
+            document.getElementById('kpi-items').textContent = warehouseData.summary.total_items.toLocaleString();
+            document.getElementById('kpi-warehouses').textContent = warehouseData.summary.total_warehouses;
+            document.getElementById('kpi-sc').textContent = warehouseData.summary.total_sc_requests.toLocaleString();
+            document.getElementById('kpi-sc-pending').textContent = warehouseData.summary.pending_sc;
+            document.getElementById('kpi-transfers').textContent = warehouseData.summary.total_transfers;
+            document.getElementById('kpi-transfer-pending').textContent = warehouseData.summary.pending_transfers;
+            document.getElementById('kpi-lowstock').textContent = warehouseData.summary.low_stock_items;
+
+            // Cycle Times
+            const ct = warehouseData.cycle_time;
+            document.getElementById('sc-avg').textContent = ct.sc_average;
+            document.getElementById('sc-p50').textContent = ct.sc_p50;
+            document.getElementById('sc-p90').textContent = ct.sc_p90;
+            document.getElementById('transfer-avg').textContent = ct.transfer_average;
+            document.getElementById('transfer-p50').textContent = ct.transfer_p50;
+            document.getElementById('transfer-p90').textContent = ct.transfer_p90;
+
+            document.getElementById('internal-otif').textContent = warehouseData.internal_otif_rate + '%';
+            document.getElementById('damage-rate').textContent = warehouseData.damage_on_handling_rate + '%';
+
+            // Annex A
+            const annex = warehouseData.annex_a_reports;
+            document.getElementById('annex-avg-days').textContent = annex.material_days_custody.average_days;
+            document.getElementById('annex-over90').textContent = annex.material_days_custody.items_over_90_days;
+            document.getElementById('annex-over180').textContent = annex.material_days_custody.items_over_180_days;
+            document.getElementById('annex-value90').textContent = annex.material_days_custody.total_value_over_90_days.toLocaleString();
+
+            document.getElementById('annex-cases').textContent = annex.theft_damage_cases.total_cases;
+            document.getElementById('annex-case-value').textContent = annex.theft_damage_cases.total_value.toLocaleString();
+            document.getElementById('annex-resolved').textContent = annex.theft_damage_cases.resolved;
+            document.getElementById('annex-pending').textContent = annex.theft_damage_cases.pending;
+
+            document.getElementById('annex-quarter').textContent = annex.cycle_count_variance.last_quarter;
+            document.getElementById('annex-counted').textContent = annex.cycle_count_variance.items_counted.toLocaleString();
+            document.getElementById('annex-variance').textContent = annex.cycle_count_variance.variance_rate + '%';
+
+            document.getElementById('annex-scrap-total').textContent = annex.scrap_summary.total_scrap_value.toLocaleString();
+            document.getElementById('annex-recovered').textContent = annex.scrap_summary.recovered_value.toLocaleString();
+            document.getElementById('annex-recovery-rate').textContent = annex.scrap_summary.recovery_rate + '%';
+        }
+
+        function updateSLACardStatus(elementId, rate, target) {
+            const element = document.getElementById(elementId);
+            element.classList.remove('sla-green', 'sla-yellow', 'sla-red');
+            if (rate >= target) {
+                element.classList.add('sla-green');
+            } else if (rate >= target - 5) {
+                element.classList.add('sla-yellow');
+            } else {
+                element.classList.add('sla-red');
+            }
+        }
+
+        function initCharts() {
+            if (!warehouseData) return;
+
+            const slaCtx = document.getElementById('slaChart').getContext('2d');
+            charts.sla = new Chart(slaCtx, {
+                type: 'line',
+                data: {
+                    labels: warehouseData.monthly_summary.labels,
+                    datasets: [{
+                        label: 'SC SLA %',
+                        data: warehouseData.monthly_summary.sc_sla_compliance,
+                        borderColor: '#2E3192',
+                        backgroundColor: 'rgba(46, 49, 146, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Transfer SLA %',
+                        data: warehouseData.monthly_summary.transfer_sla_compliance,
+                        borderColor: '#80D1E9',
+                        backgroundColor: 'rgba(128, 209, 233, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Target (95%)',
+                        data: Array(12).fill(95),
+                        borderColor: '#DC2626',
+                        borderDash: [5, 5],
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 85, max: 100 } }
+                }
+            });
+
+            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+            charts.volume = new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: warehouseData.monthly_summary.labels,
+                    datasets: [{
+                        label: 'SC Requests',
+                        data: warehouseData.monthly_summary.sc_requests,
+                        backgroundColor: 'rgba(46, 49, 146, 0.8)',
+                        borderRadius: 4
+                    }, {
+                        label: 'Transfers',
+                        data: warehouseData.monthly_summary.transfers,
+                        backgroundColor: 'rgba(128, 209, 233, 0.8)',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function populateTables() {
+            if (!warehouseData) return;
+
+            // SC Table
+            const scTbody = document.getElementById('scTable');
+            scTbody.textContent = '';
+            warehouseData.stock_confirmations.forEach(function(sc) {
+                const tr = document.createElement('tr');
+
+                const fields = [
+                    sc.sc_number,
+                    sc.project,
+                    sc.item_description,
+                    sc.requested_qty,
+                    sc.confirmed_qty,
+                    sc.warehouse,
+                    sc.request_date,
+                    sc.cycle_days
+                ];
+
+                fields.forEach(function(val) {
+                    const td = document.createElement('td');
+                    td.textContent = val;
+                    tr.appendChild(td);
+                });
+
+                const tdStatus = document.createElement('td');
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'px-2 py-1 rounded-full text-xs font-medium ';
+                statusSpan.className += sc.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                statusSpan.textContent = sc.status;
+                tdStatus.appendChild(statusSpan);
+                tr.appendChild(tdStatus);
+
+                const tdSLA = document.createElement('td');
+                const slaSpan = document.createElement('span');
+                slaSpan.className = 'px-2 py-1 rounded-full text-xs font-medium ';
+                slaSpan.className += sc.sla_met ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                slaSpan.textContent = sc.sla_status;
+                tdSLA.appendChild(slaSpan);
+                tr.appendChild(tdSLA);
+
+                scTbody.appendChild(tr);
+            });
+
+            // Transfer Table
+            const transferTbody = document.getElementById('transferTable');
+            transferTbody.textContent = '';
+            warehouseData.movements.forEach(function(mov) {
+                const tr = document.createElement('tr');
+
+                const fields = [
+                    mov.transaction_id,
+                    mov.item,
+                    mov.from_location,
+                    mov.to_location,
+                    mov.project,
+                    mov.quantity,
+                    mov.request_date,
+                    mov.delivery_date,
+                    mov.cycle_days
+                ];
+
+                fields.forEach(function(val) {
+                    const td = document.createElement('td');
+                    td.textContent = val;
+                    tr.appendChild(td);
+                });
+
+                const tdSLA = document.createElement('td');
+                const slaSpan = document.createElement('span');
+                slaSpan.className = 'px-2 py-1 rounded-full text-xs font-medium ';
+                slaSpan.className += mov.sla_met ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                slaSpan.textContent = mov.sla_status;
+                tdSLA.appendChild(slaSpan);
+                tr.appendChild(tdSLA);
+
+                transferTbody.appendChild(tr);
+            });
+        }
+
+        function populateWarehouses() {
+            if (!warehouseData) return;
+
+            const grid = document.getElementById('warehouseGrid');
+            grid.textContent = '';
+
+            warehouseData.warehouses.forEach(function(wh) {
+                const card = document.createElement('div');
+                card.className = 'warehouse-card';
+
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-start mb-3';
+
+                const title = document.createElement('h4');
+                title.className = 'font-semibold text-gray-800';
+                title.textContent = wh.name;
+                header.appendChild(title);
+
+                const badge = document.createElement('span');
+                badge.className = 'px-2 py-1 text-xs rounded-full ' + (wh.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800');
+                badge.textContent = wh.status;
+                header.appendChild(badge);
+
+                card.appendChild(header);
+
+                const location = document.createElement('p');
+                location.className = 'text-xs text-gray-500 mb-3';
+                location.textContent = wh.location;
+                card.appendChild(location);
+
+                const stats = document.createElement('div');
+                stats.className = 'flex justify-between text-sm mb-2';
+
+                const itemsDiv = document.createElement('div');
+                const itemsLabel = document.createElement('span');
+                itemsLabel.className = 'text-gray-500';
+                itemsLabel.textContent = 'Items: ';
+                itemsDiv.appendChild(itemsLabel);
+                const itemsValue = document.createElement('span');
+                itemsValue.className = 'font-medium';
+                itemsValue.textContent = wh.item_count.toLocaleString();
+                itemsDiv.appendChild(itemsValue);
+                stats.appendChild(itemsDiv);
+
+                const capDiv = document.createElement('div');
+                const capLabel = document.createElement('span');
+                capLabel.className = 'text-gray-500';
+                capLabel.textContent = 'Capacity: ';
+                capDiv.appendChild(capLabel);
+                const capValue = document.createElement('span');
+                capValue.className = 'font-medium';
+                capValue.textContent = wh.capacity_used + '%';
+                capDiv.appendChild(capValue);
+                stats.appendChild(capDiv);
+
+                card.appendChild(stats);
+
+                const barContainer = document.createElement('div');
+                barContainer.className = 'capacity-bar';
+                const barFill = document.createElement('div');
+                barFill.className = 'capacity-fill';
+                barFill.style.width = wh.capacity_used + '%';
+                if (wh.capacity_used >= 90) {
+                    barFill.style.background = '#DC2626';
+                } else if (wh.capacity_used >= 75) {
+                    barFill.style.background = '#D97706';
+                } else {
+                    barFill.style.background = '#2E3192';
+                }
+                barContainer.appendChild(barFill);
+                card.appendChild(barContainer);
+
+                grid.appendChild(card);
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(content) { content.classList.remove('active'); });
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        function resetSCFilters() {
+            document.getElementById('filterSCProject').value = '';
+            document.getElementById('filterSCWarehouse').value = '';
+            document.getElementById('filterSCStatus').value = '';
+        }
+
+        function populateNonMovingMaterials() {
+            if (!warehouseData || !warehouseData.non_moving_materials) return;
+
+            const nm = warehouseData.non_moving_materials;
+
+            // Update KPIs
+            document.getElementById('nm-total-items').textContent = nm.summary.total_items.toLocaleString();
+            document.getElementById('nm-total-qty').textContent = nm.summary.total_quantity.toLocaleString();
+            document.getElementById('nm-warehouses').textContent = nm.summary.warehouses_affected;
+            document.getElementById('nm-age').textContent = nm.summary.oldest_age;
+            document.getElementById('nm-alert-message').textContent = nm.summary.alert_message;
+
+            // Update counts
+            document.getElementById('nm-total-count').textContent = nm.summary.total_items;
+
+            // Populate table
+            filterNonMovingTable();
+        }
+
+        function filterNonMovingTable() {
+            if (!warehouseData || !warehouseData.non_moving_materials) return;
+
+            const warehouseFilter = document.getElementById('filterNMWarehouse').value;
+            const projectFilter = document.getElementById('filterNMProject').value;
+            const categoryFilter = document.getElementById('filterNMCategory').value;
+
+            let items = warehouseData.non_moving_materials.items;
+
+            if (warehouseFilter) {
+                items = items.filter(function(item) { return item.warehouse === warehouseFilter; });
+            }
+            if (projectFilter) {
+                items = items.filter(function(item) { return item.project === projectFilter; });
+            }
+            if (categoryFilter) {
+                items = items.filter(function(item) { return item.category === categoryFilter; });
+            }
+
+            document.getElementById('nm-showing-count').textContent = items.length;
+
+            const tbody = document.getElementById('nmTable');
+            tbody.textContent = '';
+
+            items.forEach(function(item) {
+                const tr = document.createElement('tr');
+
+                const fields = [
+                    item.sn,
+                    item.warehouse,
+                    item.description,
+                    item.unit,
+                    item.location,
+                    item.qty.toLocaleString(),
+                    item.project,
+                    item.category,
+                    item.age
+                ];
+
+                fields.forEach(function(val, idx) {
+                    const td = document.createElement('td');
+                    if (idx === 1) {
+                        const badge = document.createElement('span');
+                        badge.className = 'px-2 py-1 rounded-full text-xs font-medium ';
+                        badge.className += val === 'Asfan' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
+                        badge.textContent = val;
+                        td.appendChild(badge);
+                    } else if (idx === 8) {
+                        const badge = document.createElement('span');
+                        badge.className = 'px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800';
+                        badge.textContent = val;
+                        td.appendChild(badge);
+                    } else {
+                        td.textContent = val;
+                    }
+                    tr.appendChild(td);
+                });
+
+                const tdAction = document.createElement('td');
+                const actionSpan = document.createElement('span');
+                actionSpan.className = 'px-2 py-1 rounded-full text-xs font-medium ';
+                if (item.action.includes('disposal')) {
+                    actionSpan.className += 'bg-orange-100 text-orange-800';
+                } else {
+                    actionSpan.className += 'bg-green-100 text-green-800';
+                }
+                actionSpan.textContent = item.action;
+                tdAction.appendChild(actionSpan);
+                tr.appendChild(tdAction);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetNMFilters() {
+            document.getElementById('filterNMWarehouse').value = '';
+            document.getElementById('filterNMProject').value = '';
+            document.getElementById('filterNMCategory').value = '';
+            filterNonMovingTable();
+        }
+
+        function initNonMovingCharts() {
+            if (!warehouseData || !warehouseData.non_moving_materials) return;
+
+            const nm = warehouseData.non_moving_materials;
+
+            // Warehouse Distribution Chart (Doughnut)
+            const whCtx = document.getElementById('nmWarehouseChart').getContext('2d');
+            charts.nmWarehouse = new Chart(whCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: nm.by_warehouse.map(function(w) { return w.name; }),
+                    datasets: [{
+                        data: nm.by_warehouse.map(function(w) { return w.quantity; }),
+                        backgroundColor: ['#2E3192', '#80D1E9'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                                    const percentage = ((context.raw / total) * 100).toFixed(1);
+                                    return context.label + ': ' + context.raw.toLocaleString() + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Project Distribution Chart (Horizontal Bar)
+            const projCtx = document.getElementById('nmProjectChart').getContext('2d');
+            charts.nmProject = new Chart(projCtx, {
+                type: 'bar',
+                data: {
+                    labels: nm.by_project.map(function(p) { return p.name; }),
+                    datasets: [{
+                        label: 'Quantity',
+                        data: nm.by_project.map(function(p) { return p.quantity; }),
+                        backgroundColor: ['#2E3192', '#203366', '#0E2841', '#80D1E9'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Category Distribution Chart (Pie)
+            const catCtx = document.getElementById('nmCategoryChart').getContext('2d');
+            charts.nmCategory = new Chart(catCtx, {
+                type: 'pie',
+                data: {
+                    labels: nm.by_category.map(function(c) { return c.name; }),
+                    datasets: [{
+                        data: nm.by_category.map(function(c) { return c.item_count; }),
+                        backgroundColor: nm.by_category.map(function(c) { return c.color; }),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // Category Quantity Chart (Bar)
+            const catQtyCtx = document.getElementById('nmCategoryQtyChart').getContext('2d');
+            charts.nmCategoryQty = new Chart(catQtyCtx, {
+                type: 'bar',
+                data: {
+                    labels: nm.by_category.map(function(c) { return c.name; }),
+                    datasets: [{
+                        label: 'Quantity',
+                        data: nm.by_category.map(function(c) { return c.quantity; }),
+                        backgroundColor: nm.by_category.map(function(c) { return c.color; }),
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { ticks: { maxRotation: 45, minRotation: 45, font: { size: 9 } } },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function exportNonMovingData() {
+            if (!warehouseData || !warehouseData.non_moving_materials) return;
+
+            const nm = warehouseData.non_moving_materials;
+
+            // Create CSV content
+            let csv = 'S/N,Warehouse,Material Description,Unit,Location,Qty,Project,Category,Age,Recommended Action\n';
+
+            nm.items.forEach(function(item) {
+                csv += [
+                    item.sn,
+                    '"' + item.warehouse + '"',
+                    '"' + item.description + '"',
+                    item.unit,
+                    item.location,
+                    item.qty,
+                    '"' + item.project + '"',
+                    '"' + item.category + '"',
+                    item.age,
+                    '"' + item.action + '"'
+                ].join(',') + '\n';
+            });
+
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'non_moving_materials_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

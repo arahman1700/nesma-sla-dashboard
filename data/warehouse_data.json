@@ -1,0 +1,439 @@
+{
+  "last_updated": "2026-02-02T12:00:00",
+  "source": "Material Handling SLA Dashboard - Warehouse & Inventory Module",
+  "summary": {
+    "total_items": 12456,
+    "total_quantity": 458720,
+    "total_value": 28500000,
+    "low_stock_items": 45,
+    "total_warehouses": 8,
+    "total_sc_requests": 1245,
+    "total_transfers": 567,
+    "pending_sc": 32,
+    "pending_transfers": 18
+  },
+  "sla_metrics": {
+    "storage_compliance": {
+      "pass_rate": 98.5,
+      "total_audits": 48,
+      "passed_audits": 47,
+      "target": 98,
+      "description": "Storage recommendation compliance audit pass rate"
+    },
+    "stock_confirmation": {
+      "on_time": 1156,
+      "total": 1213,
+      "rate": 95.3,
+      "target": 95,
+      "sla_days": 1,
+      "description": "Stock confirmation reply within 1 business day"
+    },
+    "material_movement": {
+      "on_time": 523,
+      "total": 549,
+      "rate": 95.3,
+      "target": 95,
+      "sla_days": 2,
+      "description": "Material transfer delivery within 2 business days"
+    },
+    "incident_reporting": {
+      "on_time": 28,
+      "total": 28,
+      "rate": 100,
+      "target": 100,
+      "description": "Incident reporting by end of business day"
+    },
+    "scrap_removal": {
+      "on_time": 87,
+      "total": 92,
+      "rate": 94.6,
+      "target": 95,
+      "sla_days": 3,
+      "description": "Scrap removal within 3 business days"
+    }
+  },
+  "cycle_time": {
+    "sc_average": 0.8,
+    "sc_p50": 0.5,
+    "sc_p90": 1.2,
+    "transfer_average": 1.6,
+    "transfer_p50": 1.2,
+    "transfer_p90": 2.5,
+    "scrap_average": 2.4,
+    "scrap_p50": 2.0,
+    "scrap_p90": 3.5
+  },
+  "aging_buckets": {
+    "sc_pending": {
+      "0_1_days": 18,
+      "2_3_days": 10,
+      "4_5_days": 3,
+      "over_5_days": 1
+    },
+    "transfer_pending": {
+      "0_1_days": 10,
+      "2_3_days": 5,
+      "4_5_days": 2,
+      "over_5_days": 1
+    }
+  },
+  "filters": {
+    "years": ["2024", "2025", "2026"],
+    "projects": ["Project Alpha", "Project Beta", "Project Gamma", "NEOM", "Red Sea", "Qiddiya"],
+    "categories": ["Electrical", "Mechanical", "Civil", "Safety", "Tools", "Consumables"],
+    "warehouses": ["Main Warehouse Riyadh", "Dammam Warehouse", "Jeddah Warehouse", "NEOM Site Store", "Red Sea Site Store", "Jubail Warehouse", "Yanbu Warehouse", "Qassim Warehouse"],
+    "statuses": ["Completed", "Pending", "In Progress", "Cancelled"]
+  },
+  "monthly_summary": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "sc_requests": [98, 105, 112, 95, 118, 102, 125, 108, 96, 115, 103, 68],
+    "transfers": [45, 52, 58, 42, 62, 48, 55, 51, 44, 58, 47, 5],
+    "sc_sla_compliance": [95.9, 94.3, 96.4, 95.8, 95.8, 94.1, 96.8, 95.4, 94.8, 96.5, 95.1, 97.1],
+    "transfer_sla_compliance": [95.6, 94.2, 96.6, 95.2, 96.8, 93.8, 96.4, 95.1, 94.3, 96.6, 94.9, 100]
+  },
+  "warehouses": [
+    {"name": "Main Warehouse Riyadh", "location": "Riyadh Industrial City", "status": "Active", "item_count": 4520, "capacity_used": 78},
+    {"name": "Dammam Warehouse", "location": "Dammam 2nd Industrial City", "status": "Active", "item_count": 2890, "capacity_used": 65},
+    {"name": "Jeddah Warehouse", "location": "Jeddah Industrial Area", "status": "Active", "item_count": 1850, "capacity_used": 52},
+    {"name": "NEOM Site Store", "location": "NEOM Project Site", "status": "Active", "item_count": 1245, "capacity_used": 88},
+    {"name": "Red Sea Site Store", "location": "Red Sea Project Site", "status": "Active", "item_count": 987, "capacity_used": 72},
+    {"name": "Jubail Warehouse", "location": "Jubail Industrial City", "status": "Active", "item_count": 564, "capacity_used": 45},
+    {"name": "Yanbu Warehouse", "location": "Yanbu Industrial City", "status": "Active", "item_count": 245, "capacity_used": 32},
+    {"name": "Qassim Warehouse", "location": "Qassim Region", "status": "Active", "item_count": 155, "capacity_used": 28}
+  ],
+  "stock_confirmations": [
+    {
+      "sc_number": "SC-2026-001",
+      "request_date": "2026-01-30",
+      "reply_date": "2026-01-30",
+      "project": "NEOM",
+      "requestor": "Ahmed Ali",
+      "item_code": "ELE-001",
+      "item_description": "Cable 4x16mm",
+      "requested_qty": 500,
+      "confirmed_qty": 500,
+      "warehouse": "NEOM Site Store",
+      "status": "Completed",
+      "cycle_days": 0,
+      "sla_met": true,
+      "sla_status": "Met",
+      "remarks": ""
+    },
+    {
+      "sc_number": "SC-2026-002",
+      "request_date": "2026-01-31",
+      "reply_date": "2026-02-01",
+      "project": "Red Sea",
+      "requestor": "Mohammed Hassan",
+      "item_code": "MEC-045",
+      "item_description": "Pipe 6 inch SCH40",
+      "requested_qty": 200,
+      "confirmed_qty": 180,
+      "warehouse": "Red Sea Site Store",
+      "status": "Completed",
+      "cycle_days": 1,
+      "sla_met": true,
+      "sla_status": "Met",
+      "remarks": "Partial availability"
+    },
+    {
+      "sc_number": "SC-2026-003",
+      "request_date": "2026-02-01",
+      "reply_date": "",
+      "project": "Project Alpha",
+      "requestor": "Khalid Omar",
+      "item_code": "CIV-022",
+      "item_description": "Cement Portland Type I",
+      "requested_qty": 1000,
+      "confirmed_qty": 0,
+      "warehouse": "Main Warehouse Riyadh",
+      "status": "Pending",
+      "cycle_days": 1,
+      "sla_met": true,
+      "sla_status": "On Track",
+      "remarks": "Checking availability"
+    }
+  ],
+  "movements": [
+    {
+      "transaction_id": "TRF-2026-001",
+      "request_date": "2026-01-28",
+      "delivery_date": "2026-01-29",
+      "item": "ELE-001 - Cable 4x16mm",
+      "type": "Transfer",
+      "from_location": "Main Warehouse Riyadh",
+      "to_location": "NEOM Site Store",
+      "project": "NEOM",
+      "quantity": 1000,
+      "uom": "Meter",
+      "status": "Completed",
+      "cycle_days": 1,
+      "sla_met": true,
+      "sla_status": "Met"
+    },
+    {
+      "transaction_id": "TRF-2026-002",
+      "request_date": "2026-01-29",
+      "delivery_date": "2026-01-31",
+      "item": "MEC-045 - Pipe 6 inch",
+      "type": "Transfer",
+      "from_location": "Dammam Warehouse",
+      "to_location": "Red Sea Site Store",
+      "project": "Red Sea",
+      "quantity": 500,
+      "uom": "Piece",
+      "status": "Completed",
+      "cycle_days": 2,
+      "sla_met": true,
+      "sla_status": "Met"
+    }
+  ],
+  "incidents": [
+    {
+      "incident_id": "INC-2026-001",
+      "incident_date": "2026-01-25",
+      "report_date": "2026-01-25",
+      "type": "Damage",
+      "warehouse": "Main Warehouse Riyadh",
+      "project": "General",
+      "item_code": "ELE-102",
+      "item_description": "Light Fixture LED",
+      "quantity": 5,
+      "value": 2500,
+      "description": "Damaged during handling",
+      "status": "Resolved",
+      "reported_same_day": true,
+      "sla_met": true
+    }
+  ],
+  "scrap_records": [
+    {
+      "scrap_id": "SCR-2026-001",
+      "request_date": "2026-01-20",
+      "removal_date": "2026-01-22",
+      "project": "Project Alpha",
+      "warehouse": "Main Warehouse Riyadh",
+      "material_type": "Cable",
+      "description": "Scrap cable offcuts",
+      "quantity": 500,
+      "unit": "KG",
+      "estimated_value": 2500,
+      "recovered_value": 2200,
+      "status": "Completed",
+      "cycle_days": 2,
+      "sla_met": true,
+      "sla_status": "Met"
+    }
+  ],
+  "annex_a_reports": {
+    "material_days_custody": {
+      "average_days": 45,
+      "items_over_90_days": 234,
+      "items_over_180_days": 67,
+      "items_over_1_year": 496,
+      "items_over_4_years": 496,
+      "total_value_over_90_days": 1250000,
+      "non_moving_items": 496,
+      "non_moving_quantity": 125702,
+      "non_moving_status": "critical"
+    },
+    "theft_damage_cases": {
+      "total_cases": 12,
+      "total_value": 45000,
+      "resolved": 10,
+      "pending": 2
+    },
+    "cycle_count_variance": {
+      "last_quarter": "Q4-2025",
+      "items_counted": 8500,
+      "variance_rate": 2.3,
+      "value_variance": 125000
+    },
+    "free_stock_summary": {
+      "total_items": 567,
+      "total_value": 890000
+    },
+    "scrap_summary": {
+      "total_scrap_value": 125000,
+      "recovered_value": 98000,
+      "recovery_rate": 78.4
+    }
+  },
+  "storage_compliance_rate": 98.5,
+  "damage_on_handling_rate": 0.12,
+  "internal_otif_rate": 95.3,
+  "non_moving_materials": {
+    "summary": {
+      "total_items": 496,
+      "total_quantity": 125702,
+      "warehouses_affected": 2,
+      "projects_affected": 4,
+      "oldest_age": "4+ years",
+      "status": "critical",
+      "last_movement": "Over 4 years ago",
+      "alert_message": "These materials haven't moved in 4+ years - immediate review required"
+    },
+    "by_warehouse": [
+      {
+        "name": "Asfan",
+        "item_count": 151,
+        "quantity": 19013,
+        "percentage": 15.1,
+        "status": "critical",
+        "note": "Past 4 years haven't moved"
+      },
+      {
+        "name": "Jafurah",
+        "item_count": 345,
+        "quantity": 106689,
+        "percentage": 84.9,
+        "status": "critical",
+        "note": "Past 4 years haven't moved"
+      }
+    ],
+    "by_project": [
+      {
+        "name": "Project Materials",
+        "item_count": 263,
+        "quantity": 106402,
+        "percentage": 84.6
+      },
+      {
+        "name": "old stock",
+        "item_count": 107,
+        "quantity": 2394,
+        "percentage": 1.9
+      },
+      {
+        "name": "Project Tools",
+        "item_count": 82,
+        "quantity": 287,
+        "percentage": 0.2
+      },
+      {
+        "name": "Optern materials",
+        "item_count": 44,
+        "quantity": 16619,
+        "percentage": 13.2
+      }
+    ],
+    "by_category": [
+      {
+        "name": "Other Materials",
+        "item_count": 314,
+        "quantity": 74224,
+        "percentage": 59.0,
+        "color": "#6366f1"
+      },
+      {
+        "name": "Cables & Wiring",
+        "item_count": 109,
+        "quantity": 25199,
+        "percentage": 20.0,
+        "color": "#0891b2"
+      },
+      {
+        "name": "Insulation Materials",
+        "item_count": 20,
+        "quantity": 16997,
+        "percentage": 13.5,
+        "color": "#f59e0b"
+      },
+      {
+        "name": "Hardware & Mounting",
+        "item_count": 13,
+        "quantity": 6415,
+        "percentage": 5.1,
+        "color": "#10b981"
+      },
+      {
+        "name": "Joints & Connectors",
+        "item_count": 10,
+        "quantity": 2796,
+        "percentage": 2.2,
+        "color": "#8b5cf6"
+      },
+      {
+        "name": "Tools & Equipment",
+        "item_count": 26,
+        "quantity": 60,
+        "percentage": 0.05,
+        "color": "#ef4444"
+      },
+      {
+        "name": "Electrical Components",
+        "item_count": 4,
+        "quantity": 11,
+        "percentage": 0.01,
+        "color": "#ec4899"
+      }
+    ],
+    "items": [
+      {"sn": 1, "warehouse": "Asfan", "description": "3M TAPE YELLOW 35 3/4\" × 66FT", "unit": "NO", "location": "A-A-12", "qty": 135, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 2, "warehouse": "Asfan", "description": "DOUBLE SIDE TAPE 2\"× 30 YDS", "unit": "NO", "location": "A-A-12", "qty": 3, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 3, "warehouse": "Asfan", "description": "3M TAPE RED 35 3/4\" × 66FT", "unit": "NO", "location": "A-A-12", "qty": 50, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 4, "warehouse": "Asfan", "description": "ELECTRICAL TAPE GREEN 3/4\" SCOTCH", "unit": "NO", "location": "A-A-12", "qty": 40, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 5, "warehouse": "Asfan", "description": "ELECTRICAL TAPE BLACK 3/4\" SCOTCH", "unit": "NO", "location": "A-A-12", "qty": 3, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 6, "warehouse": "Asfan", "description": "MARKING TAPE 50MM × 30M YELLOW/BLACK", "unit": "NO", "location": "A-A-12", "qty": 50, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 7, "warehouse": "Asfan", "description": "FIBRE GLASS 25MM", "unit": "NO", "location": "A-A-12", "qty": 30, "project": "old stock", "category": "Insulation Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 8, "warehouse": "Asfan", "description": "CABLE TIE 4.8 × 500MM", "unit": "NO", "location": "A-A-12", "qty": 500, "project": "old stock", "category": "Cables & Wiring", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 9, "warehouse": "Asfan", "description": "TOOL BAG 20\"", "unit": "NO", "location": "A-A-12", "qty": 1, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 10, "warehouse": "Asfan", "description": "CABLE TIE 4.8 × 300MM WHITE", "unit": "NO", "location": "A-A-13", "qty": 200, "project": "old stock", "category": "Cables & Wiring", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 11, "warehouse": "Asfan", "description": "CABLE LUG SC 70-10 TINNED", "unit": "NO", "location": "A-A-13", "qty": 50, "project": "old stock", "category": "Joints & Connectors", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 12, "warehouse": "Asfan", "description": "CABLE LUG SC 35-8 TINNED", "unit": "NO", "location": "A-A-13", "qty": 100, "project": "old stock", "category": "Joints & Connectors", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 13, "warehouse": "Asfan", "description": "CABLE TIE 4.8 × 400MM BLACK", "unit": "NO", "location": "A-A-14", "qty": 200, "project": "old stock", "category": "Cables & Wiring", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 14, "warehouse": "Asfan", "description": "CABLE LUG SC 50-10 TINNED", "unit": "NO", "location": "A-A-14", "qty": 50, "project": "old stock", "category": "Joints & Connectors", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 15, "warehouse": "Asfan", "description": "BOLT M16 × 50MM GI", "unit": "NO", "location": "A-A-15", "qty": 100, "project": "old stock", "category": "Hardware & Mounting", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 16, "warehouse": "Asfan", "description": "NUT M16 GI", "unit": "NO", "location": "A-A-15", "qty": 100, "project": "old stock", "category": "Hardware & Mounting", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 17, "warehouse": "Asfan", "description": "WASHER M16 GI FLAT", "unit": "NO", "location": "A-A-15", "qty": 100, "project": "old stock", "category": "Hardware & Mounting", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 18, "warehouse": "Asfan", "description": "SPRING WASHER M16 GI", "unit": "NO", "location": "A-A-15", "qty": 100, "project": "old stock", "category": "Hardware & Mounting", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 19, "warehouse": "Asfan", "description": "SILICON SEALANT CLEAR 310ML", "unit": "NO", "location": "A-A-16", "qty": 20, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 20, "warehouse": "Asfan", "description": "PVC TAPE 50MM × 20M RED", "unit": "NO", "location": "A-A-16", "qty": 15, "project": "old stock", "category": "Other Materials", "age": "4+ years", "action": "Review for disposal"},
+      {"sn": 21, "warehouse": "Jafurah", "description": "INSULATION MATERIAL ROCKWOOL 50MM", "unit": "SQM", "location": "J-B-01", "qty": 5000, "project": "Project Materials", "category": "Insulation Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 22, "warehouse": "Jafurah", "description": "INSULATION MATERIAL ROCKWOOL 100MM", "unit": "SQM", "location": "J-B-01", "qty": 3500, "project": "Project Materials", "category": "Insulation Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 23, "warehouse": "Jafurah", "description": "CABLE XLPE 1C × 240MM ARMOURED", "unit": "MTR", "location": "J-B-02", "qty": 8500, "project": "Project Materials", "category": "Cables & Wiring", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 24, "warehouse": "Jafurah", "description": "CABLE XLPE 3C × 95MM ARMOURED", "unit": "MTR", "location": "J-B-02", "qty": 4200, "project": "Project Materials", "category": "Cables & Wiring", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 25, "warehouse": "Jafurah", "description": "CABLE XLPE 4C × 16MM", "unit": "MTR", "location": "J-B-03", "qty": 6500, "project": "Project Materials", "category": "Cables & Wiring", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 26, "warehouse": "Jafurah", "description": "CABLE CONTROL 12C × 1.5MM", "unit": "MTR", "location": "J-B-03", "qty": 3200, "project": "Project Materials", "category": "Cables & Wiring", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 27, "warehouse": "Jafurah", "description": "OPTERN INSULATION BOARD 25MM", "unit": "SQM", "location": "J-C-01", "qty": 8500, "project": "Optern materials", "category": "Insulation Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 28, "warehouse": "Jafurah", "description": "OPTERN JACKET MATERIAL PVC", "unit": "MTR", "location": "J-C-01", "qty": 4200, "project": "Optern materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 29, "warehouse": "Jafurah", "description": "OPTERN ADHESIVE 5KG BUCKET", "unit": "NO", "location": "J-C-02", "qty": 150, "project": "Optern materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 30, "warehouse": "Jafurah", "description": "OPTERN TAPE VAPOUR BARRIER", "unit": "ROLL", "location": "J-C-02", "qty": 320, "project": "Optern materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 31, "warehouse": "Jafurah", "description": "PIPE SUPPORT CLAMP 4 INCH", "unit": "NO", "location": "J-D-01", "qty": 2500, "project": "Project Materials", "category": "Hardware & Mounting", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 32, "warehouse": "Jafurah", "description": "PIPE SUPPORT CLAMP 6 INCH", "unit": "NO", "location": "J-D-01", "qty": 1800, "project": "Project Materials", "category": "Hardware & Mounting", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 33, "warehouse": "Jafurah", "description": "CABLE GLAND 32MM BRASS", "unit": "NO", "location": "J-D-02", "qty": 450, "project": "Project Materials", "category": "Joints & Connectors", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 34, "warehouse": "Jafurah", "description": "CABLE GLAND 50MM BRASS", "unit": "NO", "location": "J-D-02", "qty": 280, "project": "Project Materials", "category": "Joints & Connectors", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 35, "warehouse": "Jafurah", "description": "JUNCTION BOX 150×150×100 GI", "unit": "NO", "location": "J-D-03", "qty": 320, "project": "Project Materials", "category": "Electrical Components", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 36, "warehouse": "Jafurah", "description": "CONDUIT RIGID 1 INCH GI", "unit": "MTR", "location": "J-E-01", "qty": 5500, "project": "Project Materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 37, "warehouse": "Jafurah", "description": "CONDUIT FLEXIBLE 1 INCH", "unit": "MTR", "location": "J-E-01", "qty": 2800, "project": "Project Materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 38, "warehouse": "Jafurah", "description": "CABLE TRAY 300MM × 50MM HDG", "unit": "MTR", "location": "J-E-02", "qty": 1200, "project": "Project Materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 39, "warehouse": "Jafurah", "description": "CABLE TRAY 450MM × 50MM HDG", "unit": "MTR", "location": "J-E-02", "qty": 850, "project": "Project Materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 40, "warehouse": "Jafurah", "description": "STRUT CHANNEL 41×41×2.5MM HDG", "unit": "MTR", "location": "J-E-03", "qty": 3200, "project": "Project Materials", "category": "Other Materials", "age": "4+ years", "action": "Review for project use"},
+      {"sn": 41, "warehouse": "Asfan", "description": "MULTIMETER DIGITAL FLUKE 87V", "unit": "NO", "location": "A-T-01", "qty": 2, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 42, "warehouse": "Asfan", "description": "CLAMP METER FLUKE 376", "unit": "NO", "location": "A-T-01", "qty": 3, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 43, "warehouse": "Asfan", "description": "MEGGER INSULATION TESTER 1KV", "unit": "NO", "location": "A-T-01", "qty": 1, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 44, "warehouse": "Asfan", "description": "CRIMPING TOOL HYDRAULIC", "unit": "NO", "location": "A-T-02", "qty": 2, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 45, "warehouse": "Asfan", "description": "CABLE CUTTER 500MM", "unit": "NO", "location": "A-T-02", "qty": 4, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 46, "warehouse": "Asfan", "description": "TORQUE WRENCH 1/2\" 40-200NM", "unit": "NO", "location": "A-T-02", "qty": 3, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 47, "warehouse": "Asfan", "description": "HEAT GUN 2000W INDUSTRIAL", "unit": "NO", "location": "A-T-03", "qty": 2, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 48, "warehouse": "Asfan", "description": "ANGLE GRINDER 7\" 2200W", "unit": "NO", "location": "A-T-03", "qty": 5, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 49, "warehouse": "Asfan", "description": "DRILL MACHINE CORDLESS 18V SET", "unit": "NO", "location": "A-T-03", "qty": 4, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"},
+      {"sn": 50, "warehouse": "Asfan", "description": "HAMMER DRILL SDS PLUS 800W", "unit": "NO", "location": "A-T-04", "qty": 3, "project": "Project Tools", "category": "Tools & Equipment", "age": "4+ years", "action": "Review for reuse"}
+    ],
+    "sla_impact": {
+      "material_custody_days": {
+        "current": "1460+",
+        "target": "≤90",
+        "status": "critical",
+        "deviation": "Over 1600% above target"
+      },
+      "recommendations": [
+        "Immediate inventory review required",
+        "Assess materials for project reuse potential",
+        "Identify items for disposal/scrap",
+        "Update procurement planning to prevent future accumulation",
+        "Consider transfer to active projects"
+      ]
+    }
+  }
+}

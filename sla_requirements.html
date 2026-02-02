@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>NESMA | SLA Requirements Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/nesma-theme.css">
+    <style>
+        :root {
+            --nesma-primary: #2E3192;
+            --nesma-cyan: #80D1E9;
+            --nesma-navy: #0E2841;
+            --nesma-dark-blue: #203366;
+            --nesma-light-gray: #E8E8E8;
+            --nesma-gray: #B3B3B3;
+            --success: #059669;
+            --warning: #D97706;
+            --danger: #DC2626;
+            --info: #0284C7;
+        }
+
+        * { font-family: 'Inter', 'Cairo', sans-serif; }
+
+        body {
+            background: #F8FAFC;
+            min-height: 100vh;
+        }
+
+        .nesma-header {
+            background: var(--nesma-primary);
+            box-shadow: 0 2px 8px rgba(46, 49, 146, 0.15);
+            position: relative;
+        }
+        .nesma-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 120px;
+            height: 3px;
+            background: var(--nesma-cyan);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(14, 40, 65, 0.08);
+            border: 1px solid var(--nesma-light-gray);
+        }
+
+        .section-card {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, var(--nesma-primary) 0%, var(--nesma-dark-blue) 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-body {
+            padding: 24px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .data-table th {
+            background: var(--nesma-primary);
+            padding: 12px 16px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            text-align: left;
+        }
+        .data-table th:first-child { border-radius: 8px 0 0 0; }
+        .data-table th:last-child { border-radius: 0 8px 0 0; }
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--nesma-light-gray);
+            font-size: 0.875rem;
+        }
+        .data-table tr:hover td {
+            background: rgba(128, 209, 233, 0.08);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-green { background: #D1FAE5; color: #065f46; }
+        .badge-blue { background: #DBEAFE; color: #1e40af; }
+        .badge-purple { background: #EDE9FE; color: #5b21b6; }
+        .badge-orange { background: #FEF3C7; color: #92400e; }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .kpi-item {
+            background: rgba(46, 49, 146, 0.03);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 4px solid var(--nesma-primary);
+        }
+
+        .kpi-title {
+            font-weight: 600;
+            color: var(--nesma-navy);
+            margin-bottom: 8px;
+        }
+
+        .sla-target {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--nesma-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .nav-sidebar {
+            position: sticky;
+            top: 80px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--nesma-light-gray);
+        }
+
+        .nav-link {
+            display: block;
+            padding: 8px 12px;
+            color: var(--nesma-gray);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background: rgba(46, 49, 146, 0.05);
+            color: var(--nesma-primary);
+        }
+        .nav-link.active {
+            background: var(--nesma-primary);
+            color: white;
+        }
+
+        .bilingual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .bilingual .ar {
+            direction: rtl;
+            font-family: 'Cairo', sans-serif;
+            background: rgba(128, 209, 233, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .department-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .dept-procurement { background: #EDE9FE; color: #5b21b6; }
+        .dept-warehouse { background: #D1FAE5; color: #065f46; }
+        .dept-logistics { background: #DBEAFE; color: #1e40af; }
+        .dept-vendor { background: #FEF3C7; color: #92400e; }
+
+        @media print {
+            .no-print { display: none !important; }
+            .nav-sidebar { display: none; }
+            body { background: white; }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="nesma-header text-white sticky top-0 z-50 no-print">
+        <div class="container mx-auto px-4 lg:px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2 text-white/70 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        <span class="text-sm hidden sm:inline">Home</span>
+                    </a>
+                    <div class="h-6 w-px bg-white/30 hidden sm:block"></div>
+                    <img src="assets/logo-white.svg" alt="NESMA" class="h-8 lg:h-10">
+                    <div class="hidden md:block border-r border-white/30 h-8 mx-2"></div>
+                    <div class="hidden md:block">
+                        <h1 class="text-lg font-bold">SLA Requirements</h1>
+                        <p class="text-xs text-blue-100">Service Level Agreement Documentation</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-blue-100 hidden sm:inline">Document ID: NIT-SCM-SLA-KSA-v1.0A</span>
+                    <button onclick="window.print()" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors" title="Print">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 lg:px-6 py-6 lg:py-8">
+        <div class="flex gap-6">
+            <!-- Sidebar Navigation -->
+            <aside class="hidden lg:block w-64 flex-shrink-0 no-print">
+                <nav class="nav-sidebar">
+                    <p class="text-xs text-gray-500 uppercase font-semibold mb-3 px-2">Navigation</p>
+                    <a href="#overview" class="nav-link active">Overview</a>
+                    <a href="#definitions" class="nav-link">Definitions</a>
+                    <a href="#measurement" class="nav-link">Measurement Rules</a>
+                    <a href="#kpi-dictionary" class="nav-link">KPI Dictionary</a>
+                    <a href="#procurement-sla" class="nav-link">Procurement SLA</a>
+                    <a href="#vendor-sla" class="nav-link">Vendor Management SLA</a>
+                    <a href="#logistics-sla" class="nav-link">Logistics SLA</a>
+                    <a href="#warehouse-sla" class="nav-link">Warehouse SLA</a>
+                    <a href="#reporting" class="nav-link">Reporting</a>
+                    <a href="#escalation" class="nav-link">Escalation</a>
+                    <a href="#annex-a" class="nav-link">Annex A: Reports</a>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 min-w-0">
+                <!-- Overview Section -->
+                <section id="overview" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">1. Overview</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="bilingual mb-6">
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-2">Purpose</h3>
+                                <p class="text-gray-600 text-sm">Define the commitment of Supply Chain (internal service provider) to deliver reliable and efficient procurement, logistics, and materials management services to Operations (internal customer).</p>
+                            </div>
+                            <div class="ar">
+                                <h3 class="font-semibold text-gray-900 mb-2">الهدف</h3>
+                                <p class="text-gray-600 text-sm">تحديد التزام سلسلة التوريد (مزود الخدمة الداخلي) بتقديم خدمات المشتريات واللوجستيات وإدارة المواد للعمليات (العميل الداخلي) بشكل موثوق وفعال.</p>
+                            </div>
+                        </div>
+
+                        <h3 class="font-semibold text-gray-900 mb-3">Scope</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <div class="flex items-center gap-2 p-3 bg-purple-50 rounded-lg">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                <span class="text-sm">Requisition to Order</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                <span class="text-sm">Procurement</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-orange-50 rounded-lg">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+                                <span class="text-sm">Vendor Management</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-cyan-50 rounded-lg">
+                                <span class="w-2 h-2 bg-cyan-500 rounded-full"></span>
+                                <span class="text-sm">Logistics</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
+                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                <span class="text-sm">Equipment & Vehicles</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-emerald-50 rounded-lg">
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                                <span class="text-sm">Materials Handling</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-teal-50 rounded-lg">
+                                <span class="w-2 h-2 bg-teal-500 rounded-full"></span>
+                                <span class="text-sm">Inventory</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-indigo-50 rounded-lg">
+                                <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                                <span class="text-sm">Strategic Sourcing</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Definitions Section -->
+                <section id="definitions" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">2. Definitions (Glossary)</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Term</th>
+                                        <th>Definition (EN)</th>
+                                        <th>التعريف (AR)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge badge-blue">Business Day</span></td>
+                                        <td>Working day per company calendar</td>
+                                        <td class="text-right" dir="rtl">يوم عمل حسب تقويم الشركة</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-green">Start Event</span></td>
+                                        <td>Timestamp when request becomes complete and valid in system</td>
+                                        <td class="text-right" dir="rtl">الطابع الزمني عندما يصبح الطلب مكتملاً وصالحاً في النظام</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-green">Stop Event</span></td>
+                                        <td>Timestamp when service is executed (final status)</td>
+                                        <td class="text-right" dir="rtl">الطابع الزمني عند تنفيذ الخدمة (الحالة النهائية)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-orange">Stop-the-clock</span></td>
+                                        <td>Timer pause while awaiting requestor/customer action</td>
+                                        <td class="text-right" dir="rtl">إيقاف المؤقت أثناء انتظار إجراء من الطالب/العميل</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-purple">Age</span></td>
+                                        <td>Business days from Start event to report date (excluding Stop-the-clock)</td>
+                                        <td class="text-right" dir="rtl">أيام العمل من Start event إلى تاريخ التقرير (باستثناء Stop-the-clock)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-purple">Cycle Time</span></td>
+                                        <td>Business days from Start event to Stop event (excluding Stop-the-clock)</td>
+                                        <td class="text-right" dir="rtl">أيام العمل من Start event إلى Stop event (باستثناء Stop-the-clock)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-blue">PR</span></td>
+                                        <td>Purchase Requisition</td>
+                                        <td class="text-right" dir="rtl">طلب الشراء</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-blue">APR</span></td>
+                                        <td>Approved Purchase Requisition</td>
+                                        <td class="text-right" dir="rtl">طلب شراء معتمد</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-blue">PO</span></td>
+                                        <td>Purchase Order</td>
+                                        <td class="text-right" dir="rtl">أمر الشراء</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-blue">POA</span></td>
+                                        <td>Vendor Acknowledged Purchase Order</td>
+                                        <td class="text-right" dir="rtl">أمر شراء معترف به من المورد</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-orange">POCR</span></td>
+                                        <td>Purchase Order Change Request</td>
+                                        <td class="text-right" dir="rtl">طلب تغيير أمر الشراء</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-orange">OBE</span></td>
+                                        <td>Over-Budget Exception</td>
+                                        <td class="text-right" dir="rtl">استثناء تجاوز الميزانية</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-green">SC</span></td>
+                                        <td>Stock Confirmation</td>
+                                        <td class="text-right" dir="rtl">تأكيد المخزون</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-purple">Internal OTIF</span></td>
+                                        <td>Percentage of internal transfers delivered on time and in full</td>
+                                        <td class="text-right" dir="rtl">نسبة التحويلات الداخلية المُسلمة في الوقت المحدد وبالكامل</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Measurement Rules Section -->
+                <section id="measurement" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">3. Measurement Rules</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="kpi-item">
+                                <h4 class="kpi-title">Time Basis</h4>
+                                <p class="text-sm text-gray-600">Business days per company calendar</p>
+                                <p class="text-sm text-gray-600 mt-1" dir="rtl">أيام العمل حسب تقويم الشركة</p>
+                            </div>
+                            <div class="kpi-item">
+                                <h4 class="kpi-title">Counting Window</h4>
+                                <p class="text-sm text-gray-600">Use Start→Stop events; exclude Stop-the-clock periods</p>
+                                <p class="text-sm text-gray-600 mt-1" dir="rtl">استخدام أحداث Start→Stop؛ استثناء فترات Stop-the-clock</p>
+                            </div>
+                            <div class="kpi-item">
+                                <h4 class="kpi-title">Reporting Cadence</h4>
+                                <p class="text-sm text-gray-600">Monthly updates; daily drill-down for operations as needed</p>
+                                <p class="text-sm text-gray-600 mt-1" dir="rtl">تحديثات شهرية؛ drill-down يومي للعمليات حسب الحاجة</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- KPI Dictionary Section -->
+                <section id="kpi-dictionary" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">4. Common KPI Dictionary</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="kpi-grid">
+                            <!-- On-time Rate -->
+                            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-900">4.1 On-time Rate [%]</h4>
+                                    <span class="sla-target">Target: ≥95%</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">Measures delivery reliability within agreed SLA windows</p>
+                                <div class="bg-gray-50 rounded p-3 mb-3">
+                                    <p class="text-xs font-mono text-gray-700">On-time rate = (Items completed within SLA window ÷ Total completed items) × 100</p>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-green-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                    </svg>
+                                    <span>Higher is better</span>
+                                </div>
+                            </div>
+
+                            <!-- Cycle Time -->
+                            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-900">4.2 Cycle Time (P50/P90)</h4>
+                                    <span class="badge badge-blue">Informational</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">Tracks processing speed and tail behavior</p>
+                                <div class="bg-gray-50 rounded p-3 mb-3">
+                                    <p class="text-xs font-mono text-gray-700">Median (P50) and 90th percentile (P90) of Cycle time for completed items</p>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-blue-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                    </svg>
+                                    <span>Lower is better</span>
+                                </div>
+                            </div>
+
+                            <!-- Age -->
+                            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-900">4.3 Age (Open Items)</h4>
+                                    <span class="badge badge-blue">Informational</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">Reveals current backlog pressure</p>
+                                <div class="bg-gray-50 rounded p-3 mb-3">
+                                    <p class="text-xs font-mono text-gray-700">Age = Business days from Start to report date for open items</p>
+                                </div>
+                                <p class="text-xs text-gray-500"><strong>Aging Buckets:</strong> 0-1, 2-3, 4-5, ≥6 business days</p>
+                            </div>
+
+                            <!-- Volume Processed -->
+                            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-900">4.4 Volume Processed</h4>
+                                    <span class="badge badge-blue">Informational</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">Context for performance rates and capacity planning</p>
+                                <div class="bg-gray-50 rounded p-3 mb-3">
+                                    <p class="text-xs font-mono text-gray-700">Count of completed items in period</p>
+                                </div>
+                                <p class="text-xs text-gray-500">Exclude test/rejected/cancelled items</p>
+                            </div>
+
+                            <!-- Exception Rate -->
+                            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-900">4.5 Exception Rate [%]</h4>
+                                    <span class="badge badge-blue">Informational</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">Tracks items requiring manual intervention</p>
+                                <div class="bg-gray-50 rounded p-3 mb-3">
+                                    <p class="text-xs font-mono text-gray-700">Exception rate = (Items flagged with exception ÷ Total completed) × 100</p>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-blue-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                    </svg>
+                                    <span>Lower is better</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Procurement SLA Section -->
+                <section id="procurement-sla" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">5. Procurement SLA (Requisition to Order)</h2>
+                        <span class="department-badge dept-procurement ml-auto">Procurement</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="space-y-6">
+                            <!-- 5.1 PR Processing -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-purple-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-purple-900">5.1 PR Processing</h4>
+                                </div>
+                                <div class="p-4">
+                                    <div class="bilingual mb-4">
+                                        <div>
+                                            <p class="text-sm text-gray-700"><strong>Service Standard:</strong> Approve PR or provide feedback within <span class="font-bold text-purple-700">2 business days</span> from complete request</p>
+                                        </div>
+                                        <div class="ar">
+                                            <p class="text-sm text-gray-700"><strong>معيار الخدمة:</strong> الموافقة على PR أو تقديم ملاحظات خلال <span class="font-bold text-purple-700">٢ أيام عمل</span> من الطلب المكتمل</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-gray-500">Primary KPI:</span>
+                                            <span class="sla-target">On-time PR decision ≥95%</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Cycle time (P50/P90); PR quality rate (first-time complete); APRs not converted to PO >30 days</p>
+                                </div>
+                            </div>
+
+                            <!-- 5.2 PO Processing -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-purple-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-purple-900">5.2 PO Processing</h4>
+                                </div>
+                                <div class="p-4">
+                                    <div class="bilingual mb-4">
+                                        <div>
+                                            <p class="text-sm text-gray-700"><strong>Service Standard:</strong> Issue PO and obtain vendor acknowledgment within:</p>
+                                            <ul class="text-sm text-gray-600 mt-2 space-y-1">
+                                                <li class="flex items-center gap-2">
+                                                    <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                                    <span><strong class="text-purple-700">30 business days</strong> from APR (for value ≥ SAR 500K)</span>
+                                                </li>
+                                                <li class="flex items-center gap-2">
+                                                    <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                                    <span><strong class="text-purple-700">21 business days</strong> from APR (for value < SAR 500K)</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="ar">
+                                            <p class="text-sm text-gray-700"><strong>معيار الخدمة:</strong> إصدار PO والحصول على إقرار المورد خلال:</p>
+                                            <ul class="text-sm text-gray-600 mt-2 space-y-1">
+                                                <li><strong class="text-purple-700">٣٠ يوم عمل</strong> من APR (للقيمة ≥ 500K ريال)</li>
+                                                <li><strong class="text-purple-700">٢١ يوم عمل</strong> من APR (للقيمة < 500K ريال)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3">
+                                        <span class="sla-target">On-time PO issuance ≥95%</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Cycle time (P50/P90) PR→PO; Cycle time (P50/P90) PR→POA</p>
+                                </div>
+                            </div>
+
+                            <!-- 5.3 POCR/OBE Approval -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-purple-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-purple-900">5.3 POCR/OBE Approval</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Approve POCR/OBE within <span class="font-bold text-purple-700">3 business days</span></p>
+                                    <div class="flex flex-wrap gap-3">
+                                        <span class="sla-target">On-time approval ≥95%</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> PO change rate; Exception rate (CEO)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Vendor Management SLA Section -->
+                <section id="vendor-sla" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">6. Vendor Management SLA</h2>
+                        <span class="department-badge dept-vendor ml-auto">Vendor Mgmt</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="space-y-6">
+                            <!-- Performance Evaluation -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-orange-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-orange-900">6.1 Performance Evaluation</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Evaluate each:</p>
+                                    <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                                        <li class="flex items-center gap-2">
+                                            <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+                                            <span><strong class="text-orange-700">6 months</strong> (for subcontractors)</span>
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+                                            <span><strong class="text-orange-700">Annually</strong> (for others)</span>
+                                        </li>
+                                    </ul>
+                                    <span class="sla-target">On-time evaluation ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Vendors <70% score; Operations 1-week response rate; Blacklist approvals</p>
+                                </div>
+                            </div>
+
+                            <!-- Issue Resolution -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-orange-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-orange-900">6.2 Issue Resolution</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Resolve issue within <span class="font-bold text-orange-700">15 business days</span> from complete request</p>
+                                    <span class="sla-target">On-time resolution ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Cycle time (P50/P90); Same-day clarification rate (Operations); Recurrence rate; Lessons learned</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Logistics SLA Section -->
+                <section id="logistics-sla" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">7. Logistics SLA</h2>
+                        <span class="department-badge dept-logistics ml-auto">Logistics</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="space-y-6">
+                            <!-- Vehicle Provisioning -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-blue-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-blue-900">7.1 Vehicle Provisioning</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Provide vehicle within <span class="font-bold text-blue-700">2 business days</span> from approved MenaME request</p>
+                                    <span class="sla-target">On-time provision ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Cycle time (P50/P90); Up-to-date usage database</p>
+                                </div>
+                            </div>
+
+                            <!-- Equipment Request Approval -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-blue-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-blue-900">7.2 Equipment Request Approval</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Approve request within <span class="font-bold text-blue-700">1 business day</span> of receipt</p>
+                                    <span class="sla-target">On-time approval ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Approval cycle time (P50/P90); Volume processed</p>
+                                </div>
+                            </div>
+
+                            <!-- Equipment Delivery -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-blue-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-blue-900">7.3 Equipment Delivery</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Deliver equipment within:</p>
+                                    <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                                        <li class="flex items-center gap-2">
+                                            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                            <span><strong class="text-blue-700">2 business days</strong> (within city)</span>
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                            <span><strong class="text-blue-700">3 business days</strong> (from approval)</span>
+                                        </li>
+                                    </ul>
+                                    <span class="sla-target">On-time delivery ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Delivery cycle time (P50/P90); First-time ready rate; Early utilization (7-day)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Warehouse SLA Section -->
+                <section id="warehouse-sla" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7l8 5 8-5"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">8. Warehouse & Material Handling SLA</h2>
+                        <span class="department-badge dept-warehouse ml-auto">Warehouse</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="space-y-6">
+                            <!-- Storage Compliance -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-green-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-green-900">8.1 Storage Compliance</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Apply storage recommendations from company/vendor/manufacturer</p>
+                                    <span class="sla-target">Storage compliance ≥98%</span>
+                                    <p class="text-xs text-gray-500 mt-3">(Audit pass rate)</p>
+                                </div>
+                            </div>
+
+                            <!-- Storage Reporting -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-green-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-green-900">8.2 Storage Reporting</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Report per <strong>Annex A</strong></p>
+                                    <span class="sla-target">On-time availability =100%</span>
+                                </div>
+                            </div>
+
+                            <!-- Stock Confirmation -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-green-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-green-900">8.3 Stock Confirmation</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Issue SC reply within <span class="font-bold text-green-700">1 business day</span> from request</p>
+                                    <span class="sla-target">On-time SC reply ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> SC cycle time (P50/P90); Pending SC aging; Incident reporting timeliness</p>
+                                </div>
+                            </div>
+
+                            <!-- Material Movement -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-green-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-green-900">8.4 Material Movement</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Deliver materials within <span class="font-bold text-green-700">2 business days</span> from transfer approval</p>
+                                    <span class="sla-target">On-time transfer delivery ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Delivery cycle time (P50/P90); Internal OTIF</p>
+                                </div>
+                            </div>
+
+                            <!-- Incident Reporting -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-green-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-green-900">8.5 Incident Reporting</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Report incidents <span class="font-bold text-green-700">immediately</span> (and no later than end of business day)</p>
+                                    <span class="sla-target">On-time incident reporting =100%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Incident reporting cycle times (P50/P90); Damage-on-handling rate</p>
+                                </div>
+                            </div>
+
+                            <!-- Scrap Removal -->
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-green-50 px-4 py-3 border-b border-gray-200">
+                                    <h4 class="font-semibold text-green-900">8.6 Scrap Removal</h4>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-gray-700 mb-3"><strong>Service Standard:</strong> Remove scrap within <span class="font-bold text-green-700">3 business days</span> from request</p>
+                                    <span class="sla-target">On-time scrap removal ≥95%</span>
+                                    <p class="text-xs text-gray-500 mt-3"><strong>Supporting KPIs:</strong> Removal cycle time (P50/P90); Recycling/recovered value</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reporting Section -->
+                <section id="reporting" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">9. Reporting and Communication</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="kpi-item">
+                                <h4 class="kpi-title">Monthly KPI Report</h4>
+                                <p class="text-sm text-gray-600">Monthly report per Section 5, distributed to Operations and Leadership</p>
+                            </div>
+                            <div class="kpi-item">
+                                <h4 class="kpi-title">Daily Operational Drill-down</h4>
+                                <p class="text-sm text-gray-600">Available to support problem resolution</p>
+                            </div>
+                            <div class="kpi-item">
+                                <h4 class="kpi-title">Preferred Format</h4>
+                                <p class="text-sm text-gray-600">Automated templates, reports, and dashboards where possible</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Escalation Section -->
+                <section id="escalation" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">10. Escalation and Meetings</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="border-l-4 border-red-500 pl-4">
+                                <h4 class="font-semibold text-gray-900 mb-2">Escalation Timeline</h4>
+                                <p class="text-sm text-gray-600">Escalate significant risks or delays within <strong class="text-red-600">24 hours</strong> of discovery (written notice)</p>
+                            </div>
+                            <div class="border-l-4 border-blue-500 pl-4">
+                                <h4 class="font-semibold text-gray-900 mb-2">Monthly Coordination Meeting</h4>
+                                <p class="text-sm text-gray-600">Monthly meeting led by Operations with Finance participation to review performance, issues, and improvements</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Annex A Section -->
+                <section id="annex-a" class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">Annex A: Storage Reporting Particulars</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Report</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><strong>Material days in custody</strong></td>
+                                        <td>Material aging, materials delivered and not transferred to sites</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><strong>Theft/damage cases</strong></td>
+                                        <td>Theft/damage cases and value</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><strong>Inventory</strong></td>
+                                        <td>Inventory (quarterly), with cycle count variance</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><strong>Free stock list</strong></td>
+                                        <td>List of free stock items available</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><strong>Average period for SC</strong></td>
+                                        <td>Average period for SC reply and delivery</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><strong>Material from free stock</strong></td>
+                                        <td>Materials delivered from free stock per project</td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td><strong>Retained material summary</strong></td>
+                                        <td>Summary of materials retained from projects as free stock</td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td><strong>Cumulative scrap list</strong></td>
+                                        <td>Cumulative scrap list and value per project</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Links to Dashboards -->
+                <section class="card section-card">
+                    <div class="section-header">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                        <h2 class="text-xl font-bold">Quick Links to Dashboards</h2>
+                    </div>
+                    <div class="section-body">
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <a href="procurement_dashboard.html" class="block p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-purple-900">Procurement Dashboard</h4>
+                                        <p class="text-xs text-purple-600">PR & Vendor Evaluation</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="transport_dashboard.html" class="block p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                                            <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1h3.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-5a1 1 0 00-.293-.707l-3-3A1 1 0 0016 4H3z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-blue-900">Logistics Dashboard</h4>
+                                        <p class="text-xs text-blue-600">Transport & Equipment</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="warehouse_dashboard.html" class="block p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+                                            <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-green-900">Warehouse Dashboard</h4>
+                                        <p class="text-xs text-green-600">Inventory & Materials</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <div class="text-center py-6 text-gray-500 text-sm">
+                    <p>NESMA Infrastructure & Technology</p>
+                    <p class="text-xs mt-1">Document ID: NIT-SCM-SLA-KSA-11/10/2025-000-v1.0A</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Smooth scroll and active nav link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Update active state
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Update active nav link on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,135 +1,225 @@
 /* ========================================
    NESMA Infrastructure & Technology
-   Brand Identity 2025 - Theme CSS
+   Brand Identity System - Version 3.0
    Supply Chain Management Dashboards
-   Version: 2.1.0 | January 2026
-   
-   Colors extracted from official NESMA PPT Template
+
+   Official Colors from NIT Brand Guidelines
    ======================================== */
 
 /* ==========================================
-   CSS Variables - NESMA Official Color Palette
-   Based on NIT Brand Identity 2025 PPT Template
+   CSS Variables - Complete Design System
    ========================================== */
 :root {
-  /* Primary Brand Colors - NESMA 2025 (from PPT theme1.xml) */
-  --nesma-primary: #2E3192;       /* accent1 - Deep Blue Primary */
-  --nesma-secondary: #80D1E9;     /* accent3 - Cyan Secondary */
-  --nesma-dark: #0E2841;          /* dk2 - Dark Navy */
-  --nesma-accent: #203366;        /* accent4 - Medium Blue */
-  --nesma-neutral: #B3B3B3;       /* accent2/6 - Gray */
-  --nesma-light-bg: #E8E8E8;      /* lt2 - Light Background */
+  /* ===== PRIMARY BRAND COLORS ===== */
+  --nesma-primary: #2E3192;
+  --nesma-primary-light: #4A4DC7;
+  --nesma-primary-dark: #1E2175;
 
-  /* Neutral Colors */
-  --nesma-gray: #6B7280;
-  --nesma-gray-light: #B3B3B3;
-  --nesma-light: #E8E8E8;
+  --nesma-secondary: #80D1E9;
+  --nesma-secondary-light: #A8E0F0;
+  --nesma-secondary-dark: #5BBCD9;
+
+  /* ===== SECONDARY BRAND COLORS ===== */
+  --nesma-navy: #0E2841;
+  --nesma-navy-light: #152D4A;
+  --nesma-navy-dark: #081929;
+
+  --nesma-dark-blue: #203366;
+  --nesma-dark-blue-light: #2A4080;
+  --nesma-dark-blue-dark: #152447;
+
+  /* ===== NEUTRAL COLORS ===== */
   --nesma-white: #FFFFFF;
+  --nesma-gray-50: #F9FAFB;
+  --nesma-gray-100: #F3F4F6;
+  --nesma-gray-200: #E8E8E8;
+  --nesma-gray-300: #D1D5DB;
+  --nesma-gray-400: #B3B3B3;
+  --nesma-gray-500: #6B7280;
+  --nesma-gray-600: #4B5563;
+  --nesma-gray-700: #374151;
+  --nesma-gray-800: #1F2937;
+  --nesma-gray-900: #111827;
   --nesma-black: #000000;
 
-  /* Status Colors - Harmonized with Brand */
-  --nesma-success: #10B981;       /* Emerald - Success */
+  /* ===== STATUS COLORS (Brand Harmonized) ===== */
+  --nesma-success: #059669;
   --nesma-success-light: #D1FAE5;
-  --nesma-warning: #F59E0B;       /* Amber - Warning */
+  --nesma-success-dark: #047857;
+
+  --nesma-warning: #D97706;
   --nesma-warning-light: #FEF3C7;
-  --nesma-danger: #EF4444;        /* Red - Danger */
+  --nesma-warning-dark: #B45309;
+
+  --nesma-danger: #DC2626;
   --nesma-danger-light: #FEE2E2;
-  --nesma-info: #80D1E9;          /* Cyan - Info (matches secondary) */
-  --nesma-info-light: #E0F7FA;
+  --nesma-danger-dark: #B91C1C;
 
-  /* Gradients - NESMA Brand */
-  --nesma-gradient-primary: linear-gradient(135deg, #2E3192 0%, #0E2841 100%);
-  --nesma-gradient-secondary: linear-gradient(135deg, #80D1E9 0%, #2E3192 100%);
-  --nesma-gradient-dark: linear-gradient(135deg, #0E2841 0%, #203366 50%, #0E2841 100%);
-  --nesma-gradient-light: linear-gradient(180deg, #FFFFFF 0%, #E8E8E8 100%);
-  --nesma-gradient-header: linear-gradient(135deg, #2E3192 0%, #203366 50%, #0E2841 100%);
+  --nesma-info: #0284C7;
+  --nesma-info-light: #E0F2FE;
+  --nesma-info-dark: #0369A1;
 
-  /* Chart Colors - NESMA Official Palette */
-  --nesma-chart-1: #2E3192;       /* Primary Blue */
-  --nesma-chart-2: #80D1E9;       /* Cyan */
-  --nesma-chart-3: #0E2841;       /* Dark Navy */
-  --nesma-chart-4: #203366;       /* Medium Blue */
-  --nesma-chart-5: #B3B3B3;       /* Gray */
-  --nesma-chart-6: #10B981;       /* Success Green */
-  --nesma-chart-7: #F59E0B;       /* Warning Amber */
-  --nesma-chart-8: #EF4444;       /* Danger Red */
+  /* ===== BRAND GRADIENTS ===== */
+  --gradient-primary: linear-gradient(135deg, #2E3192 0%, #0E2841 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #4A4DC7 0%, #152D4A 100%);
+  --gradient-secondary: linear-gradient(135deg, #80D1E9 0%, #2E3192 100%);
+  --gradient-dark: linear-gradient(135deg, #0E2841 0%, #203366 50%, #0E2841 100%);
+  --gradient-light: linear-gradient(180deg, #FFFFFF 0%, #F3F4F6 100%);
+  --gradient-header: linear-gradient(135deg, #2E3192 0%, #203366 50%, #0E2841 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
 
-  /* Shadows - Enhanced */
-  --nesma-shadow-xs: 0 1px 2px rgba(14, 40, 65, 0.05);
-  --nesma-shadow-sm: 0 2px 8px rgba(14, 40, 65, 0.08);
-  --nesma-shadow-md: 0 4px 20px rgba(14, 40, 65, 0.1);
-  --nesma-shadow-lg: 0 8px 40px rgba(14, 40, 65, 0.15);
-  --nesma-shadow-xl: 0 16px 60px rgba(14, 40, 65, 0.2);
-  --nesma-shadow-glow: 0 0 40px rgba(128, 209, 233, 0.3);
-  --nesma-shadow-primary: 0 4px 20px rgba(46, 49, 146, 0.25);
+  /* ===== KPI CARD GRADIENTS (Sequential Palette) ===== */
+  --gradient-kpi-1: linear-gradient(135deg, #2E3192 0%, #1E2175 100%);
+  --gradient-kpi-2: linear-gradient(135deg, #203366 0%, #152447 100%);
+  --gradient-kpi-3: linear-gradient(135deg, #0E2841 0%, #081929 100%);
+  --gradient-kpi-4: linear-gradient(135deg, #80D1E9 0%, #5BBCD9 100%);
+  --gradient-kpi-success: linear-gradient(135deg, #059669 0%, #0E2841 100%);
+  --gradient-kpi-warning: linear-gradient(135deg, #D97706 0%, #203366 100%);
+  --gradient-kpi-danger: linear-gradient(135deg, #DC2626 0%, #0E2841 100%);
 
-  /* Border Radius */
-  --nesma-radius-xs: 4px;
-  --nesma-radius-sm: 8px;
-  --nesma-radius-md: 12px;
-  --nesma-radius-lg: 16px;
-  --nesma-radius-xl: 24px;
-  --nesma-radius-full: 9999px;
+  /* ===== CHART COLORS ===== */
+  --chart-1: #2E3192;
+  --chart-2: #80D1E9;
+  --chart-3: #203366;
+  --chart-4: #0E2841;
+  --chart-5: #4A4DC7;
+  --chart-6: #5BBCD9;
+  --chart-7: #059669;
+  --chart-8: #D97706;
 
-  /* Transitions */
-  --nesma-transition-fast: all 0.15s ease;
-  --nesma-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --nesma-transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* ===== SHADOWS ===== */
+  --shadow-xs: 0 1px 2px rgba(14, 40, 65, 0.05);
+  --shadow-sm: 0 2px 4px rgba(14, 40, 65, 0.06), 0 1px 2px rgba(14, 40, 65, 0.04);
+  --shadow-md: 0 4px 6px rgba(14, 40, 65, 0.07), 0 2px 4px rgba(14, 40, 65, 0.06);
+  --shadow-lg: 0 10px 15px rgba(14, 40, 65, 0.1), 0 4px 6px rgba(14, 40, 65, 0.05);
+  --shadow-xl: 0 20px 25px rgba(14, 40, 65, 0.15), 0 10px 10px rgba(14, 40, 65, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(14, 40, 65, 0.25);
+  --shadow-inner: inset 0 2px 4px rgba(14, 40, 65, 0.06);
+  --shadow-glow: 0 0 40px rgba(128, 209, 233, 0.3);
+  --shadow-primary: 0 4px 14px rgba(46, 49, 146, 0.25);
+  --shadow-card: 0 4px 20px rgba(14, 40, 65, 0.08);
+  --shadow-card-hover: 0 12px 40px rgba(46, 49, 146, 0.15);
 
-  /* Spacing */
-  --nesma-space-xs: 0.25rem;
-  --nesma-space-sm: 0.5rem;
-  --nesma-space-md: 1rem;
-  --nesma-space-lg: 1.5rem;
-  --nesma-space-xl: 2rem;
-  --nesma-space-2xl: 3rem;
+  /* ===== BORDER RADIUS ===== */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+
+  /* ===== SPACING SYSTEM ===== */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+
+  /* ===== TYPOGRAPHY ===== */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-arabic: 'Cairo', 'Inter', -apple-system, sans-serif;
+
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-5xl: 3rem;      /* 48px */
+
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  /* ===== TRANSITIONS ===== */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ===== Z-INDEX ===== */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
 }
 
 /* ==========================================
-   Typography - NESMA Brand Fonts
-   English: Inter (fallback for Futura PT)
-   Arabic: Cairo (fallback for DIN Next)
+   BASE STYLES
    ========================================== */
-* {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-[lang="ar"] *,
-[dir="rtl"] * {
-  font-family: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
-/* ==========================================
-   Portal Pages - Dark Theme
-   ========================================== */
-.nesma-portal-bg {
-  background: var(--nesma-gradient-dark);
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--nesma-gray-800);
+  background: var(--gradient-light);
   min-height: 100vh;
 }
 
-.nesma-hero-gradient {
-  background:
-    radial-gradient(ellipse at top, rgba(128, 209, 233, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse at bottom right, rgba(46, 49, 146, 0.2) 0%, transparent 60%);
+[lang="ar"] body,
+[dir="rtl"] body {
+  font-family: var(--font-arabic);
 }
 
 /* ==========================================
-   Dashboard Pages - Light Theme
+   TYPOGRAPHY UTILITIES
    ========================================== */
-.nesma-dashboard-bg {
-  background: var(--nesma-gradient-light);
-  min-height: 100vh;
-}
+.text-primary { color: var(--nesma-primary); }
+.text-secondary { color: var(--nesma-secondary); }
+.text-navy { color: var(--nesma-navy); }
+.text-success { color: var(--nesma-success); }
+.text-warning { color: var(--nesma-warning); }
+.text-danger { color: var(--nesma-danger); }
+.text-muted { color: var(--nesma-gray-500); }
+
+.font-light { font-weight: var(--font-light); }
+.font-normal { font-weight: var(--font-normal); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
 
 /* ==========================================
-   Headers - NESMA Brand
+   HEADER COMPONENT
    ========================================== */
 .nesma-header {
-  background: var(--nesma-gradient-header);
+  background: var(--gradient-header);
   color: var(--nesma-white);
-  padding: 1rem 1.5rem;
-  box-shadow: var(--nesma-shadow-primary);
-  position: relative;
+  padding: var(--space-4) var(--space-6);
+  box-shadow: var(--shadow-primary);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
 }
 
 .nesma-header::after {
@@ -142,31 +232,659 @@
   background: linear-gradient(90deg, var(--nesma-secondary) 0%, transparent 100%);
 }
 
+.nesma-header-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.01em;
+}
+
+.nesma-header-subtitle {
+  font-size: var(--text-xs);
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
 /* ==========================================
-   Cards - NESMA Style
+   CARD COMPONENTS
    ========================================== */
 .nesma-card {
   background: var(--nesma-white);
-  border-radius: var(--nesma-radius-lg);
-  box-shadow: var(--nesma-shadow-sm);
-  border: 1px solid rgba(46, 49, 146, 0.05);
-  transition: var(--nesma-transition);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(46, 49, 146, 0.06);
+  transition: all var(--transition-normal);
+  overflow: hidden;
 }
 
 .nesma-card:hover {
-  box-shadow: var(--nesma-shadow-md);
+  box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
   border-color: rgba(128, 209, 233, 0.2);
 }
 
-/* Glass Card for Portals */
+.nesma-card-header {
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--nesma-gray-200);
+  background: linear-gradient(180deg, var(--nesma-white) 0%, var(--nesma-gray-50) 100%);
+}
+
+.nesma-card-body {
+  padding: var(--space-6);
+}
+
+.nesma-card-footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--nesma-gray-200);
+  background: var(--nesma-gray-50);
+}
+
+/* ==========================================
+   KPI CARD COMPONENT
+   ========================================== */
+.nesma-kpi {
+  position: relative;
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  color: var(--nesma-white);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.nesma-kpi::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 200%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.nesma-kpi:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+}
+
+.nesma-kpi-1 { background: var(--gradient-kpi-1); }
+.nesma-kpi-2 { background: var(--gradient-kpi-2); }
+.nesma-kpi-3 { background: var(--gradient-kpi-3); }
+.nesma-kpi-4 { background: var(--gradient-kpi-4); color: var(--nesma-navy); }
+.nesma-kpi-success { background: var(--gradient-kpi-success); }
+.nesma-kpi-warning { background: var(--gradient-kpi-warning); }
+.nesma-kpi-danger { background: var(--gradient-kpi-danger); }
+
+.nesma-kpi-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+.nesma-kpi-value {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-extrabold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.nesma-kpi-subtitle {
+  font-size: var(--text-xs);
+  opacity: 0.8;
+  margin-top: var(--space-2);
+}
+
+.nesma-kpi-icon {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.2);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[dir="rtl"] .nesma-kpi-icon {
+  right: auto;
+  left: var(--space-4);
+}
+
+/* ==========================================
+   SLA INDICATOR CARDS
+   ========================================== */
+.nesma-sla-section {
+  background: linear-gradient(135deg, var(--nesma-gray-50) 0%, var(--nesma-gray-100) 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  border: 1px solid rgba(46, 49, 146, 0.08);
+}
+
+.nesma-sla-card {
+  background: var(--nesma-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.nesma-sla-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.nesma-sla-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.nesma-sla-card.sla-green::before { background: linear-gradient(90deg, var(--nesma-success) 0%, #10B981 100%); }
+.nesma-sla-card.sla-yellow::before { background: linear-gradient(90deg, var(--nesma-warning) 0%, #F59E0B 100%); }
+.nesma-sla-card.sla-red::before { background: linear-gradient(90deg, var(--nesma-danger) 0%, #EF4444 100%); }
+
+.nesma-sla-value {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-extrabold);
+  margin: var(--space-2) 0;
+}
+
+.nesma-sla-card.sla-green .nesma-sla-value { color: var(--nesma-success); }
+.nesma-sla-card.sla-yellow .nesma-sla-value { color: var(--nesma-warning); }
+.nesma-sla-card.sla-red .nesma-sla-value { color: var(--nesma-danger); }
+
+.nesma-sla-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--nesma-gray-700);
+}
+
+.nesma-sla-target {
+  font-size: var(--text-xs);
+  color: var(--nesma-gray-500);
+  margin-top: var(--space-1);
+}
+
+/* ==========================================
+   TAB NAVIGATION
+   ========================================== */
+.nesma-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--nesma-gray-200);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nesma-tab {
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--nesma-gray-500);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: all var(--transition-normal);
+}
+
+.nesma-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--nesma-primary);
+  transform: scaleX(0);
+  transition: transform var(--transition-normal);
+  border-radius: 3px 3px 0 0;
+}
+
+.nesma-tab:hover {
+  color: var(--nesma-primary);
+  background: rgba(46, 49, 146, 0.04);
+}
+
+.nesma-tab.active {
+  color: var(--nesma-primary);
+  background: rgba(46, 49, 146, 0.06);
+}
+
+.nesma-tab.active::after {
+  transform: scaleX(1);
+}
+
+.nesma-tab-content {
+  display: none;
+  animation: fadeSlideIn 0.4s ease;
+}
+
+.nesma-tab-content.active {
+  display: block;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   TABLE COMPONENT
+   ========================================== */
+.nesma-table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--nesma-gray-200);
+}
+
+.nesma-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.nesma-table th {
+  background: var(--gradient-primary);
+  color: var(--nesma-white);
+  padding: var(--space-4);
+  font-weight: var(--font-semibold);
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.nesma-table th:first-child {
+  border-radius: var(--radius-lg) 0 0 0;
+}
+
+.nesma-table th:last-child {
+  border-radius: 0 var(--radius-lg) 0 0;
+}
+
+[dir="rtl"] .nesma-table th {
+  text-align: right;
+}
+
+[dir="rtl"] .nesma-table th:first-child {
+  border-radius: 0 var(--radius-lg) 0 0;
+}
+
+[dir="rtl"] .nesma-table th:last-child {
+  border-radius: var(--radius-lg) 0 0 0;
+}
+
+.nesma-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--nesma-gray-100);
+  color: var(--nesma-gray-700);
+}
+
+.nesma-table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.nesma-table tbody tr:hover {
+  background: rgba(128, 209, 233, 0.08);
+}
+
+.nesma-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================
+   BADGE COMPONENT
+   ========================================== */
+.nesma-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.nesma-badge-primary {
+  background: rgba(46, 49, 146, 0.12);
+  color: var(--nesma-primary);
+}
+
+.nesma-badge-secondary {
+  background: rgba(128, 209, 233, 0.2);
+  color: var(--nesma-navy);
+}
+
+.nesma-badge-success {
+  background: var(--nesma-success-light);
+  color: var(--nesma-success-dark);
+}
+
+.nesma-badge-warning {
+  background: var(--nesma-warning-light);
+  color: var(--nesma-warning-dark);
+}
+
+.nesma-badge-danger {
+  background: var(--nesma-danger-light);
+  color: var(--nesma-danger-dark);
+}
+
+.nesma-badge-info {
+  background: var(--nesma-info-light);
+  color: var(--nesma-info-dark);
+}
+
+/* ==========================================
+   BUTTON COMPONENT
+   ========================================== */
+.nesma-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-decoration: none;
+}
+
+.nesma-btn-primary {
+  background: var(--gradient-primary);
+  color: var(--nesma-white);
+}
+
+.nesma-btn-primary:hover {
+  background: var(--gradient-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.nesma-btn-secondary {
+  background: var(--nesma-secondary);
+  color: var(--nesma-navy);
+}
+
+.nesma-btn-secondary:hover {
+  background: var(--nesma-secondary-dark);
+}
+
+.nesma-btn-outline {
+  background: transparent;
+  border: 2px solid var(--nesma-primary);
+  color: var(--nesma-primary);
+}
+
+.nesma-btn-outline:hover {
+  background: var(--nesma-primary);
+  color: var(--nesma-white);
+}
+
+.nesma-btn-ghost {
+  background: transparent;
+  color: var(--nesma-gray-600);
+}
+
+.nesma-btn-ghost:hover {
+  background: var(--nesma-gray-100);
+  color: var(--nesma-primary);
+}
+
+/* ==========================================
+   FORM ELEMENTS
+   ========================================== */
+.nesma-input,
+.nesma-select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  font-family: inherit;
+  color: var(--nesma-gray-800);
+  background: var(--nesma-white);
+  border: 2px solid var(--nesma-gray-200);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.nesma-input:focus,
+.nesma-select:focus {
+  outline: none;
+  border-color: var(--nesma-primary);
+  box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.1);
+}
+
+.nesma-input::placeholder {
+  color: var(--nesma-gray-400);
+}
+
+.nesma-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right var(--space-3) center;
+  background-repeat: no-repeat;
+  background-size: 1.25em;
+  padding-right: var(--space-10);
+  cursor: pointer;
+}
+
+[dir="rtl"] .nesma-select {
+  background-position: left var(--space-3) center;
+  padding-right: var(--space-4);
+  padding-left: var(--space-10);
+}
+
+/* ==========================================
+   FILTER SECTION
+   ========================================== */
+.nesma-filter-section {
+  background: linear-gradient(135deg, var(--nesma-gray-50) 0%, var(--nesma-gray-100) 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-6);
+  border: 1px solid rgba(46, 49, 146, 0.06);
+}
+
+.nesma-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: flex-end;
+}
+
+.nesma-filter-item {
+  min-width: 150px;
+}
+
+.nesma-filter-label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--nesma-gray-600);
+  margin-bottom: var(--space-1);
+}
+
+/* ==========================================
+   CHART CONTAINER
+   ========================================== */
+.nesma-chart-container {
+  position: relative;
+  height: 300px;
+  padding: var(--space-4);
+}
+
+.nesma-chart-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--nesma-gray-800);
+  margin-bottom: var(--space-4);
+}
+
+/* ==========================================
+   ALERT / NOTICE COMPONENT
+   ========================================== */
+.nesma-alert {
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.nesma-alert-success {
+  background: var(--nesma-success-light);
+  border-left: 4px solid var(--nesma-success);
+  color: var(--nesma-success-dark);
+}
+
+.nesma-alert-warning {
+  background: var(--nesma-warning-light);
+  border-left: 4px solid var(--nesma-warning);
+  color: var(--nesma-warning-dark);
+}
+
+.nesma-alert-danger {
+  background: var(--nesma-danger-light);
+  border-left: 4px solid var(--nesma-danger);
+  color: var(--nesma-danger-dark);
+}
+
+.nesma-alert-info {
+  background: var(--nesma-info-light);
+  border-left: 4px solid var(--nesma-info);
+  color: var(--nesma-info-dark);
+}
+
+[dir="rtl"] .nesma-alert {
+  border-left: none;
+  border-right: 4px solid;
+}
+
+/* ==========================================
+   CRITICAL ALERT BANNER
+   ========================================== */
+.nesma-critical-banner {
+  background: linear-gradient(135deg, var(--nesma-danger) 0%, var(--nesma-navy) 100%);
+  color: var(--nesma-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-lg);
+}
+
+.nesma-critical-banner-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255,255,255,0.2);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nesma-critical-banner-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+}
+
+.nesma-critical-banner-text {
+  font-size: var(--text-sm);
+  opacity: 0.9;
+}
+
+/* ==========================================
+   LOADING SPINNER
+   ========================================== */
+.nesma-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--nesma-gray-200);
+  border-top-color: var(--nesma-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.nesma-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  z-index: var(--z-modal);
+}
+
+/* ==========================================
+   SCROLL CONTAINER
+   ========================================== */
+.nesma-scroll-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: var(--radius-lg);
+}
+
+.nesma-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nesma-scroll-container::-webkit-scrollbar-track {
+  background: var(--nesma-gray-100);
+  border-radius: var(--radius-full);
+}
+
+.nesma-scroll-container::-webkit-scrollbar-thumb {
+  background: var(--nesma-secondary);
+  border-radius: var(--radius-full);
+}
+
+.nesma-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--nesma-secondary-dark);
+}
+
+/* ==========================================
+   GLASS CARD (Portal)
+   ========================================== */
 .nesma-glass {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(128, 209, 233, 0.1);
-  border-radius: var(--nesma-radius-xl);
-  transition: var(--nesma-transition);
+  border-radius: var(--radius-3xl);
+  transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
 }
@@ -175,7 +893,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: var(--nesma-radius-xl);
+  border-radius: var(--radius-3xl);
   padding: 1px;
   background: linear-gradient(135deg, transparent 0%, rgba(128, 209, 233, 0.3) 50%, transparent 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -193,267 +911,32 @@
 .nesma-glass:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(128, 209, 233, 0.3);
-  box-shadow: var(--nesma-shadow-glow);
+  box-shadow: var(--shadow-glow);
   transform: translateY(-8px) scale(1.02);
 }
 
-/* KPI Cards - NESMA Brand */
-.nesma-kpi-card {
-  background: var(--nesma-white);
-  border-radius: var(--nesma-radius-lg);
-  padding: 1.5rem;
-  box-shadow: var(--nesma-shadow-sm);
-  border-left: 4px solid var(--nesma-primary);
-  transition: var(--nesma-transition);
-  position: relative;
-  overflow: hidden;
-}
-
-.nesma-kpi-card::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(128, 209, 233, 0.05) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-[dir="rtl"] .nesma-kpi-card {
-  border-left: none;
-  border-right: 4px solid var(--nesma-primary);
-}
-
-.nesma-kpi-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: var(--nesma-shadow-md);
-}
-
-.nesma-kpi-card.kpi-success { border-left-color: var(--nesma-success); }
-.nesma-kpi-card.kpi-warning { border-left-color: var(--nesma-warning); }
-.nesma-kpi-card.kpi-danger { border-left-color: var(--nesma-danger); }
-.nesma-kpi-card.kpi-info { border-left-color: var(--nesma-info); }
-
-[dir="rtl"] .nesma-kpi-card.kpi-success { border-right-color: var(--nesma-success); }
-[dir="rtl"] .nesma-kpi-card.kpi-warning { border-right-color: var(--nesma-warning); }
-[dir="rtl"] .nesma-kpi-card.kpi-danger { border-right-color: var(--nesma-danger); }
-[dir="rtl"] .nesma-kpi-card.kpi-info { border-right-color: var(--nesma-info); }
-
 /* ==========================================
-   Buttons
+   PORTAL PAGE STYLES
    ========================================== */
-.nesma-btn {
-  padding: 0.5rem 1.25rem;
-  border-radius: var(--nesma-radius-sm);
-  font-weight: 600;
-  transition: var(--nesma-transition);
-  cursor: pointer;
-  border: none;
+.nesma-portal-bg {
+  background: var(--gradient-dark);
+  min-height: 100vh;
 }
 
-.nesma-btn-primary {
-  background: var(--nesma-gradient-primary);
-  color: var(--nesma-white);
+.nesma-hero-gradient {
+  background:
+    radial-gradient(ellipse at top, rgba(128, 209, 233, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at bottom right, rgba(46, 49, 146, 0.2) 0%, transparent 60%);
 }
 
-.nesma-btn-primary:hover {
-  box-shadow: var(--nesma-shadow-md);
-  transform: translateY(-2px);
-}
-
-.nesma-btn-secondary {
-  background: var(--nesma-secondary);
-  color: var(--nesma-dark);
-}
-
-.nesma-btn-secondary:hover {
-  background: #6bc4de;
-}
-
-.nesma-btn-outline {
-  background: transparent;
-  border: 2px solid var(--nesma-primary);
-  color: var(--nesma-primary);
-}
-
-.nesma-btn-outline:hover {
-  background: var(--nesma-primary);
-  color: var(--nesma-white);
+.nesma-glow-text {
+  text-shadow: 0 0 40px rgba(128, 209, 233, 0.5);
 }
 
 /* ==========================================
-   Tables
+   ANIMATIONS
    ========================================== */
-.nesma-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.nesma-table th {
-  background: var(--nesma-gradient-primary);
-  color: var(--nesma-white);
-  padding: 0.875rem 1rem;
-  text-align: right;
-  font-weight: 600;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-[dir="ltr"] .nesma-table th {
-  text-align: left;
-}
-
-.nesma-table th:first-child {
-  border-radius: 0 var(--nesma-radius-sm) 0 0;
-}
-
-[dir="ltr"] .nesma-table th:first-child {
-  border-radius: var(--nesma-radius-sm) 0 0 0;
-}
-
-.nesma-table th:last-child {
-  border-radius: var(--nesma-radius-sm) 0 0 0;
-}
-
-[dir="ltr"] .nesma-table th:last-child {
-  border-radius: 0 var(--nesma-radius-sm) 0 0;
-}
-
-.nesma-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--nesma-light);
-}
-
-.nesma-table tbody tr:hover {
-  background-color: rgba(128, 209, 233, 0.1);
-}
-
-/* ==========================================
-   Tabs
-   ========================================== */
-.nesma-tabs {
-  display: flex;
-  gap: 0.5rem;
-  background: var(--nesma-white);
-  padding: 0.5rem;
-  border-radius: var(--nesma-radius-md);
-  box-shadow: var(--nesma-shadow-sm);
-}
-
-.nesma-tab {
-  padding: 0.625rem 1.5rem;
-  border-radius: var(--nesma-radius-sm);
-  font-weight: 500;
-  transition: var(--nesma-transition);
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  color: var(--nesma-dark);
-}
-
-.nesma-tab:hover {
-  background: rgba(46, 49, 146, 0.1);
-}
-
-.nesma-tab.active {
-  background: var(--nesma-primary);
-  color: var(--nesma-white);
-}
-
-/* ==========================================
-   Badges & Status
-   ========================================== */
-.nesma-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.375rem 0.875rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.nesma-badge-primary {
-  background: rgba(46, 49, 146, 0.15);
-  color: var(--nesma-primary);
-}
-
-.nesma-badge-secondary {
-  background: rgba(128, 209, 233, 0.2);
-  color: var(--nesma-dark);
-}
-
-.nesma-badge-success {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--nesma-success);
-}
-
-.nesma-badge-warning {
-  background: rgba(245, 158, 11, 0.15);
-  color: #b45309;
-}
-
-.nesma-badge-danger {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--nesma-danger);
-}
-
-.nesma-badge-info {
-  background: rgba(59, 130, 246, 0.15);
-  color: var(--nesma-info);
-}
-
-/* ==========================================
-   Form Elements
-   ========================================== */
-.nesma-input,
-.nesma-select {
-  padding: 0.625rem 1rem;
-  border: 2px solid var(--nesma-light);
-  border-radius: var(--nesma-radius-sm);
-  transition: var(--nesma-transition);
-  background: var(--nesma-white);
-}
-
-.nesma-input:focus,
-.nesma-select:focus {
-  outline: none;
-  border-color: var(--nesma-primary);
-  box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.1);
-}
-
-/* ==========================================
-   Loading & Spinners
-   ========================================== */
-.nesma-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--nesma-light);
-  border-top-color: var(--nesma-primary);
-  border-radius: 50%;
-  animation: nesma-spin 1s linear infinite;
-}
-
-@keyframes nesma-spin {
-  to { transform: rotate(360deg); }
-}
-
-.nesma-loading-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-/* ==========================================
-   Animations
-   ========================================== */
-@keyframes nesma-fadeInUp {
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -464,65 +947,467 @@
   }
 }
 
-.nesma-fade-in-up {
-  animation: nesma-fadeInUp 0.6s ease forwards;
+.nesma-fade-in {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
 }
 
-.nesma-stagger-1 { animation-delay: 0.1s; }
-.nesma-stagger-2 { animation-delay: 0.2s; }
-.nesma-stagger-3 { animation-delay: 0.3s; }
-.nesma-stagger-4 { animation-delay: 0.4s; }
-.nesma-stagger-5 { animation-delay: 0.5s; }
+.nesma-delay-1 { animation-delay: 0.1s; }
+.nesma-delay-2 { animation-delay: 0.2s; }
+.nesma-delay-3 { animation-delay: 0.3s; }
+.nesma-delay-4 { animation-delay: 0.4s; }
+.nesma-delay-5 { animation-delay: 0.5s; }
 
-/* ==========================================
-   Utilities
-   ========================================== */
-.nesma-text-primary { color: var(--nesma-primary); }
-.nesma-text-secondary { color: var(--nesma-secondary); }
-.nesma-text-dark { color: var(--nesma-dark); }
-.nesma-text-gray { color: var(--nesma-gray); }
-.nesma-text-success { color: var(--nesma-success); }
-.nesma-text-warning { color: var(--nesma-warning); }
-.nesma-text-danger { color: var(--nesma-danger); }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 
-.nesma-bg-primary { background-color: var(--nesma-primary); }
-.nesma-bg-secondary { background-color: var(--nesma-secondary); }
-.nesma-bg-dark { background-color: var(--nesma-dark); }
-.nesma-bg-light { background-color: var(--nesma-light); }
-
-.nesma-glow-text {
-  text-shadow: 0 0 40px rgba(128, 209, 233, 0.5);
+.nesma-pulse {
+  animation: pulse 2s ease-in-out infinite;
 }
 
 /* ==========================================
-   Responsive Utilities
+   RESPONSIVE UTILITIES
    ========================================== */
 @media (max-width: 768px) {
-  .nesma-kpi-card {
-    padding: 1rem;
+  :root {
+    --text-base: 0.875rem;
+    --text-lg: 1rem;
+    --text-xl: 1.125rem;
+    --text-2xl: 1.25rem;
+    --text-3xl: 1.5rem;
   }
 
-  .nesma-tabs {
-    flex-wrap: wrap;
+  .nesma-kpi {
+    padding: var(--space-4);
+  }
+
+  .nesma-kpi-value {
+    font-size: var(--text-2xl);
   }
 
   .nesma-tab {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+  }
+
+  .nesma-card-body {
+    padding: var(--space-4);
   }
 }
 
 /* ==========================================
-   Print Styles
+   PRINT STYLES
    ========================================== */
 @media print {
   .nesma-no-print {
     display: none !important;
   }
 
+  body {
+    background: white;
+  }
+
   .nesma-card,
-  .nesma-kpi-card {
+  .nesma-kpi {
     box-shadow: none;
-    border: 1px solid var(--nesma-light);
+    border: 1px solid var(--nesma-gray-200);
+  }
+
+  .nesma-header {
+    background: var(--nesma-primary);
+    box-shadow: none;
+  }
+}
+
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+.nesma-bg-primary { background-color: var(--nesma-primary); }
+.nesma-bg-secondary { background-color: var(--nesma-secondary); }
+.nesma-bg-navy { background-color: var(--nesma-navy); }
+.nesma-bg-white { background-color: var(--nesma-white); }
+.nesma-bg-gray-50 { background-color: var(--nesma-gray-50); }
+.nesma-bg-gray-100 { background-color: var(--nesma-gray-100); }
+
+.nesma-rounded-sm { border-radius: var(--radius-sm); }
+.nesma-rounded-md { border-radius: var(--radius-md); }
+.nesma-rounded-lg { border-radius: var(--radius-lg); }
+.nesma-rounded-xl { border-radius: var(--radius-xl); }
+.nesma-rounded-full { border-radius: var(--radius-full); }
+
+.nesma-shadow-sm { box-shadow: var(--shadow-sm); }
+.nesma-shadow-md { box-shadow: var(--shadow-md); }
+.nesma-shadow-lg { box-shadow: var(--shadow-lg); }
+.nesma-shadow-xl { box-shadow: var(--shadow-xl); }
+
+/* ==========================================
+   GRADIENT KPI CARDS (New Design v4.0)
+   Professional gradient cards with diagonal shine
+   ========================================== */
+
+/* Base gradient card */
+.gradient-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 20px 24px;
+  color: white;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  min-height: 120px;
+}
+
+/* Diagonal shine overlay effect */
+.gradient-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  border-radius: 0 16px 16px 0;
+  pointer-events: none;
+}
+
+/* Inner glow effect */
+.gradient-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gradient-card:hover::after {
+  opacity: 1;
+}
+
+.gradient-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Color variants - Nesma Brand */
+/* Primary Blue - Main actions */
+.gradient-card-primary {
+  background: linear-gradient(135deg, #4361ee 0%, #3a56d4 50%, #2E3192 100%);
+}
+
+/* Secondary Blue - Info */
+.gradient-card-blue {
+  background: linear-gradient(135deg, #5B8DEF 0%, #4A7DE0 50%, #3B6FD4 100%);
+}
+
+/* Navy - Dark info */
+.gradient-card-navy {
+  background: linear-gradient(135deg, #1E3A5F 0%, #152D4A 50%, #0E2841 100%);
+}
+
+/* Success Green */
+.gradient-card-success {
+  background: linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%);
+}
+
+/* Warning Orange/Amber */
+.gradient-card-warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%);
+}
+
+/* Danger Red */
+.gradient-card-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%);
+}
+
+/* Cyan - Secondary brand */
+.gradient-card-cyan {
+  background: linear-gradient(135deg, #80D1E9 0%, #5BBCD9 50%, #3BA8C7 100%);
+  color: #0E2841;
+}
+
+/* Purple - Special */
+.gradient-card-purple {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6D28D9 100%);
+}
+
+/* Icon box in corner */
+.gradient-card-icon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+[dir="rtl"] .gradient-card-icon {
+  right: auto;
+  left: 16px;
+}
+
+.gradient-card-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Card content */
+.gradient-card-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-bottom: 4px;
+  letter-spacing: 0.01em;
+}
+
+.gradient-card-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.gradient-card-subtitle {
+  font-size: 12px;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+/* Compact version for grids */
+.gradient-card-compact {
+  min-height: 100px;
+  padding: 16px 20px;
+}
+
+.gradient-card-compact .gradient-card-value {
+  font-size: 2rem;
+}
+
+.gradient-card-compact .gradient-card-icon {
+  width: 38px;
+  height: 38px;
+}
+
+.gradient-card-compact .gradient-card-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* SLA status cards with gradient */
+.sla-gradient-card {
+  position: relative;
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: white;
+  border: 1px solid var(--nesma-gray-200);
+}
+
+.sla-gradient-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.sla-gradient-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.sla-gradient-card.sla-green::before {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.sla-gradient-card.sla-yellow::before {
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+}
+
+.sla-gradient-card.sla-red::before {
+  background: linear-gradient(90deg, #EF4444 0%, #DC2626 100%);
+}
+
+.sla-gradient-card .sla-indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.sla-gradient-card.sla-green .sla-indicator {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+  color: #059669;
+}
+
+.sla-gradient-card.sla-yellow .sla-indicator {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  color: #D97706;
+}
+
+.sla-gradient-card.sla-red .sla-indicator {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  color: #DC2626;
+}
+
+.sla-gradient-card .sla-value {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 6px 0;
+}
+
+.sla-gradient-card.sla-green .sla-value { color: #059669; }
+.sla-gradient-card.sla-yellow .sla-value { color: #D97706; }
+.sla-gradient-card.sla-red .sla-value { color: #DC2626; }
+
+/* Cycle time card with gradient background */
+.cycle-time-gradient {
+  background: linear-gradient(135deg, rgba(46, 49, 146, 0.06) 0%, rgba(128, 209, 233, 0.08) 100%);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  border: 1px solid rgba(46, 49, 146, 0.1);
+}
+
+/* Aging bucket with gradient */
+.aging-bucket-gradient {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.aging-bucket-gradient::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.aging-bucket-gradient:hover {
+  transform: translateX(4px);
+}
+
+[dir="rtl"] .aging-bucket-gradient:hover {
+  transform: translateX(-4px);
+}
+
+.aging-bucket-gradient.bucket-green {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
+}
+.aging-bucket-gradient.bucket-green::before {
+  background: linear-gradient(180deg, #10B981 0%, #059669 100%);
+}
+
+.aging-bucket-gradient.bucket-yellow {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 100%);
+}
+.aging-bucket-gradient.bucket-yellow::before {
+  background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
+}
+
+.aging-bucket-gradient.bucket-orange {
+  background: linear-gradient(90deg, rgba(249, 115, 22, 0.08) 0%, rgba(249, 115, 22, 0.02) 100%);
+}
+.aging-bucket-gradient.bucket-orange::before {
+  background: linear-gradient(180deg, #F97316 0%, #EA580C 100%);
+}
+
+.aging-bucket-gradient.bucket-red {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.02) 100%);
+}
+.aging-bucket-gradient.bucket-red::before {
+  background: linear-gradient(180deg, #EF4444 0%, #DC2626 100%);
+}
+
+/* Summary cards row */
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--nesma-gray-200);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.summary-card:hover {
+  border-color: var(--nesma-primary);
+  box-shadow: 0 4px 12px rgba(46, 49, 146, 0.1);
+  transform: translateY(-2px);
+}
+
+.summary-card-label {
+  font-size: 12px;
+  color: var(--nesma-gray-500);
+  margin-bottom: 4px;
+}
+
+.summary-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.summary-card-value.text-primary { color: var(--nesma-primary); }
+.summary-card-value.text-success { color: #059669; }
+.summary-card-value.text-warning { color: #D97706; }
+.summary-card-value.text-danger { color: #DC2626; }
+.summary-card-value.text-info { color: #0284C7; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gradient-card {
+    padding: 16px 18px;
+    min-height: 100px;
+  }
+
+  .gradient-card-value {
+    font-size: 2rem;
+  }
+
+  .gradient-card-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .gradient-card-icon svg {
+    width: 18px;
+    height: 18px;
   }
 }
