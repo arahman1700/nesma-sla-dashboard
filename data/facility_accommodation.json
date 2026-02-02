@@ -105,7 +105,8 @@
       "Safwa": 7.0,
       "Tabuk": 3.0,
       "Yanbu": 14.0
-    }
+    },
+    "total_staff": 1056
   },
   "records": [
     {
@@ -780,5 +781,29 @@
       "annual_payment": 200000.0,
       "remarks": ""
     }
-  ]
+  ],
+  "arrivals": {
+    "new_arrivals": {
+      "total": 45,
+      "by_month": {
+        "2026-01": 45
+      }
+    },
+    "departures": {
+      "total": 23,
+      "by_month": {
+        "2026-01": 23
+      }
+    }
+  },
+  "hotel_bookings": {
+    "total": 28,
+    "by_city": {
+      "Riyadh": 12,
+      "Jeddah": 8,
+      "Dammam": 5,
+      "Other": 3
+    },
+    "total_cost": 85000
+  }
 }
