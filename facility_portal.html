@@ -348,11 +348,12 @@
         // Load summary data
         async function loadSummaryData() {
             try {
+                const cacheBust = '?v=' + Date.now();
                 const [vehiclesRes, contractsRes, maintenanceRes, accommodationRes] = await Promise.all([
-                    fetch('data/facility_vehicles.json'),
-                    fetch('data/facility_contracts.json'),
-                    fetch('data/facility_maintenance.json'),
-                    fetch('data/facility_accommodation.json')
+                    fetch('data/facility_vehicles.json' + cacheBust),
+                    fetch('data/facility_contracts.json' + cacheBust),
+                    fetch('data/facility_maintenance.json' + cacheBust),
+                    fetch('data/facility_accommodation.json' + cacheBust)
                 ]);
 
                 const vehicles = await vehiclesRes.json();
