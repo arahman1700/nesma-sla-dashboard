@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>NESMA | Supply Chain Management Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/nesma-theme.css">
     <style>
         :root {
@@ -16,24 +16,220 @@
             --nesma-secondary: #80D1E9;
             --nesma-navy: #0E2841;
             --nesma-dark-blue: #203366;
+            --nesma-accent: #00D4FF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background: linear-gradient(135deg, #0E2841 0%, #203366 50%, #0E2841 100%);
+            background: linear-gradient(135deg, #0a1628 0%, #0E2841 40%, #162d50 70%, #0a1628 100%);
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-        .hero-gradient {
-            background: radial-gradient(ellipse at top, rgba(128, 209, 233, 0.2) 0%, transparent 70%),
-                        radial-gradient(ellipse at bottom right, rgba(46, 49, 146, 0.25) 0%, transparent 70%);
+        /* Animated Background Grid */
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(128, 209, 233, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(128, 209, 233, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* Glass Card Design */
+        /* Gradient Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(46, 49, 146, 0.4) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: orbFloat1 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(128, 209, 233, 0.2) 0%, transparent 70%);
+            bottom: -150px;
+            left: -150px;
+            animation: orbFloat2 25s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: orbPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-50px, 50px) scale(1.1); }
+        }
+
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, -30px) scale(1.1); }
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.3); }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Logo Container - New Design */
+        .logo-container {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        /* Rotating Ring */
+        .logo-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            border-top-color: var(--nesma-secondary);
+            border-right-color: var(--nesma-accent);
+            border-radius: 50%;
+            animation: ringRotate 8s linear infinite;
+        }
+
+        .logo-ring-inner {
+            position: absolute;
+            width: 85%;
+            height: 85%;
+            border: 1px solid transparent;
+            border-bottom-color: rgba(128, 209, 233, 0.5);
+            border-left-color: rgba(0, 212, 255, 0.3);
+            border-radius: 50%;
+            animation: ringRotate 6s linear infinite reverse;
+        }
+
+        @keyframes ringRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Main Icon */
+        .logo-main-icon {
+            position: relative;
+            z-index: 2;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--nesma-primary) 0%, var(--nesma-navy) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 30px rgba(128, 209, 233, 0.3),
+                0 0 60px rgba(46, 49, 146, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+
+        .logo-main-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--nesma-secondary);
+            filter: drop-shadow(0 0 10px rgba(128, 209, 233, 0.5));
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Glow Effect */
+        .logo-glow {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(128, 209, 233, 0.15) 0%, transparent 60%);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Title Styling */
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, var(--nesma-secondary) 50%, var(--nesma-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 60px rgba(128, 209, 233, 0.3);
+        }
+
+        .sub-title {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: var(--nesma-secondary);
+            opacity: 0.8;
+        }
+
+        /* Glass Card Design - Enhanced */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 24px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -43,9 +239,24 @@
         .glass-card::before {
             content: '';
             position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
             inset: 0;
             border-radius: 24px;
-            padding: 2px;
+            padding: 1px;
             background: linear-gradient(135deg, transparent 0%, rgba(128, 209, 233, 0.3) 50%, transparent 100%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -55,80 +266,53 @@
             transition: opacity 0.4s ease;
         }
 
-        .glass-card:hover::before { opacity: 1; }
+        .glass-card:hover::after { opacity: 1; }
 
         .glass-card:hover {
-            transform: translateY(-12px) scale(1.03);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 40px 80px rgba(128, 209, 233, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(128, 209, 233, 0.1);
         }
 
         .department-card {
-            min-height: 320px;
-        }
-
-        .glow-text {
-            text-shadow: 0 0 40px rgba(128, 209, 233, 0.5);
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in-up { animation: fadeInUp 0.8s ease forwards; opacity: 0; }
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
-        .stagger-5 { animation-delay: 0.5s; }
-
-        /* Particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 0;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--nesma-secondary);
-            border-radius: 50%;
-            opacity: 0.2;
-            animation: particleFloat 20s linear infinite;
-        }
-
-        @keyframes particleFloat {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.3; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+            min-height: 300px;
         }
 
         /* Icon Box */
         .icon-box {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .icon-box::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(128, 209, 233, 0.5) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .glass-card:hover .icon-box::before {
+            opacity: 1;
         }
 
         .icon-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 20px;
+            border-radius: 18px;
         }
 
         /* Icon Gradients */
@@ -136,26 +320,44 @@
         .procurement-gradient { background: linear-gradient(135deg, #2E3192 0%, #0E2841 100%); }
         .warehouse-gradient { background: linear-gradient(135deg, #10B981 0%, #0E2841 100%); }
         .facility-gradient { background: linear-gradient(135deg, #6366F1 0%, #0E2841 100%); }
-        .disabled-gradient { background: linear-gradient(135deg, #6B7280 0%, #374151 100%); }
+        .assets-gradient { background: linear-gradient(135deg, #F59E0B 0%, #0E2841 100%); }
 
         /* Status Badges */
         .status-badge {
-            font-size: 11px;
-            padding: 6px 14px;
+            font-size: 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .badge-coming { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .badge-active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .badge-coming {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
 
         /* Feature Tags */
         .feature-tag {
             font-size: 11px;
             padding: 4px 10px;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
+            background: rgba(128, 209, 233, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(128, 209, 233, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover .feature-tag {
+            background: rgba(128, 209, 233, 0.15);
+            border-color: rgba(128, 209, 233, 0.2);
+            color: rgba(255, 255, 255, 0.8);
         }
 
         /* Enter Button */
@@ -163,313 +365,339 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: #80D1E9;
+            color: var(--nesma-secondary);
             font-size: 14px;
             font-weight: 600;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: transparent;
+        }
+
+        .glass-card:hover .enter-btn {
+            background: rgba(128, 209, 233, 0.1);
         }
 
         .enter-btn svg {
-            transition: transform 0.2s ease;
+            transition: transform 0.3s ease;
         }
 
         .glass-card:hover .enter-btn svg {
             transform: translateX(4px);
         }
 
-        /* Disabled Card */
-        .card-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .card-disabled:hover {
-            transform: none;
-            background: rgba(255, 255, 255, 0.03);
-            box-shadow: none;
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        .card-disabled::before {
-            display: none;
+        .fade-in-up { animation: fadeInUp 0.8s ease forwards; opacity: 0; }
+        .fade-in-scale { animation: fadeInScale 1s ease forwards; opacity: 0; }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+        .stagger-6 { animation-delay: 0.6s; }
+
+        /* Header */
+        .main-header {
+            background: rgba(10, 22, 40, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(128, 209, 233, 0.1);
         }
 
-        /* Enhanced Glowing Logo Styles */
-        .logo-glow-container {
-            position: relative;
-            display: inline-block;
+        /* Time Display */
+        .time-display {
+            font-family: 'Inter', monospace;
+            font-size: 14px;
+            color: var(--nesma-secondary);
+            padding: 6px 14px;
+            background: rgba(128, 209, 233, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(128, 209, 233, 0.2);
         }
 
-        .logo-glow {
-            filter: drop-shadow(0 0 15px rgba(128, 209, 233, 1))
-                    drop-shadow(0 0 30px rgba(128, 209, 233, 0.8))
-                    drop-shadow(0 0 60px rgba(128, 209, 233, 0.6))
-                    drop-shadow(0 0 100px rgba(128, 209, 233, 0.4));
-            animation: logoGlow 2.5s ease-in-out infinite alternate, logoFloat 5s ease-in-out infinite;
+        /* SLA Doc Card */
+        .sla-doc-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(46, 49, 146, 0.05) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.1);
         }
 
-        @keyframes logoGlow {
-            0% {
-                filter: drop-shadow(0 0 15px rgba(128, 209, 233, 0.8))
-                        drop-shadow(0 0 30px rgba(128, 209, 233, 0.5))
-                        drop-shadow(0 0 60px rgba(128, 209, 233, 0.3))
-                        drop-shadow(0 0 100px rgba(128, 209, 233, 0.2));
+        .sla-doc-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(46, 49, 146, 0.1) 100%);
+        }
+
+        /* Footer */
+        .main-footer {
+            border-top: 1px solid rgba(128, 209, 233, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2rem;
             }
-            100% {
-                filter: drop-shadow(0 0 25px rgba(128, 209, 233, 1))
-                        drop-shadow(0 0 50px rgba(128, 209, 233, 0.9))
-                        drop-shadow(0 0 90px rgba(128, 209, 233, 0.7))
-                        drop-shadow(0 0 140px rgba(128, 209, 233, 0.5));
+            .sub-title {
+                font-size: 0.85rem;
+                letter-spacing: 2px;
+            }
+            .logo-icon-wrapper {
+                width: 110px;
+                height: 110px;
+            }
+            .logo-main-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 16px;
+            }
+            .logo-main-icon svg {
+                width: 28px;
+                height: 28px;
+            }
+            .department-card {
+                min-height: auto;
             }
         }
 
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* Outer glow ring - stronger */
-        .logo-glow-container::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 130%;
-            height: 160%;
-            background: radial-gradient(ellipse, rgba(128, 209, 233, 0.25) 0%, rgba(128, 209, 233, 0.1) 40%, transparent 70%);
-            animation: pulseGlow 3s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
-            border-radius: 50%;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-        }
-
-        /* Sparkle effects around logo */
-        .sparkle {
-            position: absolute;
+        /* Scrollbar */
+        ::-webkit-scrollbar {
             width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: sparkle 2.5s ease-in-out infinite;
-            box-shadow: 0 0 15px rgba(128, 209, 233, 1), 0 0 30px rgba(128, 209, 233, 0.8);
         }
-
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1.2); }
+        ::-webkit-scrollbar-track {
+            background: var(--nesma-navy);
         }
-
-        .sparkle:nth-child(1) { top: 5%; left: 10%; animation-delay: 0s; }
-        .sparkle:nth-child(2) { top: 0%; right: 15%; animation-delay: 0.4s; }
-        .sparkle:nth-child(3) { bottom: 10%; left: 5%; animation-delay: 0.8s; }
-        .sparkle:nth-child(4) { bottom: 5%; right: 10%; animation-delay: 1.2s; }
-        .sparkle:nth-child(5) { top: 40%; left: 0%; animation-delay: 0.2s; }
-        .sparkle:nth-child(6) { top: 40%; right: 0%; animation-delay: 0.6s; }
+        ::-webkit-scrollbar-thumb {
+            background: var(--nesma-primary);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--nesma-secondary);
+        }
     </style>
 </head>
 <body class="text-white">
-    <!-- Particles -->
-    <div class="particles" id="particles"></div>
+    <!-- Background Effects -->
+    <div class="grid-background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
     <!-- Main Content -->
-    <div class="relative z-10 hero-gradient min-h-screen">
+    <div class="relative z-10 min-h-screen flex flex-col">
+
         <!-- Header -->
-        <header class="container mx-auto px-6 pt-8 pb-4">
-            <nav class="flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <img src="assets/logo-white.svg" alt="NESMA" class="h-10 lg:h-12">
-                </div>
-                <div class="flex items-center gap-4">
-                    <span class="text-gray-400 text-sm hidden md:inline">Supply Chain Management</span>
-                    <div class="h-6 w-px bg-gray-700 hidden md:block"></div>
-                    <span class="text-cyan-400 text-sm" id="currentTime"></span>
-                </div>
-            </nav>
+        <header class="main-header sticky top-0 z-50">
+            <div class="container mx-auto px-6 py-4">
+                <nav class="flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <img src="assets/logo-white.svg" alt="NESMA" class="h-9 lg:h-10">
+                        <div class="hidden md:block h-6 w-px bg-gray-700"></div>
+                        <span class="hidden md:inline text-gray-400 text-sm font-medium">Infrastructure & Technology</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="time-display" id="currentTime"></span>
+                    </div>
+                </nav>
+            </div>
         </header>
 
-        <!-- Hero with Logo -->
-        <section class="container mx-auto px-4 md:px-6 py-12 md:py-16 text-center">
-            <!-- Glowing Logo Section -->
-            <div class="fade-in-up stagger-1 mb-10">
-                <div class="logo-glow-container inline-block relative" style="padding: 30px;">
-                    <!-- Sparkle effects -->
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <!-- Main Logo -->
-                    <img src="assets/nit-supply-chain-logo.png" alt="NIT Supply Chain" class="mx-auto logo-glow h-40 md:h-56 lg:h-72 xl:h-80" onerror="this.style.display='none'; document.getElementById('fallback-title').style.display='block';">
-                    <div id="fallback-title" style="display:none;">
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 glow-text">Supply Chain Management</h1>
+        <!-- Hero Section -->
+        <section class="hero-section flex-shrink-0">
+            <div class="container mx-auto px-4 md:px-6 py-16 md:py-20 text-center">
+
+                <!-- Logo Design -->
+                <div class="fade-in-scale stagger-1 mb-8">
+                    <div class="logo-container">
+                        <div class="logo-icon-wrapper">
+                            <div class="logo-glow"></div>
+                            <div class="logo-ring"></div>
+                            <div class="logo-ring-inner"></div>
+                            <div class="logo-main-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="fade-in-up stagger-2">
-                <p class="text-xl text-gray-300 mb-2">Integrated Operations Management System</p>
-                <p class="text-sm text-cyan-400/70">Select a department to access dashboards</p>
+
+                <!-- Title -->
+                <div class="fade-in-up stagger-2">
+                    <h1 class="main-title">Supply Chain</h1>
+                    <p class="sub-title">Management Portal</p>
+                    <p class="tagline">Integrated Operations Management System</p>
+                </div>
+
             </div>
         </section>
 
         <!-- Department Cards -->
-        <section class="container mx-auto px-6 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section class="flex-1">
+            <div class="container mx-auto px-6 pb-8">
 
-                <!-- Logistics -->
-                <a href="transport_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-2 block text-center">
-                    <div class="flex justify-center">
-                        <div class="icon-box p-0 overflow-hidden" style="width: 90px; height: 90px;">
-                            <img src="assets/nit-logistics.png" alt="NIT Logistics">
+                <!-- Section Title -->
+                <div class="text-center mb-8 fade-in-up stagger-2">
+                    <p class="text-sm text-gray-400 uppercase tracking-widest">Select Department</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+
+                    <!-- Logistics -->
+                    <a href="transport_dashboard.html" class="glass-card department-card p-6 fade-in-up stagger-2 block text-center">
+                        <div class="flex justify-center">
+                            <div class="icon-box p-0 overflow-hidden">
+                                <img src="assets/nit-logistics.png" alt="NIT Logistics">
+                            </div>
                         </div>
-                    </div>
-                    <span class="status-badge badge-active mb-4 inline-block">Active</span>
-                    <h3 class="text-2xl font-bold mb-3">Logistics</h3>
-                    <p class="text-gray-400 text-sm mb-6">Transportation & equipment provisioning</p>
+                        <span class="status-badge badge-active mb-3 inline-block">Active</span>
+                        <h3 class="text-xl font-bold mb-2">Logistics</h3>
+                        <p class="text-gray-400 text-sm mb-4">Transportation & equipment</p>
 
-                    <div class="flex flex-wrap justify-center gap-2 mb-6">
-                        <span class="feature-tag">Transport</span>
-                        <span class="feature-tag">Equipment</span>
-                    </div>
+                        <div class="flex flex-wrap justify-center gap-2 mb-4">
+                            <span class="feature-tag">Transport</span>
+                            <span class="feature-tag">Equipment</span>
+                        </div>
 
-                    <div class="enter-btn">
-                        <span>Enter</span>
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </a>
-
-                <!-- Procurement -->
-                <a href="procurement_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-3 block text-center">
-                    <div class="flex justify-center">
-                        <div class="icon-box procurement-gradient">
-                            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/>
+                        <div class="enter-btn">
+                            <span>Enter</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
-                    </div>
-                    <span class="status-badge badge-active mb-4 inline-block">Active</span>
-                    <h3 class="text-2xl font-bold mb-3">Procurement</h3>
-                    <p class="text-gray-400 text-sm mb-6">PR Analysis & vendor evaluation</p>
+                    </a>
 
-                    <div class="flex flex-wrap justify-center gap-2 mb-6">
-                        <span class="feature-tag">PR Analysis</span>
-                        <span class="feature-tag">Vendors</span>
-                    </div>
+                    <!-- Procurement -->
+                    <a href="procurement_dashboard.html" class="glass-card department-card p-6 fade-in-up stagger-3 block text-center">
+                        <div class="flex justify-center">
+                            <div class="icon-box procurement-gradient">
+                                <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <span class="status-badge badge-active mb-3 inline-block">Active</span>
+                        <h3 class="text-xl font-bold mb-2">Procurement</h3>
+                        <p class="text-gray-400 text-sm mb-4">PR Analysis & vendors</p>
 
-                    <div class="enter-btn">
-                        <span>Enter</span>
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </a>
+                        <div class="flex flex-wrap justify-center gap-2 mb-4">
+                            <span class="feature-tag">PR Analysis</span>
+                            <span class="feature-tag">Vendors</span>
+                        </div>
 
-                <!-- Warehouse -->
-                <a href="warehouse_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-4 block text-center">
-                    <div class="flex justify-center">
-                        <div class="icon-box warehouse-gradient">
-                            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
-                                <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        <div class="enter-btn">
+                            <span>Enter</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
-                    </div>
-                    <span class="status-badge badge-active mb-4 inline-block">Active</span>
-                    <h3 class="text-2xl font-bold mb-3">Warehouse</h3>
-                    <p class="text-gray-400 text-sm mb-6">Inventory & materials management</p>
+                    </a>
 
-                    <div class="flex flex-wrap justify-center gap-2 mb-6">
-                        <span class="feature-tag">Inventory</span>
-                        <span class="feature-tag">Transfers</span>
-                    </div>
+                    <!-- Warehouse -->
+                    <a href="warehouse_dashboard.html" class="glass-card department-card p-6 fade-in-up stagger-4 block text-center">
+                        <div class="flex justify-center">
+                            <div class="icon-box warehouse-gradient">
+                                <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+                                    <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <span class="status-badge badge-active mb-3 inline-block">Active</span>
+                        <h3 class="text-xl font-bold mb-2">Warehouse</h3>
+                        <p class="text-gray-400 text-sm mb-4">Inventory & materials</p>
 
-                    <div class="enter-btn">
-                        <span>Enter</span>
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </a>
+                        <div class="flex flex-wrap justify-center gap-2 mb-4">
+                            <span class="feature-tag">Inventory</span>
+                            <span class="feature-tag">Transfers</span>
+                        </div>
 
-                <!-- Assets Management -->
-                <a href="assets_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-5 block text-center">
-                    <div class="flex justify-center">
-                        <div class="icon-box" style="background: linear-gradient(135deg, #F59E0B 0%, #0E2841 100%);">
-                            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 1a1 1 0 10-2 0v2a1 1 0 102 0v-2zm-4 0a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd"/>
+                        <div class="enter-btn">
+                            <span>Enter</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
-                    </div>
-                    <span class="status-badge badge-active mb-4 inline-block">Active</span>
-                    <h3 class="text-2xl font-bold mb-3">Assets</h3>
-                    <p class="text-gray-400 text-sm mb-6">Equipment, fleet & tools tracking</p>
+                    </a>
 
-                    <div class="flex flex-wrap justify-center gap-2 mb-6">
-                        <span class="feature-tag">Equipment</span>
-                        <span class="feature-tag">Fleet</span>
-                        <span class="feature-tag">Tools</span>
-                    </div>
+                    <!-- Assets -->
+                    <a href="facility_dashboard.html" class="glass-card department-card p-6 fade-in-up stagger-5 block text-center">
+                        <div class="flex justify-center">
+                            <div class="icon-box assets-gradient">
+                                <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 1a1 1 0 10-2 0v2a1 1 0 102 0v-2zm-4 0a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <span class="status-badge badge-active mb-3 inline-block">Active</span>
+                        <h3 class="text-xl font-bold mb-2">Assets</h3>
+                        <p class="text-gray-400 text-sm mb-4">Equipment & fleet</p>
 
-                    <div class="enter-btn">
-                        <span>Enter</span>
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </a>
+                        <div class="flex flex-wrap justify-center gap-2 mb-4">
+                            <span class="feature-tag">Equipment</span>
+                            <span class="feature-tag">Fleet</span>
+                        </div>
 
-                <!-- Facility Management -->
-                <a href="facility_dashboard.html" class="glass-card department-card p-8 fade-in-up stagger-5 block text-center">
-                    <div class="flex justify-center">
-                        <div class="icon-box" style="background: linear-gradient(135deg, #6366F1 0%, #0E2841 100%);">
-                            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                        <div class="enter-btn">
+                            <span>Enter</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
-                    </div>
-                    <span class="status-badge badge-active mb-4 inline-block">Active</span>
-                    <h3 class="text-2xl font-bold mb-3">Facility</h3>
-                    <p class="text-gray-400 text-sm mb-6">Accommodation, fleet & maintenance</p>
+                    </a>
 
-                    <div class="flex flex-wrap justify-center gap-2 mb-6">
-                        <span class="feature-tag">Accommodation</span>
-                        <span class="feature-tag">Fleet</span>
-                        <span class="feature-tag">Safety</span>
-                    </div>
+                    <!-- Facility -->
+                    <a href="facility_dashboard.html" class="glass-card department-card p-6 fade-in-up stagger-6 block text-center">
+                        <div class="flex justify-center">
+                            <div class="icon-box facility-gradient">
+                                <svg class="w-9 h-9 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <span class="status-badge badge-active mb-3 inline-block">Active</span>
+                        <h3 class="text-xl font-bold mb-2">Facility</h3>
+                        <p class="text-gray-400 text-sm mb-4">Accommodation & safety</p>
 
-                    <div class="enter-btn">
-                        <span>Enter</span>
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </a>
+                        <div class="flex flex-wrap justify-center gap-2 mb-4">
+                            <span class="feature-tag">Accommodation</span>
+                            <span class="feature-tag">Safety</span>
+                        </div>
 
+                        <div class="enter-btn">
+                            <span>Enter</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </a>
+
+                </div>
             </div>
         </section>
 
         <!-- SLA Documentation Link -->
-        <section class="container mx-auto px-6 py-8">
-            <a href="sla_requirements.html" class="block glass-card p-6 fade-in-up stagger-5 hover:border-cyan-400/50 transition-all">
+        <section class="container mx-auto px-6 py-6">
+            <a href="sla_requirements.html" class="block glass-card sla-doc-card p-5 fade-in-up stagger-6 transition-all">
                 <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-lg font-bold text-white mb-1">SLA Requirements Documentation</h3>
-                        <p class="text-sm text-gray-400">Service Level Agreement standards, KPIs, and compliance targets</p>
+                        <h3 class="text-base font-semibold text-white mb-0.5">SLA Requirements Documentation</h3>
+                        <p class="text-sm text-gray-400">Service Level Agreement standards & compliance targets</p>
                     </div>
                     <div class="text-cyan-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </div>
@@ -478,27 +706,20 @@
         </section>
 
         <!-- Footer -->
-        <footer class="container mx-auto px-6 py-8 text-center">
-            <div class="border-t border-gray-800 pt-6">
-                <p class="text-gray-500 text-sm mb-2">NESMA Infrastructure & Technology</p>
-                <p class="text-gray-600 text-xs">Supply Chain Management</p>
+        <footer class="main-footer mt-auto">
+            <div class="container mx-auto px-6 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <img src="assets/logo-white.svg" alt="NESMA" class="h-6 opacity-50">
+                        <span class="text-gray-500 text-sm">Infrastructure & Technology</span>
+                    </div>
+                    <p class="text-gray-600 text-xs">Supply Chain Management Portal</p>
+                </div>
             </div>
         </footer>
     </div>
 
     <script>
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 25; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 20 + 's';
-                particle.style.animationDuration = (20 + Math.random() * 10) + 's';
-                container.appendChild(particle);
-            }
-        }
-
         function updateTime() {
             const now = new Date();
             const options = {
@@ -508,11 +729,13 @@
                 hour12: true,
                 timeZone: 'Asia/Riyadh'
             };
-            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', options);
+            const timeEl = document.getElementById('currentTime');
+            if (timeEl) {
+                timeEl.textContent = now.toLocaleTimeString('en-US', options);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            createParticles();
             updateTime();
             setInterval(updateTime, 1000);
         });
