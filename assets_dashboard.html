@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>NESMA | Assets Management Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/nesma-theme.css">
+    <style>
+        :root {
+            --nesma-primary: #2E3192;
+            --nesma-cyan: #80D1E9;
+            --nesma-navy: #0E2841;
+            --nesma-light-gray: #E8E8E8;
+            --success: #059669;
+            --warning: #D97706;
+            --danger: #DC2626;
+        }
+        * { font-family: 'Inter', 'Cairo', sans-serif; }
+        body { background: #F8FAFC; min-height: 100vh; }
+        .nesma-header { background: var(--nesma-primary); position: relative; }
+        .nesma-header::after { content: ''; position: absolute; bottom: 0; left: 0; width: 120px; height: 3px; background: var(--nesma-cyan); }
+        .card { background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(14,40,65,0.08); border: 1px solid var(--nesma-light-gray); }
+        .overview-card { position: relative; border-radius: 16px; padding: 20px; color: white; overflow: hidden; cursor: pointer; transition: all 0.3s ease; }
+        .overview-card::before { content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%); }
+        .overview-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .overview-card .icon { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .overview-card .value { font-size: 2rem; font-weight: 800; }
+        .overview-card .label { font-size: 0.85rem; opacity: 0.9; }
+        .overview-card .sub { font-size: 0.75rem; opacity: 0.7; margin-top: 4px; }
+        .bg-equipment { background: linear-gradient(135deg, #4361ee 0%, #2E3192 100%); }
+        .bg-fleet { background: linear-gradient(135deg, #10B981 0%, #047857 100%); }
+        .bg-generators { background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%); }
+        .bg-acs { background: linear-gradient(135deg, #06B6D4 0%, #0E7490 100%); }
+        .bg-testing { background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); }
+        .bg-tools { background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%); }
+        .tab-btn { transition: all 0.2s ease; font-weight: 500; color: #B3B3B3; border-bottom: 3px solid transparent; background: transparent; }
+        .tab-btn.active { color: var(--nesma-primary); border-bottom-color: var(--nesma-primary); background: rgba(46,49,146,0.05); }
+        .tab-btn:hover:not(.active) { color: var(--nesma-navy); background: rgba(128,209,233,0.1); }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .chart-container { position: relative; height: 300px; }
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table th { background: var(--nesma-primary); padding: 12px 16px; font-weight: 600; color: white; position: sticky; top: 0; z-index: 10; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; }
+        .data-table th:first-child { border-radius: 8px 0 0 0; }
+        .data-table th:last-child { border-radius: 0 8px 0 0; }
+        .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--nesma-light-gray); font-size: 0.8rem; }
+        .data-table tr:hover td { background: rgba(128,209,233,0.08); }
+        .data-table tr:nth-child(even) td { background: rgba(248,250,252,0.5); }
+        .scroll-container { max-height: 450px; overflow-y: auto; border-radius: 8px; border: 1px solid var(--nesma-light-gray); }
+        .scroll-container::-webkit-scrollbar { width: 6px; }
+        .scroll-container::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scroll-container::-webkit-scrollbar-thumb { background: var(--nesma-cyan); border-radius: 4px; }
+        .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; }
+        .badge-danger { background: #FEE2E2; color: #DC2626; }
+        .badge-warning { background: #FEF3C7; color: #D97706; }
+        .badge-success { background: #D1FAE5; color: #059669; }
+        .badge-info { background: #DBEAFE; color: #2563EB; }
+        .badge-purple { background: #EDE9FE; color: #7C3AED; }
+        .filter-section { background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--nesma-light-gray); }
+        .filter-select { border: 1px solid var(--nesma-light-gray); border-radius: 8px; padding: 8px 12px; font-size: 0.85rem; background: white; min-width: 150px; transition: all 0.2s; }
+        .filter-select:focus { outline: none; border-color: var(--nesma-primary); box-shadow: 0 0 0 3px rgba(46,49,146,0.1); }
+        .btn-export { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all 0.2s ease; }
+        .btn-excel { background: #059669; color: white; }
+        .btn-excel:hover { background: #047857; transform: translateY(-1px); }
+        .search-box { position: relative; }
+        .search-box input { width: 100%; padding: 10px 40px 10px 14px; border: 1px solid var(--nesma-light-gray); border-radius: 8px; font-size: 0.85rem; }
+        .search-box input:focus { outline: none; border-color: var(--nesma-primary); box-shadow: 0 0 0 3px rgba(46,49,146,0.1); }
+        .search-box svg { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9CA3AF; }
+        .kpi-mini { background: white; border-radius: 12px; padding: 16px; border: 1px solid var(--nesma-light-gray); transition: all 0.2s; }
+        .kpi-mini:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .kpi-mini .value { font-size: 1.5rem; font-weight: 700; color: var(--nesma-primary); }
+        .kpi-mini .label { font-size: 0.75rem; color: #6B7280; }
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+    <header class="nesma-header text-white no-print">
+        <div class="container mx-auto px-4 lg:px-6">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2 text-white/80 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                        <span class="text-sm font-medium hidden sm:inline">Back</span>
+                    </a>
+                    <div class="h-6 w-px bg-white/20"></div>
+                    <img src="assets/logo-white.svg" alt="NESMA" class="h-8 lg:h-10">
+                </div>
+                <div class="text-center flex-1 px-4">
+                    <h1 class="text-lg lg:text-xl font-bold">Assets Management Dashboard</h1>
+                    <p class="text-xs lg:text-sm text-white/70 hidden sm:block">Equipment, Fleet, Generators & Tools Tracking</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-white/60 hidden md:inline" id="lastUpdated">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 lg:px-6 py-6">
+        <section class="mb-8">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Assets Overview</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="overviewCards"></div>
+        </section>
+
+        <div class="card">
+            <div class="border-b border-gray-200 overflow-x-auto no-print">
+                <div class="flex min-w-max">
+                    <button class="tab-btn active px-4 lg:px-5 py-3 font-semibold whitespace-nowrap text-sm" onclick="switchTab('equipment')">Equipment <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1" id="equipmentBadge">0</span></button>
+                    <button class="tab-btn px-4 lg:px-5 py-3 font-semibold whitespace-nowrap text-sm" onclick="switchTab('fleet')">Fleet <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1" id="fleetBadge">0</span></button>
+                    <button class="tab-btn px-4 lg:px-5 py-3 font-semibold whitespace-nowrap text-sm" onclick="switchTab('generators')">Generators <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ml-1" id="generatorsBadge">0</span></button>
+                    <button class="tab-btn px-4 lg:px-5 py-3 font-semibold whitespace-nowrap text-sm" onclick="switchTab('acs')">Stand ACs <span class="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full ml-1" id="acsBadge">0</span></button>
+                    <button class="tab-btn px-4 lg:px-5 py-3 font-semibold whitespace-nowrap text-sm" onclick="switchTab('testing')">Testing Equip <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full ml-1" id="testingBadge">0</span></button>
+                    <button class="tab-btn px-4 lg:px-5 py-3 font-semibold whitespace-nowrap text-sm" onclick="switchTab('tools')">Tools <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full ml-1" id="toolsBadge">0</span></button>
+                </div>
+            </div>
+
+            <div id="tab-equipment" class="tab-content active p-4 lg:p-6">
+                <div class="filter-section no-print">
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[200px]"><label class="block text-xs font-medium text-gray-500 mb-1">Search</label><div class="search-box"><input type="text" id="equipmentSearch" placeholder="Search equipment..." onkeyup="filterEquipment()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">City</label><select id="filterEquipmentCity" class="filter-select" onchange="filterEquipment()"><option value="">All Cities</option></select></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Status</label><select id="filterEquipmentStatus" class="filter-select" onchange="filterEquipment()"><option value="">All Statuses</option></select></div>
+                        <button onclick="exportToExcel('equipment')" class="btn-export btn-excel">Excel</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="equipmentKPIs"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="card p-4"><h3 class="font-semibold text-gray-800 mb-4">Equipment by City</h3><div class="chart-container"><canvas id="equipmentByCityChart"></canvas></div></div>
+                    <div class="card p-4"><h3 class="font-semibold text-gray-800 mb-4">Equipment by Brand</h3><div class="chart-container"><canvas id="equipmentByBrandChart"></canvas></div></div>
+                </div>
+                <div class="card"><div class="p-4 border-b border-gray-200 flex justify-between items-center"><h3 class="font-semibold text-gray-800">Equipment List</h3><span class="text-sm text-gray-500" id="equipmentCount">0 items</span></div><div class="scroll-container"><table class="data-table"><thead><tr><th>#</th><th>Description</th><th>Brand</th><th>Capacity</th><th>City</th><th>Project</th><th>Responsible</th><th>Status</th><th>Cost (SAR)</th></tr></thead><tbody id="equipmentTableBody"></tbody></table></div></div>
+            </div>
+
+            <div id="tab-fleet" class="tab-content p-4 lg:p-6">
+                <div class="filter-section no-print">
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[200px]"><label class="block text-xs font-medium text-gray-500 mb-1">Search</label><div class="search-box"><input type="text" id="fleetSearch" placeholder="Search vehicles..." onkeyup="filterFleet()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Type</label><select id="filterFleetType" class="filter-select" onchange="filterFleet()"><option value="">All Types</option></select></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Region</label><select id="filterFleetRegion" class="filter-select" onchange="filterFleet()"><option value="">All Regions</option></select></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Make</label><select id="filterFleetMake" class="filter-select" onchange="filterFleet()"><option value="">All Makes</option></select></div>
+                        <button onclick="exportToExcel('fleet')" class="btn-export btn-excel">Excel</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="fleetKPIs"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="card p-4"><h3 class="font-semibold text-gray-800 mb-4">Fleet by Vehicle Type</h3><div class="chart-container"><canvas id="fleetByTypeChart"></canvas></div></div>
+                    <div class="card p-4"><h3 class="font-semibold text-gray-800 mb-4">Fleet by Region</h3><div class="chart-container"><canvas id="fleetByRegionChart"></canvas></div></div>
+                </div>
+                <div class="card"><div class="p-4 border-b border-gray-200 flex justify-between items-center"><h3 class="font-semibold text-gray-800">Fleet List</h3><span class="text-sm text-gray-500" id="fleetCount">0 vehicles</span></div><div class="scroll-container"><table class="data-table"><thead><tr><th>#</th><th>Plate No.</th><th>Make/Model</th><th>Type</th><th>Year</th><th>Region</th><th>City</th><th>User</th><th>Status</th></tr></thead><tbody id="fleetTableBody"></tbody></table></div></div>
+            </div>
+
+            <div id="tab-generators" class="tab-content p-4 lg:p-6">
+                <div class="filter-section no-print">
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[200px]"><label class="block text-xs font-medium text-gray-500 mb-1">Search</label><div class="search-box"><input type="text" id="generatorSearch" placeholder="Search generators..." onkeyup="filterGenerators()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Location</label><select id="filterGenLocation" class="filter-select" onchange="filterGenerators()"><option value="">All Locations</option></select></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Status</label><select id="filterGenStatus" class="filter-select" onchange="filterGenerators()"><option value="">All Statuses</option></select></div>
+                        <button onclick="exportToExcel('generators')" class="btn-export btn-excel">Excel</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="generatorKPIs"></div>
+                <div class="card p-4 mb-6"><h3 class="font-semibold text-gray-800 mb-4">Generators by Location (Capacity kW)</h3><div class="chart-container"><canvas id="generatorsByLocationChart"></canvas></div></div>
+                <div class="card"><div class="p-4 border-b border-gray-200 flex justify-between items-center"><h3 class="font-semibold text-gray-800">Generator List</h3><span class="text-sm text-gray-500" id="generatorCount">0 generators</span></div><div class="scroll-container"><table class="data-table"><thead><tr><th>#</th><th>Name</th><th>Type</th><th>Capacity</th><th>Max kW</th><th>Location</th><th>Condition</th><th>Responsible</th><th>Status</th></tr></thead><tbody id="generatorTableBody"></tbody></table></div></div>
+            </div>
+
+            <div id="tab-acs" class="tab-content p-4 lg:p-6">
+                <div class="filter-section no-print">
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[200px]"><label class="block text-xs font-medium text-gray-500 mb-1">Search</label><div class="search-box"><input type="text" id="acsSearch" placeholder="Search AC units..." onkeyup="filterACs()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div></div>
+                        <button onclick="exportToExcel('acs')" class="btn-export btn-excel">Excel</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="acsKPIs"></div>
+                <div class="card"><div class="p-4 border-b border-gray-200 flex justify-between items-center"><h3 class="font-semibold text-gray-800">Stand AC Units</h3><span class="text-sm text-gray-500" id="acsCount">0 units</span></div><div class="scroll-container"><table class="data-table"><thead><tr><th>#</th><th>Description</th><th>Project Code</th><th>Capacity</th><th>Required</th><th>Available</th><th>Cost (SAR)</th><th>Status</th></tr></thead><tbody id="acsTableBody"></tbody></table></div></div>
+            </div>
+
+            <div id="tab-testing" class="tab-content p-4 lg:p-6">
+                <div class="filter-section no-print">
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[200px]"><label class="block text-xs font-medium text-gray-500 mb-1">Search</label><div class="search-box"><input type="text" id="testingSearch" placeholder="Search equipment..." onkeyup="filterTesting()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div></div>
+                        <button onclick="exportToExcel('testing')" class="btn-export btn-excel">Excel</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="testingKPIs"></div>
+                <div class="card"><div class="p-4 border-b border-gray-200 flex justify-between items-center"><h3 class="font-semibold text-gray-800">Testing & Commission Equipment</h3><span class="text-sm text-gray-500" id="testingCount">0 items</span></div><div class="scroll-container"><table class="data-table"><thead><tr><th>#</th><th>Description</th><th>Supplier</th><th>Location</th><th>TUV</th><th>Calibration</th><th>Qty</th><th>Total (SAR)</th></tr></thead><tbody id="testingTableBody"></tbody></table></div></div>
+            </div>
+
+            <div id="tab-tools" class="tab-content p-4 lg:p-6">
+                <div class="filter-section no-print">
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[200px]"><label class="block text-xs font-medium text-gray-500 mb-1">Search</label><div class="search-box"><input type="text" id="toolsSearch" placeholder="Search tools..." onkeyup="filterTools()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div></div>
+                        <div><label class="block text-xs font-medium text-gray-500 mb-1">Type</label><select id="filterToolType" class="filter-select" onchange="filterTools()"><option value="">All Types</option></select></div>
+                        <button onclick="exportToExcel('tools')" class="btn-export btn-excel">Excel</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="toolsKPIs"></div>
+                <div class="card"><div class="p-4 border-b border-gray-200 flex justify-between items-center"><h3 class="font-semibold text-gray-800">Tools List</h3><span class="text-sm text-gray-500" id="toolsCount">0 tools</span></div><div class="scroll-container"><table class="data-table"><thead><tr><th>#</th><th>Description</th><th>Type</th><th>Supplier</th><th>Measurement</th><th>Location</th><th>Qty</th><th>TUV Status</th></tr></thead><tbody id="toolsTableBody"></tbody></table></div></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let assetsData = null;
+        let charts = {};
+        let filteredData = {};
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.textContent;
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('data/assets_data.json?t=' + Date.now());
+                assetsData = await response.json();
+                document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date(assetsData.last_updated).toLocaleString();
+                document.getElementById('equipmentBadge').textContent = assetsData.summary.equipment.total;
+                document.getElementById('fleetBadge').textContent = assetsData.summary.fleet.total;
+                document.getElementById('generatorsBadge').textContent = assetsData.summary.generators.total;
+                document.getElementById('acsBadge').textContent = assetsData.summary.stand_acs.total;
+                document.getElementById('testingBadge').textContent = assetsData.summary.testing_equipment.total;
+                document.getElementById('toolsBadge').textContent = assetsData.summary.tools.total;
+                renderOverviewCards();
+                populateFilters();
+                initAllTabs();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function renderOverviewCards() {
+            const s = assetsData.summary;
+            const container = document.getElementById('overviewCards');
+            container.textContent = '';
+            const cards = [
+                { cls: 'bg-equipment', label: 'Equipment', value: s.equipment.total, sub: 'SAR ' + (s.equipment.total_cost/1e6).toFixed(1) + 'M' },
+                { cls: 'bg-fleet', label: 'Fleet Vehicles', value: s.fleet.total, sub: 'SAR ' + (s.fleet.total_cost/1e6).toFixed(1) + 'M' },
+                { cls: 'bg-generators', label: 'Generators', value: s.generators.total, sub: s.generators.total_capacity_kw.toLocaleString() + ' kW' },
+                { cls: 'bg-acs', label: 'Stand ACs', value: s.stand_acs.total, sub: s.stand_acs.total_available + ' available' },
+                { cls: 'bg-testing', label: 'Testing Equip', value: s.testing_equipment.total, sub: 'SAR ' + (s.testing_equipment.total_value/1e6).toFixed(1) + 'M' },
+                { cls: 'bg-tools', label: 'Tools', value: s.tools.total, sub: s.tools.total_qty.toLocaleString() + ' qty' }
+            ];
+            cards.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'overview-card ' + c.cls;
+                const valueEl = document.createElement('div');
+                valueEl.className = 'value';
+                valueEl.textContent = c.value.toLocaleString();
+                const labelEl = document.createElement('div');
+                labelEl.className = 'label';
+                labelEl.textContent = c.label;
+                const subEl = document.createElement('div');
+                subEl.className = 'sub';
+                subEl.textContent = c.sub;
+                div.appendChild(valueEl);
+                div.appendChild(labelEl);
+                div.appendChild(subEl);
+                container.appendChild(div);
+            });
+        }
+
+        function populateFilters() {
+            const f = assetsData.filters;
+            populateSelect('filterEquipmentCity', f.equipment_cities);
+            populateSelect('filterEquipmentStatus', f.equipment_statuses);
+            populateSelect('filterFleetType', f.fleet_vehicle_types);
+            populateSelect('filterFleetRegion', f.fleet_regions);
+            populateSelect('filterFleetMake', f.fleet_makes);
+            populateSelect('filterGenLocation', f.generator_locations);
+            populateSelect('filterGenStatus', f.generator_statuses);
+            populateSelect('filterToolType', f.tool_types);
+        }
+
+        function populateSelect(id, options) {
+            const select = document.getElementById(id);
+            if (!select) return;
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.appendChild(option);
+            });
+        }
+
+        function initAllTabs() {
+            filteredData.equipment = [...assetsData.records.equipment];
+            filteredData.fleet = [...assetsData.records.fleet];
+            filteredData.generators = [...assetsData.records.generators];
+            filteredData.acs = [...assetsData.records.stand_acs];
+            filteredData.testing = [...assetsData.records.testing_equipment];
+            filteredData.tools = [...assetsData.records.tools];
+            renderEquipmentTab();
+            renderFleetTab();
+            renderGeneratorsTab();
+            renderACsTab();
+            renderTestingTab();
+            renderToolsTab();
+        }
+
+        function filterEquipment() {
+            const search = document.getElementById('equipmentSearch').value.toLowerCase();
+            const city = document.getElementById('filterEquipmentCity').value;
+            const status = document.getElementById('filterEquipmentStatus').value;
+            filteredData.equipment = assetsData.records.equipment.filter(r => {
+                const matchSearch = !search || r.description.toLowerCase().includes(search) || r.brand.toLowerCase().includes(search);
+                const matchCity = !city || r.city === city;
+                const matchStatus = !status || r.status === status;
+                return matchSearch && matchCity && matchStatus;
+            });
+            renderEquipmentTab();
+        }
+
+        function renderEquipmentTab() {
+            const data = filteredData.equipment;
+            const total = data.length;
+            const totalCost = data.reduce((s, r) => s + r.cost, 0);
+            const active = data.filter(r => r.status === 'Active').length;
+            const cities = new Set(data.map(r => r.city).filter(c => c)).size;
+
+            const kpisContainer = document.getElementById('equipmentKPIs');
+            kpisContainer.textContent = '';
+            [
+                { value: total, label: 'Total Equipment' },
+                { value: active, label: 'Active Units', color: '#059669' },
+                { value: cities, label: 'Cities' },
+                { value: 'SAR ' + (totalCost/1e6).toFixed(2) + 'M', label: 'Total Value' }
+            ].forEach(k => {
+                const div = document.createElement('div');
+                div.className = 'kpi-mini';
+                const val = document.createElement('div');
+                val.className = 'value';
+                val.textContent = typeof k.value === 'number' ? k.value.toLocaleString() : k.value;
+                if (k.color) val.style.color = k.color;
+                const lbl = document.createElement('div');
+                lbl.className = 'label';
+                lbl.textContent = k.label;
+                div.appendChild(val);
+                div.appendChild(lbl);
+                kpisContainer.appendChild(div);
+            });
+
+            // Charts
+            const cityData = {};
+            const brandData = {};
+            data.forEach(r => {
+                if (r.city) cityData[r.city] = (cityData[r.city] || 0) + 1;
+                if (r.brand) brandData[r.brand] = (brandData[r.brand] || 0) + 1;
+            });
+            const citySorted = Object.entries(cityData).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            const brandSorted = Object.entries(brandData).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+            if (charts.equipmentByCity) charts.equipmentByCity.destroy();
+            charts.equipmentByCity = new Chart(document.getElementById('equipmentByCityChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: citySorted.map(d => d[0]), datasets: [{ label: 'Count', data: citySorted.map(d => d[1]), backgroundColor: 'rgba(46,49,146,0.8)', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+
+            if (charts.equipmentByBrand) charts.equipmentByBrand.destroy();
+            charts.equipmentByBrand = new Chart(document.getElementById('equipmentByBrandChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: brandSorted.map(d => d[0]), datasets: [{ data: brandSorted.map(d => d[1]), backgroundColor: ['#2E3192', '#80D1E9', '#0E2841', '#059669', '#D97706', '#DC2626', '#8B5CF6', '#06B6D4'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
+            });
+
+            document.getElementById('equipmentCount').textContent = data.length + ' items';
+            const tbody = document.getElementById('equipmentTableBody');
+            tbody.textContent = '';
+            data.slice(0, 100).forEach((r, i) => {
+                const tr = document.createElement('tr');
+                const cells = [i + 1, escapeHtml(r.description?.substring(0, 40) || ''), escapeHtml(r.brand), escapeHtml(r.capacity), escapeHtml(r.city), escapeHtml(r.project), escapeHtml(r.responsible), r.status, r.cost?.toLocaleString() || 0];
+                cells.forEach((c, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 7) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge ' + (c === 'Active' ? 'badge-success' : 'badge-warning');
+                        badge.textContent = c;
+                        td.appendChild(badge);
+                    } else if (idx === 8) {
+                        td.className = 'font-semibold';
+                        td.textContent = c;
+                    } else {
+                        td.textContent = c;
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterFleet() {
+            const search = document.getElementById('fleetSearch').value.toLowerCase();
+            const type = document.getElementById('filterFleetType').value;
+            const region = document.getElementById('filterFleetRegion').value;
+            const make = document.getElementById('filterFleetMake').value;
+            filteredData.fleet = assetsData.records.fleet.filter(r => {
+                const matchSearch = !search || r.make.toLowerCase().includes(search) || r.model.toLowerCase().includes(search) || r.plate_no_eng.toLowerCase().includes(search);
+                const matchType = !type || r.vehicle_type === type;
+                const matchRegion = !region || r.region === region;
+                const matchMake = !make || r.make === make;
+                return matchSearch && matchType && matchRegion && matchMake;
+            });
+            renderFleetTab();
+        }
+
+        function renderFleetTab() {
+            const data = filteredData.fleet;
+            const total = data.length;
+            const active = data.filter(r => r.availability === 'ACTIVE').length;
+            const types = new Set(data.map(r => r.vehicle_type).filter(t => t)).size;
+            const totalCost = data.reduce((s, r) => s + r.cost, 0);
+
+            const kpisContainer = document.getElementById('fleetKPIs');
+            kpisContainer.textContent = '';
+            [{ value: total, label: 'Total Vehicles' }, { value: active, label: 'Active', color: '#059669' }, { value: types, label: 'Vehicle Types' }, { value: 'SAR ' + (totalCost/1e6).toFixed(1) + 'M', label: 'Total Value' }].forEach(k => {
+                const div = document.createElement('div');
+                div.className = 'kpi-mini';
+                const val = document.createElement('div');
+                val.className = 'value';
+                val.textContent = typeof k.value === 'number' ? k.value.toLocaleString() : k.value;
+                if (k.color) val.style.color = k.color;
+                const lbl = document.createElement('div');
+                lbl.className = 'label';
+                lbl.textContent = k.label;
+                div.appendChild(val);
+                div.appendChild(lbl);
+                kpisContainer.appendChild(div);
+            });
+
+            const typeData = {};
+            const regionData = {};
+            data.forEach(r => {
+                if (r.vehicle_type) typeData[r.vehicle_type] = (typeData[r.vehicle_type] || 0) + 1;
+                if (r.region) regionData[r.region] = (regionData[r.region] || 0) + 1;
+            });
+            const typeSorted = Object.entries(typeData).sort((a, b) => b[1] - a[1]);
+            const regionSorted = Object.entries(regionData).sort((a, b) => b[1] - a[1]);
+
+            if (charts.fleetByType) charts.fleetByType.destroy();
+            charts.fleetByType = new Chart(document.getElementById('fleetByTypeChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: typeSorted.map(d => d[0]), datasets: [{ label: 'Count', data: typeSorted.map(d => d[1]), backgroundColor: 'rgba(16,185,129,0.8)', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } } }
+            });
+
+            if (charts.fleetByRegion) charts.fleetByRegion.destroy();
+            charts.fleetByRegion = new Chart(document.getElementById('fleetByRegionChart').getContext('2d'), {
+                type: 'pie',
+                data: { labels: regionSorted.map(d => d[0]), datasets: [{ data: regionSorted.map(d => d[1]), backgroundColor: ['#2E3192', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+
+            document.getElementById('fleetCount').textContent = data.length + ' vehicles';
+            const tbody = document.getElementById('fleetTableBody');
+            tbody.textContent = '';
+            data.slice(0, 100).forEach((r, i) => {
+                const tr = document.createElement('tr');
+                const cells = [i + 1, r.plate_no_eng, r.make + ' ' + r.model, r.vehicle_type, r.year || '-', r.region, r.city, (r.user_name || '').substring(0, 25), r.availability];
+                cells.forEach((c, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 1) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge badge-info';
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else if (idx === 8) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge ' + (c === 'ACTIVE' ? 'badge-success' : 'badge-warning');
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else {
+                        td.textContent = escapeHtml(c);
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterGenerators() {
+            const search = document.getElementById('generatorSearch').value.toLowerCase();
+            const location = document.getElementById('filterGenLocation').value;
+            const status = document.getElementById('filterGenStatus').value;
+            filteredData.generators = assetsData.records.generators.filter(r => {
+                const matchSearch = !search || r.name.toLowerCase().includes(search) || r.location.toLowerCase().includes(search);
+                const matchLocation = !location || r.location === location;
+                const matchStatus = !status || r.status === status;
+                return matchSearch && matchLocation && matchStatus;
+            });
+            renderGeneratorsTab();
+        }
+
+        function renderGeneratorsTab() {
+            const data = filteredData.generators;
+            const total = data.length;
+            const totalKW = data.reduce((s, r) => s + r.max_kw, 0);
+            const active = data.filter(r => r.status === 'Active').length;
+            const locations = new Set(data.map(r => r.location).filter(l => l)).size;
+
+            const kpisContainer = document.getElementById('generatorKPIs');
+            kpisContainer.textContent = '';
+            [{ value: total, label: 'Total Generators' }, { value: totalKW.toLocaleString(), label: 'Total kW', color: '#F59E0B' }, { value: active, label: 'Active', color: '#059669' }, { value: locations, label: 'Locations' }].forEach(k => {
+                const div = document.createElement('div');
+                div.className = 'kpi-mini';
+                const val = document.createElement('div');
+                val.className = 'value';
+                val.textContent = k.value;
+                if (k.color) val.style.color = k.color;
+                const lbl = document.createElement('div');
+                lbl.className = 'label';
+                lbl.textContent = k.label;
+                div.appendChild(val);
+                div.appendChild(lbl);
+                kpisContainer.appendChild(div);
+            });
+
+            const locData = {};
+            data.forEach(r => {
+                if (r.location) {
+                    if (!locData[r.location]) locData[r.location] = { count: 0, kw: 0 };
+                    locData[r.location].count++;
+                    locData[r.location].kw += r.max_kw;
+                }
+            });
+            const locSorted = Object.entries(locData).sort((a, b) => b[1].kw - a[1].kw).slice(0, 10);
+
+            if (charts.generatorsByLocation) charts.generatorsByLocation.destroy();
+            charts.generatorsByLocation = new Chart(document.getElementById('generatorsByLocationChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: locSorted.map(d => d[0]), datasets: [{ label: 'Capacity (kW)', data: locSorted.map(d => d[1].kw), backgroundColor: 'rgba(245,158,11,0.8)', borderRadius: 6 }, { label: 'Count', data: locSorted.map(d => d[1].count), backgroundColor: 'rgba(46,49,146,0.8)', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            });
+
+            document.getElementById('generatorCount').textContent = data.length + ' generators';
+            const tbody = document.getElementById('generatorTableBody');
+            tbody.textContent = '';
+            data.forEach((r, i) => {
+                const tr = document.createElement('tr');
+                const cells = [i + 1, r.name, r.type, r.capacity, r.max_kw, r.location, r.condition, r.responsible, r.status];
+                cells.forEach((c, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 4) {
+                        td.className = 'font-semibold';
+                        td.style.color = '#D97706';
+                        td.textContent = c;
+                    } else if (idx === 6) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge ' + (c === 'Good' ? 'badge-success' : 'badge-warning');
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else if (idx === 8) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge ' + (c === 'Active' ? 'badge-success' : 'badge-info');
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else {
+                        td.textContent = escapeHtml(c);
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterACs() {
+            const search = document.getElementById('acsSearch').value.toLowerCase();
+            filteredData.acs = assetsData.records.stand_acs.filter(r => !search || r.description.toLowerCase().includes(search));
+            renderACsTab();
+        }
+
+        function renderACsTab() {
+            const data = filteredData.acs;
+            const total = data.length;
+            const available = data.reduce((s, r) => s + r.qty_available, 0);
+            const required = data.reduce((s, r) => s + r.qty_required, 0);
+            const totalCost = data.reduce((s, r) => s + r.cost, 0);
+
+            const kpisContainer = document.getElementById('acsKPIs');
+            kpisContainer.textContent = '';
+            [{ value: total, label: 'Total Units' }, { value: available, label: 'Available', color: '#059669' }, { value: required, label: 'Required', color: '#D97706' }, { value: 'SAR ' + totalCost.toLocaleString(), label: 'Total Cost' }].forEach(k => {
+                const div = document.createElement('div');
+                div.className = 'kpi-mini';
+                const val = document.createElement('div');
+                val.className = 'value';
+                val.textContent = k.value;
+                if (k.color) val.style.color = k.color;
+                const lbl = document.createElement('div');
+                lbl.className = 'label';
+                lbl.textContent = k.label;
+                div.appendChild(val);
+                div.appendChild(lbl);
+                kpisContainer.appendChild(div);
+            });
+
+            document.getElementById('acsCount').textContent = data.length + ' units';
+            const tbody = document.getElementById('acsTableBody');
+            tbody.textContent = '';
+            data.forEach((r, i) => {
+                const tr = document.createElement('tr');
+                const cells = [i + 1, (r.description || '').substring(0, 50), r.project_code, r.capacity, r.qty_required, r.qty_available, r.cost?.toLocaleString() || 0, r.status];
+                cells.forEach((c, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 2) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge badge-info';
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else if (idx === 5) {
+                        td.className = 'font-semibold';
+                        td.style.color = '#059669';
+                        td.textContent = c;
+                    } else if (idx === 7) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge ' + (c === 'Active' ? 'badge-success' : c === 'Energized' ? 'badge-info' : 'badge-warning');
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else {
+                        td.textContent = escapeHtml(c);
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTesting() {
+            const search = document.getElementById('testingSearch').value.toLowerCase();
+            filteredData.testing = assetsData.records.testing_equipment.filter(r => !search || r.description.toLowerCase().includes(search) || r.supplier.toLowerCase().includes(search));
+            renderTestingTab();
+        }
+
+        function renderTestingTab() {
+            const data = filteredData.testing;
+            const total = data.length;
+            const totalValue = data.reduce((s, r) => s + r.total_price, 0);
+            const calibrated = data.filter(r => r.calibration === 'New' || r.calibration === 'Valid').length;
+
+            const kpisContainer = document.getElementById('testingKPIs');
+            kpisContainer.textContent = '';
+            [{ value: total, label: 'Total Items' }, { value: calibrated, label: 'Calibrated', color: '#8B5CF6' }, { value: 'SAR ' + (totalValue/1e6).toFixed(2) + 'M', label: 'Total Value' }, { value: data.reduce((s, r) => s + r.qty, 0), label: 'Total Qty' }].forEach(k => {
+                const div = document.createElement('div');
+                div.className = 'kpi-mini';
+                const val = document.createElement('div');
+                val.className = 'value';
+                val.textContent = k.value;
+                if (k.color) val.style.color = k.color;
+                const lbl = document.createElement('div');
+                lbl.className = 'label';
+                lbl.textContent = k.label;
+                div.appendChild(val);
+                div.appendChild(lbl);
+                kpisContainer.appendChild(div);
+            });
+
+            document.getElementById('testingCount').textContent = data.length + ' items';
+            const tbody = document.getElementById('testingTableBody');
+            tbody.textContent = '';
+            data.forEach((r, i) => {
+                const tr = document.createElement('tr');
+                const cells = [i + 1, (r.description || '').substring(0, 45), r.supplier, r.location, r.tuv, r.calibration, r.qty, r.total_price?.toLocaleString() || 0];
+                cells.forEach((c, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 4 || idx === 5) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge ' + (c === 'New' ? 'badge-success' : 'badge-warning');
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else if (idx === 7) {
+                        td.className = 'font-semibold';
+                        td.textContent = c;
+                    } else {
+                        td.textContent = escapeHtml(c);
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTools() {
+            const search = document.getElementById('toolsSearch').value.toLowerCase();
+            const type = document.getElementById('filterToolType').value;
+            filteredData.tools = assetsData.records.tools.filter(r => {
+                const matchSearch = !search || r.description.toLowerCase().includes(search);
+                const matchType = !type || r.type === type;
+                return matchSearch && matchType;
+            });
+            renderToolsTab();
+        }
+
+        function renderToolsTab() {
+            const data = filteredData.tools;
+            const total = data.length;
+            const totalQty = data.reduce((s, r) => s + r.quantity, 0);
+            const types = new Set(data.map(r => r.type).filter(t => t)).size;
+            const valid = data.filter(r => r.tuv_status === 'Valid').length;
+
+            const kpisContainer = document.getElementById('toolsKPIs');
+            kpisContainer.textContent = '';
+            [{ value: total, label: 'Total Tools' }, { value: totalQty.toLocaleString(), label: 'Total Quantity', color: '#EF4444' }, { value: types, label: 'Types' }, { value: valid, label: 'TUV Valid', color: '#059669' }].forEach(k => {
+                const div = document.createElement('div');
+                div.className = 'kpi-mini';
+                const val = document.createElement('div');
+                val.className = 'value';
+                val.textContent = k.value;
+                if (k.color) val.style.color = k.color;
+                const lbl = document.createElement('div');
+                lbl.className = 'label';
+                lbl.textContent = k.label;
+                div.appendChild(val);
+                div.appendChild(lbl);
+                kpisContainer.appendChild(div);
+            });
+
+            document.getElementById('toolsCount').textContent = data.length + ' tools';
+            const tbody = document.getElementById('toolsTableBody');
+            tbody.textContent = '';
+            data.slice(0, 100).forEach((r, i) => {
+                const tr = document.createElement('tr');
+                const cells = [i + 1, (r.description || '').substring(0, 40), r.type, r.supplier, r.measurement, (r.location || '').substring(0, 25), r.quantity, r.tuv_status];
+                cells.forEach((c, idx) => {
+                    const td = document.createElement('td');
+                    if (idx === 6) {
+                        td.className = 'font-semibold';
+                        td.textContent = c;
+                    } else if (idx === 7) {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge ' + (c === 'Valid' ? 'badge-success' : 'badge-warning');
+                        badge.textContent = escapeHtml(c);
+                        td.appendChild(badge);
+                    } else {
+                        td.textContent = escapeHtml(c);
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        function exportToExcel(type) {
+            let data, filename;
+            switch(type) {
+                case 'equipment': data = filteredData.equipment; filename = 'equipment_export.xlsx'; break;
+                case 'fleet': data = filteredData.fleet; filename = 'fleet_export.xlsx'; break;
+                case 'generators': data = filteredData.generators; filename = 'generators_export.xlsx'; break;
+                case 'acs': data = filteredData.acs; filename = 'stand_acs_export.xlsx'; break;
+                case 'testing': data = filteredData.testing; filename = 'testing_equipment_export.xlsx'; break;
+                case 'tools': data = filteredData.tools; filename = 'tools_export.xlsx'; break;
+            }
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Data');
+            XLSX.writeFile(wb, filename);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
