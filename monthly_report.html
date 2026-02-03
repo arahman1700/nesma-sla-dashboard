@@ -11,27 +11,28 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #f0f4f8;
+            background: #0f172a;
             min-height: 100vh;
             margin: 0;
             display: flex;
             flex-direction: column;
+            color: white;
         }
 
         /* Header */
         .report-header {
             background: linear-gradient(135deg, #0E2841 0%, #2E3192 100%);
             color: white;
-            padding: 14px 24px;
+            padding: 12px 24px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            gap: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
             flex-shrink: 0;
             z-index: 20;
         }
 
-        .report-header .back-btn {
+        .back-btn {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -39,17 +40,15 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 8px;
             transition: background 0.2s;
         }
 
-        .report-header .back-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
+        .back-btn:hover { background: rgba(255,255,255,0.1); }
 
         .report-header h1 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             flex: 1;
         }
@@ -58,21 +57,19 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 16px;
-            background: rgba(128, 209, 233, 0.2);
-            border: 1px solid rgba(128, 209, 233, 0.4);
+            padding: 8px 14px;
+            background: rgba(128, 209, 233, 0.15);
+            border: 1px solid rgba(128, 209, 233, 0.3);
             color: #80D1E9;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.2s;
             text-decoration: none;
         }
 
-        .header-btn:hover {
-            background: rgba(128, 209, 233, 0.3);
-        }
+        .header-btn:hover { background: rgba(128, 209, 233, 0.25); }
 
         /* Main layout */
         .main-content {
@@ -81,51 +78,175 @@
             overflow: hidden;
         }
 
-        /* PPTX Viewer */
-        .pptx-viewer {
+        /* Slide viewer */
+        .slide-viewer {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #1a1a2e;
+            background: #0a0f1a;
             position: relative;
+            min-width: 0;
         }
 
-        .pptx-viewer iframe {
+        .slide-container {
             flex: 1;
-            border: none;
-            width: 100%;
-            height: 100%;
-        }
-
-        .pptx-loading {
-            position: absolute;
-            inset: 0;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 16px;
+        }
+
+        .slide-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* Slide controls */
+        .slide-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 12px 20px;
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
+
+        .slide-nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
             color: #94a3b8;
-            z-index: 5;
-            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
         }
 
-        .pptx-loading .spinner {
+        .slide-nav-btn:hover {
+            background: rgba(128, 209, 233, 0.15);
+            color: #80D1E9;
+            border-color: rgba(128, 209, 233, 0.3);
+        }
+
+        .slide-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-size: 14px;
+            font-weight: 600;
+            color: #94a3b8;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .slide-counter span { color: white; }
+
+        .fullscreen-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.5);
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            z-index: 10;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(128, 209, 233, 0.2);
+            color: #80D1E9;
+        }
+
+        /* Side arrows for desktop */
+        .slide-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
             width: 48px;
-            height: 48px;
-            border: 4px solid #334155;
-            border-top-color: #2E3192;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
+            height: 80px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(0,0,0,0.4);
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+            opacity: 0;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .slide-viewer:hover .slide-arrow { opacity: 1; }
+
+        .slide-arrow:hover {
+            background: rgba(128, 209, 233, 0.3);
+            color: white;
+        }
+
+        .slide-arrow.left { left: 12px; }
+        .slide-arrow.right { right: 12px; }
+
+        /* Slide thumbnails strip */
+        .slide-strip {
+            display: flex;
+            gap: 6px;
+            padding: 0 8px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #334155 transparent;
+            max-width: 500px;
+        }
+
+        .slide-strip::-webkit-scrollbar { height: 4px; }
+        .slide-strip::-webkit-scrollbar-track { background: transparent; }
+        .slide-strip::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+        .slide-thumb {
+            width: 48px;
+            height: 27px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            object-fit: cover;
+            flex-shrink: 0;
+            opacity: 0.5;
+            transition: all 0.15s;
+        }
+
+        .slide-thumb:hover { opacity: 0.8; }
+        .slide-thumb.active {
+            border-color: #80D1E9;
+            opacity: 1;
+        }
 
         /* Side panel */
         .side-panel {
-            width: 320px;
-            background: #f8fafc;
-            border-left: 1px solid #e2e8f0;
+            width: 300px;
+            background: #111827;
+            border-left: 1px solid rgba(255,255,255,0.06);
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -133,43 +254,42 @@
         }
 
         .side-panel-header {
-            padding: 20px 20px 12px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 18px 18px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
 
         .side-panel-header h2 {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
-            color: #334155;
+            color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .excel-card {
-            margin: 12px 16px;
-            background: white;
-            border-radius: 14px;
-            border: 1px solid #e2e8f0;
+            margin: 10px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
             overflow: hidden;
             transition: all 0.2s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
 
         .excel-card:hover {
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            border-color: #cbd5e1;
+            border-color: rgba(128, 209, 233, 0.2);
+            background: rgba(255,255,255,0.05);
         }
 
         .excel-card-body {
-            padding: 16px;
+            padding: 14px;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 12px;
         }
 
         .excel-icon {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -181,27 +301,26 @@
         .excel-icon.blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
         .excel-icon.amber { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
 
-        .excel-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .excel-info { flex: 1; min-width: 0; }
 
         .excel-info h3 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 4px;
-            line-height: 1.3;
+            color: #f1f5f9;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .excel-info p {
-            font-size: 12px;
-            color: #94a3b8;
+            font-size: 11px;
+            color: #64748b;
         }
 
         .excel-actions {
             display: flex;
-            border-top: 1px solid #f1f5f9;
+            border-top: 1px solid rgba(255,255,255,0.04);
         }
 
         .excel-action-btn {
@@ -209,8 +328,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 10px;
+            gap: 5px;
+            padding: 9px;
             font-size: 12px;
             font-weight: 600;
             color: #64748b;
@@ -222,111 +341,55 @@
         }
 
         .excel-action-btn:first-child {
-            border-right: 1px solid #f1f5f9;
+            border-right: 1px solid rgba(255,255,255,0.04);
         }
 
         .excel-action-btn:hover {
-            background: #f8fafc;
-            color: #2E3192;
-        }
-
-        .excel-action-btn svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        /* Responsive: stack on mobile */
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            .side-panel {
-                width: 100%;
-                border-left: none;
-                border-top: 1px solid #e2e8f0;
-                max-height: 40vh;
-            }
-            .pptx-viewer {
-                min-height: 50vh;
-            }
-        }
-
-        /* Dark theme */
-        [data-theme="dark"] body,
-        [data-theme="nit"] body {
-            background: #0f172a;
-        }
-
-        [data-theme="dark"] .side-panel,
-        [data-theme="nit"] .side-panel {
-            background: #1e293b;
-            border-left-color: #334155;
-        }
-
-        [data-theme="dark"] .side-panel-header,
-        [data-theme="nit"] .side-panel-header {
-            border-bottom-color: #334155;
-        }
-
-        [data-theme="dark"] .side-panel-header h2,
-        [data-theme="nit"] .side-panel-header h2 {
-            color: #e2e8f0;
-        }
-
-        [data-theme="dark"] .excel-card,
-        [data-theme="nit"] .excel-card {
-            background: #0f172a;
-            border-color: #334155;
-        }
-
-        [data-theme="dark"] .excel-card:hover,
-        [data-theme="nit"] .excel-card:hover {
-            border-color: #475569;
-        }
-
-        [data-theme="dark"] .excel-info h3,
-        [data-theme="nit"] .excel-info h3 {
-            color: #f1f5f9;
-        }
-
-        [data-theme="dark"] .excel-info p,
-        [data-theme="nit"] .excel-info p {
-            color: #64748b;
-        }
-
-        [data-theme="dark"] .excel-actions,
-        [data-theme="nit"] .excel-actions {
-            border-top-color: #334155;
-        }
-
-        [data-theme="dark"] .excel-action-btn,
-        [data-theme="nit"] .excel-action-btn {
-            color: #94a3b8;
-        }
-
-        [data-theme="dark"] .excel-action-btn:first-child,
-        [data-theme="nit"] .excel-action-btn:first-child {
-            border-right-color: #334155;
-        }
-
-        [data-theme="dark"] .excel-action-btn:hover,
-        [data-theme="nit"] .excel-action-btn:hover {
-            background: #1e293b;
+            background: rgba(128, 209, 233, 0.08);
             color: #80D1E9;
         }
 
-        [data-theme="dark"] .pptx-viewer,
-        [data-theme="nit"] .pptx-viewer {
-            background: #0f172a;
-        }
+        .excel-action-btn svg { width: 13px; height: 13px; }
 
-        [data-theme="dark"] .pptx-loading,
-        [data-theme="nit"] .pptx-loading {
-            background: #0f172a;
+        /* Light theme */
+        [data-theme="light"] body { background: #f0f4f8; color: #1e293b; }
+        [data-theme="light"] .slide-viewer,
+        [data-theme="light"] .slide-container { background: #e2e8f0; }
+        [data-theme="light"] .slide-controls { background: rgba(241,245,249,0.95); border-top-color: #e2e8f0; }
+        [data-theme="light"] .slide-nav-btn { border-color: #cbd5e1; background: white; color: #64748b; }
+        [data-theme="light"] .slide-nav-btn:hover { background: #2E3192; color: white; }
+        [data-theme="light"] .slide-counter { color: #64748b; }
+        [data-theme="light"] .slide-counter span { color: #1e293b; }
+        [data-theme="light"] .slide-arrow { background: rgba(255,255,255,0.8); color: #334155; }
+        [data-theme="light"] .fullscreen-btn { background: rgba(255,255,255,0.8); color: #334155; border-color: #cbd5e1; }
+        [data-theme="light"] .side-panel { background: #f8fafc; border-left-color: #e2e8f0; }
+        [data-theme="light"] .side-panel-header { border-bottom-color: #e2e8f0; }
+        [data-theme="light"] .side-panel-header h2 { color: #94a3b8; }
+        [data-theme="light"] .excel-card { background: white; border-color: #e2e8f0; }
+        [data-theme="light"] .excel-card:hover { border-color: #2E3192; }
+        [data-theme="light"] .excel-info h3 { color: #1e293b; }
+        [data-theme="light"] .excel-info p { color: #94a3b8; }
+        [data-theme="light"] .excel-actions { border-top-color: #f1f5f9; }
+        [data-theme="light"] .excel-action-btn { color: #64748b; }
+        [data-theme="light"] .excel-action-btn:first-child { border-right-color: #f1f5f9; }
+        [data-theme="light"] .excel-action-btn:hover { background: #f1f5f9; color: #2E3192; }
+        [data-theme="light"] .slide-strip::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; }
+            .side-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid rgba(255,255,255,0.06);
+                max-height: 35vh;
+            }
+            .slide-viewer { min-height: 55vh; }
+            .slide-arrow { display: none; }
+            .slide-strip { max-width: 200px; }
         }
 
         @media print {
-            .side-panel { display: none; }
+            .side-panel, .slide-controls, .slide-arrow, .fullscreen-btn { display: none !important; }
             .report-header .back-btn, .header-btn { display: none !important; }
         }
     </style>
@@ -348,19 +411,58 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
-            Download PPTX
+            PPTX
         </a>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- PPTX Viewer (main area) -->
-        <div class="pptx-viewer">
-            <div class="pptx-loading" id="pptxLoading">
-                <div class="spinner"></div>
-                <p>Loading presentation...</p>
+        <!-- Slide Viewer -->
+        <div class="slide-viewer" id="slideViewer">
+            <!-- Fullscreen button -->
+            <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                </svg>
+            </button>
+
+            <!-- Side arrows -->
+            <button class="slide-arrow left" id="arrowLeft">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <button class="slide-arrow right" id="arrowRight">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+
+            <!-- Slide image -->
+            <div class="slide-container">
+                <img id="slideImage" alt="Slide" draggable="false">
             </div>
-            <iframe id="pptxFrame" style="opacity:0; transition: opacity 0.3s;"></iframe>
+
+            <!-- Controls -->
+            <div class="slide-controls">
+                <button class="slide-nav-btn" id="prevBtn" title="Previous slide">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+
+                <div class="slide-strip" id="slideStrip"></div>
+
+                <div class="slide-counter">
+                    <span id="currentSlide">1</span> / <span id="totalSlides">29</span>
+                </div>
+
+                <button class="slide-nav-btn" id="nextBtn" title="Next slide">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Side Panel: Excel Files -->
@@ -369,17 +471,17 @@
                 <h2>Attachments</h2>
             </div>
 
-            <!-- Excel 1: Monthly Report JAN 2026 -->
+            <!-- Excel 1 -->
             <div class="excel-card">
                 <div class="excel-card-body">
                     <div class="excel-icon green">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
                     <div class="excel-info">
                         <h3>Monthly Report JAN 2026</h3>
-                        <p>Shipping & clearance data</p>
+                        <p>Shipping & clearance</p>
                     </div>
                 </div>
                 <div class="excel-actions">
@@ -394,17 +496,17 @@
                 </div>
             </div>
 
-            <!-- Excel 2: Monthly Report 03-02-26 -->
+            <!-- Excel 2 -->
             <div class="excel-card">
                 <div class="excel-card-body">
                     <div class="excel-icon blue">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
                     <div class="excel-info">
                         <h3>Monthly Report 03-02-26</h3>
-                        <p>Detailed monthly analytics</p>
+                        <p>Detailed analytics</p>
                     </div>
                 </div>
                 <div class="excel-actions">
@@ -419,17 +521,17 @@
                 </div>
             </div>
 
-            <!-- Excel 3: Local Content for POs -->
+            <!-- Excel 3 -->
             <div class="excel-card">
                 <div class="excel-card-body">
                     <div class="excel-icon amber">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
                     <div class="excel-info">
                         <h3>Local Content for POs</h3>
-                        <p>January 2026 PO local content</p>
+                        <p>January 2026</p>
                     </div>
                 </div>
                 <div class="excel-actions">
@@ -447,27 +549,101 @@
     </div>
 
     <script>
-        // Build the Office Online viewer URL
-        var pptxFile = 'reports/supply-chain-monthly-report-feb-2026.pptx';
-        var baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
-        var fileUrl = encodeURIComponent(baseUrl + pptxFile);
-        var viewerUrl = 'https://view.officeapps.live.com/op/embed.aspx?src=' + fileUrl;
+        var TOTAL_SLIDES = 29;
+        var current = 1;
+        var slideImage = document.getElementById('slideImage');
+        var strip = document.getElementById('slideStrip');
 
-        var frame = document.getElementById('pptxFrame');
-        var loading = document.getElementById('pptxLoading');
+        function slidePath(n) {
+            var num = n < 10 ? '0' + n : '' + n;
+            return 'reports/slides/slide-' + num + '.jpg';
+        }
 
-        frame.addEventListener('load', function() {
-            loading.style.display = 'none';
-            frame.style.opacity = '1';
+        function goToSlide(n) {
+            if (n < 1 || n > TOTAL_SLIDES) return;
+            current = n;
+            slideImage.src = slidePath(n);
+            document.getElementById('currentSlide').textContent = n;
+            document.getElementById('prevBtn').disabled = (n === 1);
+            document.getElementById('nextBtn').disabled = (n === TOTAL_SLIDES);
+            document.getElementById('arrowLeft').style.visibility = (n === 1) ? 'hidden' : 'visible';
+            document.getElementById('arrowRight').style.visibility = (n === TOTAL_SLIDES) ? 'hidden' : 'visible';
+
+            // Update thumbnail active state
+            var thumbs = strip.querySelectorAll('.slide-thumb');
+            thumbs.forEach(function(t, i) {
+                t.classList.toggle('active', i + 1 === n);
+            });
+
+            // Scroll thumbnail into view
+            if (thumbs[n - 1]) {
+                thumbs[n - 1].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+        }
+
+        function nextSlide() { goToSlide(current + 1); }
+        function prevSlide() { goToSlide(current - 1); }
+
+        // Build thumbnail strip
+        for (var i = 1; i <= TOTAL_SLIDES; i++) {
+            var thumb = document.createElement('img');
+            thumb.className = 'slide-thumb' + (i === 1 ? ' active' : '');
+            thumb.src = slidePath(i);
+            thumb.alt = 'Slide ' + i;
+            thumb.loading = 'lazy';
+            thumb.dataset.slide = i;
+            thumb.addEventListener('click', function() {
+                goToSlide(parseInt(this.dataset.slide));
+            });
+            strip.appendChild(thumb);
+        }
+
+        // Button handlers
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('arrowLeft').addEventListener('click', prevSlide);
+        document.getElementById('arrowRight').addEventListener('click', nextSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { prevSlide(); e.preventDefault(); }
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { nextSlide(); e.preventDefault(); }
+            if (e.key === 'Home') { goToSlide(1); e.preventDefault(); }
+            if (e.key === 'End') { goToSlide(TOTAL_SLIDES); e.preventDefault(); }
         });
 
-        frame.src = viewerUrl;
+        // Fullscreen
+        document.getElementById('fullscreenBtn').addEventListener('click', function() {
+            var viewer = document.getElementById('slideViewer');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                viewer.requestFullscreen();
+            }
+        });
 
-        // Fallback: hide loading after 8 seconds regardless
-        setTimeout(function() {
-            loading.style.display = 'none';
-            frame.style.opacity = '1';
-        }, 8000);
+        // Touch swipe support
+        var touchStartX = 0;
+        var slideContainer = document.querySelector('.slide-container');
+        slideContainer.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        slideContainer.addEventListener('touchend', function(e) {
+            var diff = touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) nextSlide();
+                else prevSlide();
+            }
+        }, { passive: true });
+
+        // Initialize
+        goToSlide(1);
+
+        // Preload next few slides
+        for (var p = 2; p <= Math.min(5, TOTAL_SLIDES); p++) {
+            var preload = new Image();
+            preload.src = slidePath(p);
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof NesmaTheme !== 'undefined') NesmaTheme.init();
